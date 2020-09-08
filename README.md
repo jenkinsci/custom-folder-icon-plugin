@@ -8,7 +8,7 @@ This plugin extends the Folder plugin to provide a custom icon.
 Build Status
 ------------
 
-[Developer Repository][1] [![Build Status](https://buildhive.cloudbees.com/job/jcsirot/job/custom-folder-icon-plugin/badge/icon)](https://buildhive.cloudbees.com/job/jcsirot/job/custom-folder-icon-plugin/)
+[Developer Repository][1] [![Build Status](https://buildhive.cloudbees.com/job/strangelookingnerd/job/custom-folder-icon-plugin/badge/icon)](https://buildhive.cloudbees.com/job/strangelookingnerd/job/custom-folder-icon-plugin/)
 
 [Release Repository][2] [![Build Status](https://buildhive.cloudbees.com/job/jenkinsci/job/custom-folder-icon-plugin/badge/icon)](https://buildhive.cloudbees.com/job/jenkinsci/job/custom-folder-icon-plugin/)
 
