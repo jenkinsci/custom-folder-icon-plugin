@@ -1,0 +1,25 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<f:entry title="${%UploadIcon}" help="${descriptor.getHelpFile('foldericon')}" >
+    	<table>
+            <tr>
+                <td>
+	                <j:choose>
+					   <j:when test="${instance.foldericon != null}">
+							<img src="${rootURL}/userContent/customFolderIcons/${instance.foldericon}" height="32" width="32"/>
+						</j:when>
+					   	<j:otherwise>
+					  		<img src="${rootURL}/plugin/custom-folder-icon/icons/default.png" height="32" width="32"/>
+					   	</j:otherwise>
+					</j:choose>
+				</td>
+				<td>
+					<div name="foldericon">
+						<input type="hidden" name="MAX_FILE_SIZE" value="1048576"  /> 
+						<input type="file" name="foldericon.filename" size="50" accept="image/*" jsonAware="yes" />
+					</div>
+				</td>
+			</tr>
+		</table>
+	</f:entry>
+</j:jelly>
