@@ -1,0 +1,60 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<f:entry title="${%IconPreview}">
+		<div id="icon-preview">
+			<j:choose>
+				<j:when test="${instance.foldericon != null}">
+					<img src="/userContent/customFolderIcons/${instance.foldericon}" height="32" width="32"/>
+					<st:nbsp/> 
+					<img src="/userContent/customFolderIcons/${instance.foldericon}" height="24" width="24"/>
+					<st:nbsp/> 
+					<img src="/userContent/customFolderIcons/${instance.foldericon}" height="16" width="16"/>
+				</j:when>
+				<j:otherwise>
+					<img src="/plugin/custom-folder-icon/icons/default.png" height="32" width="32"/>
+					<st:nbsp/> 
+					<img src="/plugin/custom-folder-icon/icons/default.png" height="24" width="24"/>
+					<st:nbsp/> 
+					<img src="/plugin/custom-folder-icon/icons/default.png" height="16" width="16"/>
+				</j:otherwise>
+			</j:choose>
+		</div>
+	</f:entry>
+	<f:entry title="${%IconUpload}" help="${descriptor.getHelpFile('upload')}">
+		<!-- @size is for other browsers, @style is for IE -->
+		<input type="file" id="file-input" class="setting-input" style="width:80%" size="40" accept="image/*" />
+		<input type="button" value="${%Upload}" id="upload-button" />
+	</f:entry>
+	<f:entry field="foldericon">
+		<f:textbox id="file-name" value="${instance.foldericon}" style="display: none" />
+	</f:entry>
+	<script>
+		document.getElementById("upload-button").addEventListener("click", function(e) {
+			var formData = new FormData();
+			formData.append("file", document.getElementById("file-input").files[0]);
+			var header = document.getRootNode().head.getAttribute("data-crumb-header");
+			var value = document.getRootNode().head.getAttribute("data-crumb-value");
+
+			var request = new XMLHttpRequest();
+			request.onreadystatechange = function() {
+				if (this.readyState == 4) {
+					if(this.status == 200) {
+						var images = document.getElementById("icon-preview").getElementsByTagName("img");
+						for ( var i = 0, l = images.length; i &lt; l; i++ ) {
+							images[i].setAttribute("src", "/userContent/customFolderIcons/" + this.responseText);
+						}
+						document.getElementById("file-name").setAttribute("value", this.responseText);
+						alert("Success: " + this.responseText); 
+					} else {
+            			var error = this.responseText.substring(this.responseText.lastIndexOf("<title>")+7, this.responseText.lastIndexOf("</title>"));
+            			alert(error)
+			    	}
+			    }
+			};
+			       	
+			request.open("POST", "/descriptor/jenkins.plugins.foldericon.CustomFolderIcon/uploadIcon");
+			request.setRequestHeader(header, value);
+			request.send(formData);
+        });
+    </script>
+</j:jelly>

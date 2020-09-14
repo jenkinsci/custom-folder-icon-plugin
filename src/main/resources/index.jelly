@@ -1,4 +1,4 @@
 <?jelly escape-by-default='true'?>
 <div>
-  This plugin allows users to set a custom icon for a Folder.
+  This plugin allows users to upload and set a custom icon for a Folder.
 </div>
