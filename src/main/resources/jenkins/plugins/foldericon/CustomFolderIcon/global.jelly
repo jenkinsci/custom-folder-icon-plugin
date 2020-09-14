@@ -1,0 +1,17 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<f:section title="${%CustomFolderIcons}">
+		<f:entry title="${%CleanupIcons}" help="${descriptor.getHelpFile('global-cleanup')}">
+			<input type="button" value="${%Cleanup}" id="cleanup-button" />
+		</f:entry>
+		<script>
+			document.getElementById("cleanup-button").addEventListener("click", function(e) {
+				new Ajax.Request("/descriptor/jenkins.plugins.foldericon.CustomFolderIcon/cleanup", {
+	           		onSuccess: function(rsp) {
+              			alert("Done!")
+            		}
+            	});
+	        });
+	    </script>
+    </f:section>
+</j:jelly>
