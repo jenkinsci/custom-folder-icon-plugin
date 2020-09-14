@@ -1,0 +1,42 @@
+[[custom-folder-icon-plugin]]
+= Custom Folder Icon Plugin
+:toc: macro
+:toc-title:
+
+image:https://ci.jenkins.io/job/Plugins/job/custom-folder-icon-plugin/job/master/badge/icon[link="https://ci.jenkins.io/job/Plugins/job/custom-folder-icon-plugin/job/master/"]
+image:https://img.shields.io/github/contributors/jenkinsci/custom-folder-icon-plugin.svg?color=blue[link="https://github.com/jenkinsci/custom-folder-icon-plugin/graphs/contributors"]
+image:https://img.shields.io/jenkins/plugin/i/custom-folder-icon-plugin.svg?color=blue&label=installations[link="https://plugins.jenkins.io/custom-folder-icon-plugin"]
+image:https://img.shields.io/github/release/jenkinsci/custom-folder-icon-plugin.svg?label=changelog[link="https://github.com/jenkinsci/custom-folder-icon-plugin/releases/latest"]
+
+[#introduction]
+== Introduction
+
+image:src/main/webapp/icons/default.png[]
+
+This plugin extends the link:https://github.com/jenkinsci/cloudbees-folder-plugin[Folder plugin] to use a custom icon to each folder.
+
+toc::[]
+
+[#changelog]
+== Changelog
+
+Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-plugin/releases[GitHub Releases] 
+
+[#configuration]
+== Configuration
+
+[#folder-configuration]
+=== Folder Configuration
+Enable the Custom Icon and upload a file to use.
+
+image:images/folder-configuration.png[]
+
+Have your Custom Icom for each Folder.
+
+image:images/folder-icon.png[]
+
+[#global-configuration]
+=== Global Configuration
+Check for unused folder icon files and delete them.
+
+image:images/global-configuration.png[]
