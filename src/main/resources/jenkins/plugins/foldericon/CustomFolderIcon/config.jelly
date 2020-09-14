@@ -3,7 +3,7 @@
 	<f:entry title="${%IconPreview}">
 		<div id="icon-preview">
 			<j:choose>
-				<j:when test="${instance.foldericon != null}">
+				<j:when test="${instance.foldericon != null &amp;&amp; instance.foldericon != ''}">
 					<img src="/userContent/customFolderIcons/${instance.foldericon}" height="32" width="32"/>
 					<st:nbsp/> 
 					<img src="/userContent/customFolderIcons/${instance.foldericon}" height="24" width="24"/>

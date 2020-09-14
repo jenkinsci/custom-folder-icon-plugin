@@ -8,7 +8,7 @@
 			document.getElementById("cleanup-button").addEventListener("click", function(e) {
 				new Ajax.Request("/descriptor/jenkins.plugins.foldericon.CustomFolderIcon/cleanup", {
 	           		onSuccess: function(rsp) {
-              			alert("Done!")
+              			alert("Done!");
             		}
             	});
 	        });

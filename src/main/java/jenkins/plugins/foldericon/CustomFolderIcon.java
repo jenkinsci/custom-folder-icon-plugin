@@ -58,7 +58,7 @@ public class CustomFolderIcon extends FolderIcon {
 
     @Override
     public String getImageOf(String size) {
-        if (foldericon != null) {
+        if (StringUtils.isNotEmpty(foldericon)) {
             return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH + "/" + USER_CONTENT + "/"
                     + PATH + "/"
                     + foldericon;
