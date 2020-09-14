@@ -158,7 +158,9 @@ public class CustomFolderIcon extends FolderIcon {
          * @return OK
          * 
          * @throws InterruptedException
+         *             if there is a file handling error
          * @throws IOException
+         *             if there is a file handling error
          */
         public HttpResponse doCleanup(StaplerRequest req) throws InterruptedException, IOException {
             Jenkins jenkins = Jenkins.get();
