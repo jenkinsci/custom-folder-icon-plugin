@@ -37,10 +37,11 @@
 		<connection>scm:git:ssh://github.com/jenkinsci/custom-folder-icon-plugin.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/custom-folder-icon-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/custom-folder-icon-plugin</url>
+		<tag>HEAD</tag>
 	</scm>
 
 	<properties>
-	    <revision>1.0</revision>
+	    <revision>1.1</revision>
 	    <changelist>-SNAPSHOT</changelist>
 	    <java.level>8</java.level>
 	</properties>
