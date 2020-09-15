@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
@@ -11,7 +10,7 @@
 
 	<groupId>io.jenkins.plugins</groupId>
 	<artifactId>custom-folder-icon</artifactId>
-	<version>${revision}${changelist}</version>
+	<version>1.1</version>
 	<packaging>hpi</packaging>
 
 	<name>Custom Folder Icon Plugin</name>
@@ -37,7 +36,7 @@
 		<connection>scm:git:ssh://github.com/jenkinsci/custom-folder-icon-plugin.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/custom-folder-icon-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/custom-folder-icon-plugin</url>
-		<tag>HEAD</tag>
+		<tag>custom-folder-icon-1.1</tag>
 	</scm>
 
 	<properties>
