@@ -1,5 +1,5 @@
 [[custom-folder-icon-plugin]]
-= Custom Folder Icon Plugin
+= image:src/main/webapp/icons/default.png[] Custom Folder Icon Plugin image:src/main/webapp/icons/default.png[]
 :toc: macro
 :toc-title:
 
@@ -11,9 +11,7 @@ image:https://img.shields.io/github/release/jenkinsci/custom-folder-icon-plugin.
 [#introduction]
 == Introduction
 
-image:src/main/webapp/icons/default.png[]
-
-This plugin extends the link:https://github.com/jenkinsci/cloudbees-folder-plugin[Folder plugin] to use a custom icon to each folder.
+This plugin extends the link:https://github.com/jenkinsci/cloudbees-folder-plugin[Folders plugin] to enable a custom icon for each folder.
 
 toc::[]
 
@@ -27,11 +25,11 @@ Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-pl
 
 [#folder-configuration]
 === Folder Configuration
-Enable the Custom Icon and upload a file to use.
+Select the Custom Folder Icon option and upload a file to use. The file name will be randomized during upload.
 
 image:images/folder-configuration.png[]
 
-Have your Custom Icom for each Folder.
+Use your Custom Icon for each Folder.
 
 image:images/folder-icon.png[]
 
