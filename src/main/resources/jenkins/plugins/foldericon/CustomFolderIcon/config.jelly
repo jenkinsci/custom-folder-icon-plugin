@@ -30,31 +30,37 @@
 	</f:entry>
 	<script>
 		document.getElementById("upload-button").addEventListener("click", function(e) {
-			var formData = new FormData();
-			formData.append("file", document.getElementById("file-input").files[0]);
-			var header = document.getRootNode().head.getAttribute("data-crumb-header");
-			var value = document.getRootNode().head.getAttribute("data-crumb-value");
-
-			var request = new XMLHttpRequest();
-			request.onreadystatechange = function() {
-				if (this.readyState == 4) {
-					if(this.status == 200) {
-						var images = document.getElementById("icon-preview").getElementsByTagName("img");
-						for ( var i = 0, l = images.length; i &lt; l; i++ ) {
-							images[i].setAttribute("src", "/userContent/customFolderIcons/" + this.responseText);
-						}
-						document.getElementById("file-name").setAttribute("value", this.responseText);
-						alert("Success: " + this.responseText); 
-					} else {
-            			var error = this.responseText.substring(this.responseText.lastIndexOf("<title>")+7, this.responseText.lastIndexOf("</title>"));
-            			alert(error)
-			    	}
-			    }
-			};
-			       	
-			request.open("POST", "/descriptor/jenkins.plugins.foldericon.CustomFolderIcon/uploadIcon");
-			request.setRequestHeader(header, value);
-			request.send(formData);
-        });
+			new Ajax.Request("/crumbIssuer/api/json", {
+			  	method: "GET",
+			  	onSuccess: function(req) {
+					var formData = new FormData();
+					formData.append("file", document.getElementById("file-input").files[0]);
+		      		var jsonResponse = JSON.parse(req.transport.response);
+					var header = jsonResponse.crumbRequestField;
+					var value = jsonResponse.crumb;
+		
+					var request = new XMLHttpRequest();
+					request.onreadystatechange = function() {
+						if (this.readyState == 4) {
+							if(this.status == 200) {
+								var images = document.getElementById("icon-preview").getElementsByTagName("img");
+								for ( var i = 0, l = images.length; i &lt; l; i++ ) {
+									images[i].setAttribute("src", "/userContent/customFolderIcons/" + this.responseText);
+								}
+								document.getElementById("file-name").setAttribute("value", this.responseText);
+								alert("Success: " + this.responseText); 
+							} else {
+		            			var error = this.responseText.substring(this.responseText.lastIndexOf("<title>")+7, this.responseText.lastIndexOf("</title>"));
+		            			alert(error)
+					    	}
+					    }
+					};
+					       	
+					request.open("POST", "/descriptor/jenkins.plugins.foldericon.CustomFolderIcon/uploadIcon");
+					request.setRequestHeader(header, value);
+					request.send(formData);
+		    	}
+			});
+    	});
     </script>
 </j:jelly>
