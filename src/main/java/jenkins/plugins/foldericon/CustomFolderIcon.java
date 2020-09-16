@@ -31,7 +31,7 @@ import hudson.FilePath;
 import jenkins.model.Jenkins;
 
 /**
- * A Custom Folder Icon
+ * A Custom Folder Icon.
  * 
  * @author strangelookingnerd
  *
@@ -42,8 +42,9 @@ public class CustomFolderIcon extends FolderIcon {
 
     private static final String PATH = "customFolderIcons";
     private static final String USER_CONTENT = "userContent";
+    private static final String DEFAULT_ICON = "/plugin/custom-folder-icon/icons/default.png";
 
-    public String foldericon;
+    private final String foldericon;
 
     /**
      * Ctor.
@@ -56,15 +57,20 @@ public class CustomFolderIcon extends FolderIcon {
         this.foldericon = foldericon;
     }
 
+    /**
+     * @return the foldericon
+     */
+    public String getFoldericon() {
+        return foldericon;
+    }
+
     @Override
     public String getImageOf(String size) {
-        if (StringUtils.isNotEmpty(foldericon)) {
+        if (StringUtils.isNotEmpty(getFoldericon())) {
             return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH + "/" + USER_CONTENT + "/"
-                    + PATH + "/"
-                    + foldericon;
+                    + PATH + "/" + getFoldericon();
         } else {
-            return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH
-                    + "/plugin/custom-folder-icon/icons/default.png";
+            return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH + DEFAULT_ICON;
         }
     }
 
@@ -79,7 +85,9 @@ public class CustomFolderIcon extends FolderIcon {
     }
 
     /**
-     * @author dkraemer
+     * The Descriptor.
+     * 
+     * @author strangelookingnerd
      *
      */
     @Extension
@@ -93,7 +101,7 @@ public class CustomFolderIcon extends FolderIcon {
         public String getDisplayName() {
             return Messages.Icon_description();
         }
-        
+
         @Override
         public boolean isApplicable(Class<? extends AbstractFolder> folderType) {
             return true;
@@ -146,10 +154,11 @@ public class CustomFolderIcon extends FolderIcon {
 
                 return HttpResponses.text(filename);
             } catch (IOException | FileUploadException | InterruptedException ex) {
+                LOGGER.log(Level.WARNING, "Error during Folder Icon upload!", ex);
                 return HttpResponses.errorWithoutStack(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
             }
         }
-        
+
         /**
          * Cleanup unused icons.
          * 
@@ -165,7 +174,7 @@ public class CustomFolderIcon extends FolderIcon {
         public HttpResponse doCleanup(StaplerRequest req) throws InterruptedException, IOException {
             Jenkins jenkins = Jenkins.get();
             jenkins.checkPermission(Jenkins.ADMINISTER);
-            
+
             FilePath iconDir = jenkins.getRootPath().child(USER_CONTENT).child(PATH);
 
             if (iconDir.exists()) {
@@ -175,10 +184,10 @@ public class CustomFolderIcon extends FolderIcon {
                 }
 
                 List<String> usedIcons = new ArrayList<>();
-                for (AbstractFolder folder : jenkins.getAllItems(AbstractFolder.class)) {
+                for (AbstractFolder<?> folder : jenkins.getAllItems(AbstractFolder.class)) {
                     if (folder.getIcon() instanceof CustomFolderIcon) {
                         CustomFolderIcon icon = (CustomFolderIcon) folder.getIcon();
-                        usedIcons.add(icon.foldericon);
+                        usedIcons.add(icon.getFoldericon());
                     }
                 }
 
@@ -189,7 +198,7 @@ public class CustomFolderIcon extends FolderIcon {
                                 LOGGER.warning("Unable to delete unused Folder Icon '" + icon + "'!");
                             }
                         } catch (IOException ex) {
-                            LOGGER.log(Level.SEVERE, "Unable to delete unused Folder Icon '" + icon + "'!", ex);
+                            LOGGER.log(Level.WARNING, "Unable to delete unused Folder Icon '" + icon + "'!", ex);
                         }
                     }
                 }
@@ -198,4 +207,3 @@ public class CustomFolderIcon extends FolderIcon {
         }
     }
 }
-
