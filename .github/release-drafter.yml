@@ -1,0 +1,4 @@
+# Extends the default ReleaseDrafter config provided in https://github.com/jenkinsci/.github
+_extends: .github
+tag-template: custom-folder-icon-$NEXT_MINOR_VERSION
+name-template: Custom Folder Icon v$NEXT_MINOR_VERSION
