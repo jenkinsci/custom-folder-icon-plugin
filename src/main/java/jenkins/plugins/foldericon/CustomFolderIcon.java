@@ -28,6 +28,7 @@ import com.cloudbees.hudson.plugins.folder.FolderIconDescriptor;
 
 import hudson.Extension;
 import hudson.FilePath;
+import hudson.model.Item;
 import jenkins.model.Jenkins;
 
 /**
@@ -120,7 +121,7 @@ public class CustomFolderIcon extends FolderIcon {
         public HttpResponse doUploadIcon(StaplerRequest req) {
             try {
                 Jenkins jenkins = Jenkins.get();
-                jenkins.checkPermission(Jenkins.ADMINISTER);
+                jenkins.checkPermission(Item.CONFIGURE);
 
                 ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
                 upload.setFileSizeMax(FILE_SIZE_MAX);
