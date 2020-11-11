@@ -1,4 +1,0 @@
-language: java
-# use Java 8
-jdk:
-- openjdk8
