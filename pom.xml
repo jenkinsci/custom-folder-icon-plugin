@@ -40,6 +40,7 @@
 	</scm>
 
 	<properties>
+		<jenkins.version>2.204.6</jenkins.version>
 	    <revision>1.4</revision>
 	    <changelist>-SNAPSHOT</changelist>
 	    <java.level>8</java.level>
