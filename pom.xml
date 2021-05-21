@@ -33,13 +33,16 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:ssh://github.com/jenkinsci/custom-folder-icon-plugin.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/custom-folder-icon-plugin.git</developerConnection>
-		<url>https://github.com/jenkinsci/custom-folder-icon-plugin</url>
-		<tag>HEAD</tag>
+		<connection>scm:git:ssh://github.com/${gitHubRepo}.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/${gitHubRepo}.git</developerConnection>
+		<url>https://github.com/${gitHubRepo}</url>
+		<tag>${scmTag}</tag>
 	</scm>
 
 	<properties>
+		<revision>1.5</revision>
+		<changelist>-SNAPSHOT</changelist>
+		<gitHubRepo>jenkinsci/custom-folder-icon-plugin</gitHubRepo>
 		<jenkins.version>2.204.6</jenkins.version>
 	    <revision>1.5</revision>
 	    <changelist>-SNAPSHOT</changelist>
