@@ -6,7 +6,7 @@
 		</f:entry>
 		<script>
 			document.getElementById("cleanup-button").addEventListener("click", function(e) {
-				new Ajax.Request("/descriptor/jenkins.plugins.foldericon.CustomFolderIcon/cleanup", {
+				new Ajax.Request("${rootURL}/descriptor/jenkins.plugins.foldericon.CustomFolderIcon/cleanup", {
 	           		onSuccess: function(rsp) {
               			alert("Done!");
             		}
