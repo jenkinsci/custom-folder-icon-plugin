@@ -44,7 +44,7 @@
 		<changelist>-SNAPSHOT</changelist>
 		<gitHubRepo>jenkinsci/custom-folder-icon-plugin</gitHubRepo>
 		<jenkins.version>2.204.6</jenkins.version>
-	    <revision>1.5</revision>
+	    <revision>1.6</revision>
 	    <changelist>-SNAPSHOT</changelist>
 	    <java.level>8</java.level>
 	</properties>
