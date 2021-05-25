@@ -133,14 +133,6 @@ public class CustomFolderIcon extends FolderIcon {
                     return HttpResponses.errorWithoutStack(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                             Messages.Upload_invalidFile());
                 }
-                String fileName = fileItem.getName();
-                // we allow the upload of the new png and jpg
-                if (!StringUtils.endsWithIgnoreCase(fileName, ".png")
-                        && !StringUtils.endsWithIgnoreCase(fileName, ".jpg")
-                        && !StringUtils.endsWithIgnoreCase(fileName, ".jpeg")) {
-                    return HttpResponses.errorWithoutStack(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                            Messages.Upload_invalidType());
-                }
 
                 String filename = UUID.randomUUID().toString() + ".png";
                 FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT).child(CustomFolderIcon.PATH);

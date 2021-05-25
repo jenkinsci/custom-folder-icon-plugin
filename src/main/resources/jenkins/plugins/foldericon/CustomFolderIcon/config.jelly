@@ -1,66 +1,82 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-	<f:entry title="${%IconPreview}">
+	<f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('upload')}">
+		<link rel="stylesheet" href="${app.rootUrl}plugin/custom-folder-icon/croppie/croppie.css" type="text/css" />
+		<script src="${app.rootUrl}plugin/custom-folder-icon/croppie/croppie.js" type="text/javascript" ></script>
 		<div id="icon-preview">
-			<j:choose>
-				<j:when test="${instance.foldericon != null &amp;&amp; instance.foldericon != ''}">
-					<img src="${app.rootUrl}userContent/customFolderIcons/${instance.foldericon}" height="32" width="32"/>
-					<st:nbsp/> 
-					<img src="${app.rootUrl}userContent/customFolderIcons/${instance.foldericon}" height="24" width="24"/>
-					<st:nbsp/> 
-					<img src="${app.rootUrl}userContent/customFolderIcons/${instance.foldericon}" height="16" width="16"/>
-				</j:when>
-				<j:otherwise>
-					<img src="${app.rootUrl}plugin/custom-folder-icon/icons/default.png" height="32" width="32"/>
-					<st:nbsp/> 
-					<img src="${app.rootUrl}plugin/custom-folder-icon/icons/default.png" height="24" width="24"/>
-					<st:nbsp/> 
-					<img src="${app.rootUrl}plugin/custom-folder-icon/icons/default.png" height="16" width="16"/>
-				</j:otherwise>
-			</j:choose>
-		</div>
-	</f:entry>
-	<f:entry title="${%IconUpload}" help="${descriptor.getHelpFile('upload')}">
-		<!-- @size is for other browsers, @style is for IE -->
-		<input type="file" id="file-input" class="setting-input" style="width:80%" size="40" accept="image/*" />
-		<input type="button" value="${%Upload}" id="upload-button" />
+			<div id="file-cropper"></div>
+			<!-- @size is for other browsers, @style is for IE -->
+			<input type="file" class="setting-input" style="width:80%" size="40" accept="image/*" id="file-input" />
+			<st:nbsp/> 
+			<input type="button" value="${%Apply}" id="apply-button" />
+	    </div>
 	</f:entry>
 	<f:entry field="foldericon">
 		<f:textbox id="file-name" value="${instance.foldericon}" style="display: none" />
 	</f:entry>
 	<script>
-		document.getElementById("upload-button").addEventListener("click", function(e) {
+		// init preview url
+		var preview = document.getElementById("file-name").getAttribute("value");
+		var url;
+		if (preview != null &amp;&amp; preview != '') {
+			url = "${rootURL}/userContent/customFolderIcons/" + preview;
+		} else {
+			url = "${rootURL}/plugin/custom-folder-icon/icons/default.png";
+		}
+		
+		// init croppie
+		var croppie = new Croppie(document.getElementById("file-cropper"), {
+			viewport: { width: 128, height: 128 },
+			boundary: { width: 200, height: 200 },
+			url: url
+		});
+		
+		// read file input	
+		document.getElementById("file-input").addEventListener("change", function(e) {
+			var reader = new FileReader();
+			reader.onload = function (ev) {
+				croppie.bind({
+					url: ev.target.result
+				});
+			}
+			reader.readAsDataURL(this.files[0]);
+		});
+			
+		// handle apply
+		document.getElementById("apply-button").addEventListener("click", function(e) {
+			var request = new XMLHttpRequest();
+			request.onreadystatechange = function() {
+				if (this.readyState == 4) {
+					if (this.status == 200) {
+						document.getElementById("file-name").setAttribute("value", this.responseText);
+						alert("${%UploadSuccess}" + this.responseText); 
+					} else {
+						var error = this.responseText.substring(this.responseText.lastIndexOf("<title>")+7, this.responseText.lastIndexOf("</title>"));
+						alert("${%UploadFailed}" + error);
+					}
+				}
+			};
+
+			request.open("POST", "${rootURL}/descriptor/jenkins.plugins.foldericon.CustomFolderIcon/uploadIcon");	
+
+			// get a crumb
 			new Ajax.Request("${rootURL}/crumbIssuer/api/json", {
-			  	method: "GET",
+				method: "GET",
 			  	onSuccess: function(req) {
-					var formData = new FormData();
-					formData.append("file", document.getElementById("file-input").files[0]);
-		      		var jsonResponse = JSON.parse(req.transport.response);
+					var jsonResponse = JSON.parse(req.transport.response);
 					var header = jsonResponse.crumbRequestField;
 					var value = jsonResponse.crumb;
-		
-					var request = new XMLHttpRequest();
-					request.onreadystatechange = function() {
-						if (this.readyState == 4) {
-							if (this.status == 200) {
-								var images = document.getElementById("icon-preview").getElementsByTagName("img");
-								for ( var i = 0, l = images.length; i &lt; l; i++ ) {
-									images[i].setAttribute("src", "${rootURL}/userContent/customFolderIcons/" + this.responseText);
-								}
-								document.getElementById("file-name").setAttribute("value", this.responseText);
-								alert("Success: " + this.responseText); 
-							} else {
-		            			var error = this.responseText.substring(this.responseText.lastIndexOf("<title>")+7, this.responseText.lastIndexOf("</title>"));
-		            			alert(error)
-					    	}
-					    }
-					};
-					       	
-					request.open("POST", "${rootURL}/descriptor/jenkins.plugins.foldericon.CustomFolderIcon/uploadIcon");
 					request.setRequestHeader(header, value);
-					request.send(formData);
-		    	}
+				},
+				onComplete: function() {
+					// upload the file
+					var formData = new FormData();
+					croppie.result("blob").then(function(blob) {
+						formData.append("file", blob);
+						request.send(formData);
+					});
+				}
 			});
-    	});
-    </script>
+		});
+	</script>
 </j:jelly>

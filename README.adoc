@@ -26,7 +26,9 @@ Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-pl
 
 [#folder-configuration]
 === Folder Configuration
-Select the Custom Folder Icon option and upload the file to use. The file name will be randomized during upload.
+Select the Custom Folder Icon option and use "Browse..." to chose a file. 
+
+You can crop the image to the desired result and upload it using the "Apply" button. The file name will be randomized during upload.
 
 image:images/folder-configuration.png[]
 
