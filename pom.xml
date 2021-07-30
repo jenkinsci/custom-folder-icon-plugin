@@ -45,6 +45,7 @@
 		<revision>1.8</revision>
 		<changelist>-SNAPSHOT</changelist>
 		<java.level>8</java.level>
+		<access-modifier-checker.version>1.22</access-modifier-checker.version>
 	</properties>
 
 	<dependencies>
