@@ -1,11 +1,11 @@
 package jenkins.plugins.foldericon;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletResponse;
@@ -167,27 +167,22 @@ public class CustomFolderIcon extends FolderIcon {
             FilePath iconDir = jenkins.getRootPath().child(USER_CONTENT).child(PATH);
 
             if (iconDir.exists()) {
-                List<String> existingIcons = new ArrayList<>();
-                for (FilePath fp : iconDir.list()) {
-                    existingIcons.add(fp.getName());
-                }
+                List<String> existingIcons = iconDir.list().stream().map(FilePath::getName)
+                        .collect(Collectors.toList());
 
-                List<String> usedIcons = new ArrayList<>();
-                for (AbstractFolder<?> folder : jenkins.getAllItems(AbstractFolder.class)) {
-                    if (folder.getIcon() instanceof CustomFolderIcon) {
-                        CustomFolderIcon icon = (CustomFolderIcon) folder.getIcon();
-                        usedIcons.add(icon.getFoldericon());
-                    }
-                }
+                List<String> usedIcons = jenkins.getAllItems(AbstractFolder.class).stream()
+                        .filter(CustomFolderIcon.class::isInstance)
+                        .map(folder -> ((CustomFolderIcon) folder.getIcon()).getFoldericon())
+                        .collect(Collectors.toList());
 
                 if (existingIcons.removeAll(usedIcons)) {
                     for (String icon : existingIcons) {
                         try {
                             if (!iconDir.child(icon).delete()) {
-                                LOGGER.warning("Unable to delete unused Folder Icon '" + icon + "'!");
+                                LOGGER.warning(() -> "Unable to delete unused Folder Icon '" + icon + "'!");
                             }
                         } catch (IOException ex) {
-                            LOGGER.log(Level.WARNING, "Unable to delete unused Folder Icon '" + icon + "'!", ex);
+                            LOGGER.log(Level.WARNING, ex, () -> "Unable to delete unused Folder Icon '" + icon + "'!");
                         }
                     }
                 }
