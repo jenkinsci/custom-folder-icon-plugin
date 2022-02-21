@@ -7,7 +7,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
@@ -96,7 +95,6 @@ public class CustomFolderIcon extends FolderIcon {
         private static final int CHMOD = 0644;
         private static final long FILE_SIZE_MAX = 1024L * 1024L;
 
-        @Nonnull
         @Override
         public String getDisplayName() {
             return Messages.Icon_description();
