@@ -19,6 +19,8 @@ toc::[]
 [#changelog]
 == Changelog
 
+Since https://github.com/jenkinsci/branch-api-plugin/releases/tag/2.1044.v2c007e51b_87f[2.1044] of the https://github.com/jenkinsci/branch-api-plugin[branch-api-plugin] the Custom Folder Icons can be used for Multi-Branch or Organization Projects.
+
 Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-plugin/releases[GitHub Releases] 
 
 [#configuration]
