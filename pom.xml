@@ -44,7 +44,6 @@
 		<jenkins.version>2.277.1</jenkins.version>
 		<revision>1.10</revision>
 		<changelist>-SNAPSHOT</changelist>
-		<java.level>8</java.level>
 	</properties>
 
 	<dependencies>
