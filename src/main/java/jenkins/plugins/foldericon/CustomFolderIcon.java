@@ -45,6 +45,8 @@ public class CustomFolderIcon extends FolderIcon {
 
     private final String foldericon;
 
+    private AbstractFolder<?> owner;
+
     /**
      * Ctor.
      * 
@@ -54,6 +56,14 @@ public class CustomFolderIcon extends FolderIcon {
     @DataBoundConstructor
     public CustomFolderIcon(String foldericon) {
         this.foldericon = foldericon;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void setOwner(AbstractFolder<?> folder) {
+        this.owner = folder;
     }
 
     /**
@@ -75,7 +85,11 @@ public class CustomFolderIcon extends FolderIcon {
 
     @Override
     public String getDescription() {
-        return Messages.Folder_description();
+        if (owner != null) {
+            return owner.getPronoun();
+        } else {
+            return Messages.Folder_description();
+        }
     }
 
     @Override
