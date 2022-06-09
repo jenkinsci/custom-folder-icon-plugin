@@ -1,6 +1,7 @@
 package jenkins.plugins.foldericon;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
@@ -20,6 +21,7 @@ import org.mockito.Mockito;
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 
+import hudson.FilePath;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.CustomFolderIcon.DescriptorImpl;
 
@@ -149,9 +151,16 @@ public class CustomFolderIconTest {
         field.setAccessible(true);
         assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, field.get(response));
 
+        FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
+        parent.mkdirs();
+        FilePath file = parent.child(System.currentTimeMillis() + ".png");
+        file.touch(System.currentTimeMillis());
+        assertTrue(file.exists());
+
         response = descriptor.doCleanup(mockReq);
         field = response.getClass().getDeclaredField("val$code");
         field.setAccessible(true);
         assertEquals(HttpServletResponse.SC_OK, field.get(response));
+        assertFalse(file.exists());
     }
 }

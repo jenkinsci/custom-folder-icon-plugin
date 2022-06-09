@@ -147,7 +147,7 @@ public class CustomFolderIcon extends FolderIcon {
                 }
 
                 String filename = UUID.randomUUID().toString() + ".png";
-                FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT).child(CustomFolderIcon.PATH);
+                FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT).child(PATH);
                 iconDir.mkdirs();
                 FilePath icon = iconDir.child(filename);
                 icon.copyFrom(fileItem.getInputStream());
@@ -187,7 +187,7 @@ public class CustomFolderIcon extends FolderIcon {
                         .map(folder -> ((CustomFolderIcon) folder.getIcon()).getFoldericon())
                         .collect(Collectors.toList());
 
-                if (existingIcons.removeAll(usedIcons)) {
+                if (usedIcons.isEmpty() || existingIcons.removeAll(usedIcons)) {
                     for (String icon : existingIcons) {
                         try {
                             if (!iconDir.child(icon).delete()) {
