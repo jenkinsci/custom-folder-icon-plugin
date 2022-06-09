@@ -58,6 +58,16 @@
 			<version>2.1046.v0ca_37783ecc5</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+		    <groupId>org.mockito</groupId>
+		    <artifactId>mockito-core</artifactId>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		<groupId>org.mockito</groupId>
+		    <artifactId>mockito-inline</artifactId>
+		    <scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<repositories>
