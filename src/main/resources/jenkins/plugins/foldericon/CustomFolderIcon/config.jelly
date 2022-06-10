@@ -28,6 +28,7 @@
 		var croppie = new Croppie(document.getElementById("file-cropper"), {
 			viewport: { width: 128, height: 128 },
 			boundary: { width: 200, height: 200 },
+			enforceBoundary: false,
 			url: url
 		});
 		
