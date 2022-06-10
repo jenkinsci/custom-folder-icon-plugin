@@ -1,5 +1,7 @@
 name: 'Generate Coverage Report'
 
+comment: false
+
 on:
   push:
     branches:
