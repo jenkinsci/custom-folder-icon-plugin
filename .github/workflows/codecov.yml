@@ -1,5 +1,7 @@
 name: 'Generate Coverage Report'
 
+comment: off
+
 on:
   push:
     branches:
@@ -11,7 +13,6 @@ jobs:
 
     runs-on: [ubuntu-latest]
     name: Coverage on Ubuntu
-    comment: false
 
     steps:
       - uses: actions/checkout@v3
