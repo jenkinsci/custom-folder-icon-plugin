@@ -11,6 +11,7 @@ jobs:
 
     runs-on: [ubuntu-latest]
     name: Coverage on Ubuntu
+    comment: false
 
     steps:
       - uses: actions/checkout@v3
@@ -29,5 +30,3 @@ jobs:
         with:
           token: ${{secrets.CODECOV_TOKEN}}
           file: ./target/site/jacoco/jacoco.xml
-
-  comment: false
