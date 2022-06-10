@@ -1,7 +1,5 @@
 name: 'Generate Coverage Report'
 
-comment: false
-
 on:
   push:
     branches:
@@ -31,3 +29,5 @@ jobs:
         with:
           token: ${{secrets.CODECOV_TOKEN}}
           file: ./target/site/jacoco/jacoco.xml
+
+  comment: false
