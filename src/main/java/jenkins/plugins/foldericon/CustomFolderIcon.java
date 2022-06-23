@@ -39,9 +39,9 @@ public class CustomFolderIcon extends FolderIcon {
 
     private static final Logger LOGGER = Logger.getLogger(CustomFolderIcon.class.getName());
 
-    private static final String PATH = "customFolderIcons";
-    private static final String USER_CONTENT = "userContent";
-    private static final String DEFAULT_ICON = "/plugin/custom-folder-icon/icons/default.png";
+    private static final String PLUGIN_PATH = "customFolderIcons";
+    private static final String USER_CONTENT_PATH = "userContent";
+    private static final String DEFAULT_ICON_PATH = "plugin/custom-folder-icon/icons/default.png";
 
     private final String foldericon;
 
@@ -76,10 +76,10 @@ public class CustomFolderIcon extends FolderIcon {
     @Override
     public String getImageOf(String size) {
         if (StringUtils.isNotEmpty(getFoldericon())) {
-            return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH + "/" + USER_CONTENT + "/"
-                    + PATH + "/" + getFoldericon();
+            return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH + "/" + USER_CONTENT_PATH + "/"
+                    + PLUGIN_PATH + "/" + getFoldericon();
         } else {
-            return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH + DEFAULT_ICON;
+            return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH + "/" + DEFAULT_ICON_PATH;
         }
     }
 
@@ -136,21 +136,16 @@ public class CustomFolderIcon extends FolderIcon {
 
                 // Parse the request
                 List<FileItem> files = upload.parseRequest(req);
-                if (files == null || files.isEmpty()) {
-                    return HttpResponses.errorWithoutStack(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                            Messages.Upload_invalidFile());
-                }
-                FileItem fileItem = files.get(0);
-                if (fileItem == null || StringUtils.isEmpty(fileItem.getName())) {
+                if (files == null || files.isEmpty() || files.get(0) == null) {
                     return HttpResponses.errorWithoutStack(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                             Messages.Upload_invalidFile());
                 }
 
                 String filename = UUID.randomUUID().toString() + ".png";
-                FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT).child(PATH);
+                FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
                 iconDir.mkdirs();
                 FilePath icon = iconDir.child(filename);
-                icon.copyFrom(fileItem.getInputStream());
+                icon.copyFrom(files.get(0).getInputStream());
                 icon.chmod(CHMOD);
 
                 return HttpResponses.text(filename);
@@ -176,7 +171,7 @@ public class CustomFolderIcon extends FolderIcon {
             Jenkins jenkins = Jenkins.get();
             jenkins.checkPermission(Jenkins.ADMINISTER);
 
-            FilePath iconDir = jenkins.getRootPath().child(USER_CONTENT).child(PATH);
+            FilePath iconDir = jenkins.getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
 
             if (iconDir.exists()) {
                 List<String> existingIcons = iconDir.list().stream().map(FilePath::getName)
