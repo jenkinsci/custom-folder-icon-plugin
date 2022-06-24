@@ -290,13 +290,14 @@ public class CustomFolderIconTest {
         parent.mkdirs();
         FilePath file = parent.child(System.currentTimeMillis() + ".png");
         file.touch(System.currentTimeMillis());
+        File remoteFile = new File(file.getRemote());
 
         // jenkins is pretty brutal when deleting files...
         Thread blocker = new Thread() {
             @Override
             public void run() {
                 while (!this.isInterrupted()) {
-                    new File(file.getRemote()).setReadOnly();
+                    remoteFile.setReadOnly();
                 }
             }
         };
@@ -310,6 +311,7 @@ public class CustomFolderIconTest {
         assertEquals(HttpServletResponse.SC_OK, field.get(response));
 
         blocker.interrupt();
+        remoteFile.setWritable(true);
         assertTrue(file.exists());
 
         response = descriptor.doCleanup(mockReq);
