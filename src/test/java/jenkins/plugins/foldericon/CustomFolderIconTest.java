@@ -301,17 +301,16 @@ public class CustomFolderIconTest {
             }
         };
 
-        assertTrue(file.exists());
-
         blocker.start();
+        assertTrue(file.exists());
 
         HttpResponse response = descriptor.doCleanup(mockReq);
         Field field = response.getClass().getDeclaredField("val$code");
         field.setAccessible(true);
         assertEquals(HttpServletResponse.SC_OK, field.get(response));
-        assertTrue(file.exists());
 
         blocker.interrupt();
+        assertTrue(file.exists());
 
         response = descriptor.doCleanup(mockReq);
         field = response.getClass().getDeclaredField("val$code");
