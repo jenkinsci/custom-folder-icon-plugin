@@ -311,8 +311,6 @@ public class CustomFolderIconTest {
         assertEquals(HttpServletResponse.SC_OK, field.get(response));
 
         blocker.interrupt();
-        remoteFile.setWritable(true);
-        assertTrue(file.exists());
 
         response = descriptor.doCleanup(mockReq);
         field = response.getClass().getDeclaredField("val$code");
