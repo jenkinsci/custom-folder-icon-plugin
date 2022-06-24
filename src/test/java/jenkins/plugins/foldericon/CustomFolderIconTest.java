@@ -144,7 +144,8 @@ public class CustomFolderIconTest {
      */
     @Test
     public void testDescriptor() throws Exception {
-        DescriptorImpl descriptor = new DescriptorImpl();
+        CustomFolderIcon customIcon = new CustomFolderIcon("dummy");
+        DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.Icon_description(), descriptor.getDisplayName());
         assertTrue(descriptor.isApplicable(null));
     }
@@ -248,6 +249,72 @@ public class CustomFolderIconTest {
 
         HttpResponse response = descriptor.doCleanup(mockReq);
         Field field = response.getClass().getDeclaredField("val$code");
+        field.setAccessible(true);
+        assertEquals(HttpServletResponse.SC_OK, field.get(response));
+        assertFalse(file.exists());
+    }
+
+    /**
+     * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)} when root does not exist.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testDoCleanupNoRoot() throws Exception {
+        DescriptorImpl descriptor = new DescriptorImpl();
+
+        StaplerRequest mockReq = Mockito.mock(StaplerRequest.class);
+
+        FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
+        assertTrue(parent.delete());
+
+        HttpResponse response = descriptor.doCleanup(mockReq);
+        Field field = response.getClass().getDeclaredField("val$code");
+        field.setAccessible(true);
+        assertEquals(HttpServletResponse.SC_OK, field.get(response));
+        assertFalse(parent.exists());
+    }
+
+    /**
+     * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)} if a file can not be deleted.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testDoCleanupFileNotDeleted() throws Exception {
+        DescriptorImpl descriptor = new DescriptorImpl();
+
+        StaplerRequest mockReq = Mockito.mock(StaplerRequest.class);
+
+        FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
+        parent.mkdirs();
+        FilePath file = parent.child(System.currentTimeMillis() + ".png");
+        file.touch(System.currentTimeMillis());
+
+        // jenkins is pretty brutal when deleting files...
+        Thread blocker = new Thread() {
+            @Override
+            public void run() {
+                while (!this.isInterrupted()) {
+                    new File(file.getRemote()).setReadOnly();
+                }
+            }
+        };
+
+        assertTrue(file.exists());
+
+        blocker.start();
+
+        HttpResponse response = descriptor.doCleanup(mockReq);
+        Field field = response.getClass().getDeclaredField("val$code");
+        field.setAccessible(true);
+        assertEquals(HttpServletResponse.SC_OK, field.get(response));
+        assertTrue(file.exists());
+
+        blocker.interrupt();
+
+        response = descriptor.doCleanup(mockReq);
+        field = response.getClass().getDeclaredField("val$code");
         field.setAccessible(true);
         assertEquals(HttpServletResponse.SC_OK, field.get(response));
         assertFalse(file.exists());
