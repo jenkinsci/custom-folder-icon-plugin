@@ -1,8 +1,8 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 	<f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('upload')}">
-		<link rel="stylesheet" href="${app.rootUrl}plugin/custom-folder-icon/croppie/croppie.css" type="text/css" />
-		<script src="${app.rootUrl}plugin/custom-folder-icon/croppie/croppie.js" type="text/javascript" ></script>
+		<link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/croppie/croppie.css" type="text/css" />
+		<script src="${rootURL}/plugin/custom-folder-icon/croppie/croppie.js" type="text/javascript" ></script>
 		<div id="icon-preview">
 			<div id="file-cropper"></div>
 			<!-- @size is for other browsers, @style is for IE -->

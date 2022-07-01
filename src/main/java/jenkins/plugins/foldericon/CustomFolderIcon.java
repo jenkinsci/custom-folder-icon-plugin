@@ -27,6 +27,7 @@ import com.cloudbees.hudson.plugins.folder.FolderIconDescriptor;
 
 import hudson.Extension;
 import hudson.FilePath;
+import hudson.util.VersionNumber;
 import jenkins.model.Jenkins;
 
 /**
@@ -46,6 +47,17 @@ public class CustomFolderIcon extends FolderIcon {
     private final String foldericon;
 
     private AbstractFolder<?> owner;
+
+    private static final boolean USE_WORKAROUND;
+
+    static {
+        // workaround for https://issues.jenkins.io/browse/JENKINS-68894 that was introduces in 2.334 and fixed in 2.357
+        // this can be removed once minimal version is >= 2.357
+        VersionNumber version = Jenkins.getVersion();
+        USE_WORKAROUND = version != null 
+                && version.isNewerThan(new VersionNumber("2.334"))
+                && version.isOlderThan(new VersionNumber("2.357"));
+    }
 
     /**
      * Ctor.
@@ -75,11 +87,13 @@ public class CustomFolderIcon extends FolderIcon {
 
     @Override
     public String getImageOf(String size) {
+
         if (StringUtils.isNotEmpty(getFoldericon())) {
-            return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH + "/" + USER_CONTENT_PATH + "/"
-                    + PLUGIN_PATH + "/" + getFoldericon();
+            return (USE_WORKAROUND ? "" : Stapler.getCurrentRequest().getContextPath()) + Jenkins.RESOURCE_PATH + "/"
+                    + USER_CONTENT_PATH + "/" + PLUGIN_PATH + "/" + getFoldericon();
         } else {
-            return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH + "/" + DEFAULT_ICON_PATH;
+            return (USE_WORKAROUND ? "" : Stapler.getCurrentRequest().getContextPath()) + Jenkins.RESOURCE_PATH + "/"
+                    + DEFAULT_ICON_PATH;
         }
     }
 
