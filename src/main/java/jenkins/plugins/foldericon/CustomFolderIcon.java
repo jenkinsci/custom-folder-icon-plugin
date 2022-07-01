@@ -51,8 +51,8 @@ public class CustomFolderIcon extends FolderIcon {
     private static final boolean USE_WORKAROUND;
 
     static {
-        // workaround for https://issues.jenkins.io/browse/JENKINS-68894 that was introduces in 2.334 and fixed in 2.357
-        // this can be removed once minimal version is >= 2.357
+        // workaround for https://issues.jenkins.io/browse/JENKINS-68894 introduced with 2.334 and fixed in 2.357
+        // this can be removed once the minimal jenkins version is >= 2.357
         VersionNumber version = Jenkins.getVersion();
         USE_WORKAROUND = version != null 
                 && version.isNewerThan(new VersionNumber("2.334"))
