@@ -8,5 +8,5 @@ buildPlugin(useContainerAgent: true, configurations: [
   [ platform: 'windows', jdk: '11', jenkins: '2.346.1' ],
 
   // Test the bleeding edge of the compatibility spectrum (i.e., the latest supported Java runtime).
-  [ platform: 'linux', jdk: '17', jenkins: '2.356' ],
+  [ platform: 'linux', jdk: '17', jenkins: '2.357' ],
 ])

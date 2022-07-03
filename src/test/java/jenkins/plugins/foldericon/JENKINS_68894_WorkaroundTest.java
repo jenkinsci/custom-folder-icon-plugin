@@ -2,11 +2,14 @@ package jenkins.plugins.foldericon;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
+import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -36,6 +39,7 @@ public class JENKINS_68894_WorkaroundTest {
 
     @BeforeClass
     public static void setup() throws Exception {
+        assumeTrue(SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_11));
         Field field = CustomFolderIcon.class.getDeclaredField("USE_WORKAROUND");
         field.setAccessible(true);
 
