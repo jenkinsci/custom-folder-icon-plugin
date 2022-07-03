@@ -52,15 +52,16 @@ public class JENKINS_68894_WorkaroundTest {
 
     @AfterClass
     public static void shutdown() throws Exception {
-        assumeTrue(SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_11));
-        Field field = CustomFolderIcon.class.getDeclaredField("USE_WORKAROUND");
-        field.setAccessible(true);
-
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-
-        field.set(null, false);
+        if(!SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_11)) {
+            Field field = CustomFolderIcon.class.getDeclaredField("USE_WORKAROUND");
+            field.setAccessible(true);
+    
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+    
+            field.set(null, false);
+        }
     }
 
     /**
