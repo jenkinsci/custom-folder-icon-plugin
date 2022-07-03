@@ -110,7 +110,12 @@ public class CustomFolderIconTest {
 
             String image = customIcon.getImageOf("42");
             assertTrue(StringUtils.endsWith(image, "default.png"));
-            assertTrue(StringUtils.contains(image, "/jenkins"));
+            
+            Field field = CustomFolderIcon.class.getDeclaredField("USE_WORKAROUND");
+            field.setAccessible(true);
+            boolean useWorkaround = (boolean) field.get(null);
+            
+            assertEquals(!useWorkaround, StringUtils.contains(image, "/jenkins"));
             assertFalse(StringUtils.contains(image, "/jenkins/jenkins"));
         }
     }
@@ -138,7 +143,12 @@ public class CustomFolderIconTest {
 
             String image = customIcon.getImageOf("42");
             assertTrue(StringUtils.endsWith(image, "dummy"));
-            assertTrue(StringUtils.contains(image, "/jenkins"));
+            
+            Field field = CustomFolderIcon.class.getDeclaredField("USE_WORKAROUND");
+            field.setAccessible(true);
+            boolean useWorkaround = (boolean) field.get(null);
+            
+            assertEquals(!useWorkaround, StringUtils.contains(image, "/jenkins"));
             assertFalse(StringUtils.contains(image, "/jenkins/jenkins"));
         }
     }
