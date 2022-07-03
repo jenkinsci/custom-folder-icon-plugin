@@ -2,7 +2,6 @@ package jenkins.plugins.foldericon;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -24,7 +23,8 @@ import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 
 /**
- * Custom Folder Icon Tests
+ * JENKINS-68894 Workaround Tests.
+ * Does not work with Java 17.
  * 
  * @author strangelookingnerd
  *
@@ -39,27 +39,28 @@ public class JENKINS_68894_WorkaroundTest {
 
     @BeforeClass
     public static void setup() throws Exception {
-        assumeTrue(SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_11));
-        Field field = CustomFolderIcon.class.getDeclaredField("USE_WORKAROUND");
-        field.setAccessible(true);
+        if (SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_11)) {
+            Field field = CustomFolderIcon.class.getDeclaredField("USE_WORKAROUND");
+            field.setAccessible(true);
 
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 
-        field.set(null, true);
+            field.set(null, true);
+        }
     }
 
     @AfterClass
     public static void shutdown() throws Exception {
-        if(!SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_11)) {
+        if (SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_11)) {
             Field field = CustomFolderIcon.class.getDeclaredField("USE_WORKAROUND");
             field.setAccessible(true);
-    
+
             Field modifiersField = Field.class.getDeclaredField("modifiers");
             modifiersField.setAccessible(true);
             modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-    
+
             field.set(null, false);
         }
     }
@@ -71,24 +72,26 @@ public class JENKINS_68894_WorkaroundTest {
      */
     @Test
     public void testDefaultImagePath() throws Exception {
-        CustomFolderIcon customIcon = new CustomFolderIcon(null);
-        Folder project = r.jenkins.createProject(Folder.class, "folder");
-        project.setIcon(customIcon);
-        FolderIcon icon = project.getIcon();
+        if (SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_11)) {
+            CustomFolderIcon customIcon = new CustomFolderIcon(null);
+            Folder project = r.jenkins.createProject(Folder.class, "folder");
+            project.setIcon(customIcon);
+            FolderIcon icon = project.getIcon();
 
-        assertTrue(icon instanceof CustomFolderIcon);
+            assertTrue(icon instanceof CustomFolderIcon);
 
-        customIcon = ((CustomFolderIcon) icon);
+            customIcon = ((CustomFolderIcon) icon);
 
-        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = Mockito.mock(StaplerRequest.class);
-            stapler.when(Stapler::getCurrentRequest).thenReturn(mockReq);
-            Mockito.when(mockReq.getContextPath()).thenReturn("/jenkins");
+            try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
+                StaplerRequest mockReq = Mockito.mock(StaplerRequest.class);
+                stapler.when(Stapler::getCurrentRequest).thenReturn(mockReq);
+                Mockito.when(mockReq.getContextPath()).thenReturn("/jenkins");
 
-            String image = customIcon.getImageOf("42");
-            assertTrue(StringUtils.endsWith(image, "default.png"));
-            assertFalse(StringUtils.contains(image, "/jenkins"));
-            assertFalse(StringUtils.contains(image, "/jenkins/jenkins"));
+                String image = customIcon.getImageOf("42");
+                assertTrue(StringUtils.endsWith(image, "default.png"));
+                assertFalse(StringUtils.contains(image, "/jenkins"));
+                assertFalse(StringUtils.contains(image, "/jenkins/jenkins"));
+            }
         }
     }
 
@@ -99,24 +102,26 @@ public class JENKINS_68894_WorkaroundTest {
      */
     @Test
     public void testImagePath() throws Exception {
-        CustomFolderIcon customIcon = new CustomFolderIcon("dummy");
-        Folder project = r.jenkins.createProject(Folder.class, "folder");
-        project.setIcon(customIcon);
-        FolderIcon icon = project.getIcon();
+        if (SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_11)) {
+            CustomFolderIcon customIcon = new CustomFolderIcon("dummy");
+            Folder project = r.jenkins.createProject(Folder.class, "folder");
+            project.setIcon(customIcon);
+            FolderIcon icon = project.getIcon();
 
-        assertTrue(icon instanceof CustomFolderIcon);
+            assertTrue(icon instanceof CustomFolderIcon);
 
-        customIcon = ((CustomFolderIcon) icon);
+            customIcon = ((CustomFolderIcon) icon);
 
-        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = Mockito.mock(StaplerRequest.class);
-            stapler.when(Stapler::getCurrentRequest).thenReturn(mockReq);
-            Mockito.when(mockReq.getContextPath()).thenReturn("/jenkins");
+            try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
+                StaplerRequest mockReq = Mockito.mock(StaplerRequest.class);
+                stapler.when(Stapler::getCurrentRequest).thenReturn(mockReq);
+                Mockito.when(mockReq.getContextPath()).thenReturn("/jenkins");
 
-            String image = customIcon.getImageOf("42");
-            assertTrue(StringUtils.endsWith(image, "dummy"));
-            assertFalse(StringUtils.contains(image, "/jenkins"));
-            assertFalse(StringUtils.contains(image, "/jenkins/jenkins"));
+                String image = customIcon.getImageOf("42");
+                assertTrue(StringUtils.endsWith(image, "dummy"));
+                assertFalse(StringUtils.contains(image, "/jenkins"));
+                assertFalse(StringUtils.contains(image, "/jenkins/jenkins"));
+            }
         }
     }
 }
