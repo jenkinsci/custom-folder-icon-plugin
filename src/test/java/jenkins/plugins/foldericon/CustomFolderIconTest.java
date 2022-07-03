@@ -108,7 +108,10 @@ public class CustomFolderIconTest {
             stapler.when(Stapler::getCurrentRequest).thenReturn(mockReq);
             Mockito.when(mockReq.getContextPath()).thenReturn("/jenkins");
 
-            assertTrue(StringUtils.contains(customIcon.getImageOf("42"), "default.png"));
+            String image = customIcon.getImageOf("42");
+            assertTrue(StringUtils.endsWith(image, "default.png"));
+            assertTrue(StringUtils.contains(image, "/jenkins"));
+            assertFalse(StringUtils.contains(image, "/jenkins/jenkins"));
         }
     }
 
@@ -133,7 +136,10 @@ public class CustomFolderIconTest {
             stapler.when(Stapler::getCurrentRequest).thenReturn(mockReq);
             Mockito.when(mockReq.getContextPath()).thenReturn("/jenkins");
 
-            assertTrue(StringUtils.contains(customIcon.getImageOf("42"), "dummy"));
+            String image = customIcon.getImageOf("42");
+            assertTrue(StringUtils.endsWith(image, "dummy"));
+            assertTrue(StringUtils.contains(image, "/jenkins"));
+            assertFalse(StringUtils.contains(image, "/jenkins/jenkins"));
         }
     }
 

@@ -50,8 +50,7 @@ public class MockMultiPartRequest implements StaplerRequest {
     private final ByteArrayInputStream stream;
 
     /**
-     * @param buffer
-     *            buffer
+     * @param buffer buffer
      */
     public MockMultiPartRequest(byte[] buffer) {
         this.buffer = buffer;
@@ -375,8 +374,7 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
-    public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse)
-            throws IllegalStateException {
+    public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) throws IllegalStateException {
         return null;
     }
 

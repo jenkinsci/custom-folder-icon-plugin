@@ -62,8 +62,7 @@ public class CustomFolderIcon extends FolderIcon {
     /**
      * Ctor.
      * 
-     * @param foldericon
-     *            the icon to use
+     * @param foldericon the icon to use
      */
     @DataBoundConstructor
     public CustomFolderIcon(String foldericon) {
@@ -87,13 +86,11 @@ public class CustomFolderIcon extends FolderIcon {
 
     @Override
     public String getImageOf(String size) {
-
         if (StringUtils.isNotEmpty(getFoldericon())) {
-            return (USE_WORKAROUND ? "" : Stapler.getCurrentRequest().getContextPath()) + Jenkins.RESOURCE_PATH + "/"
-                    + USER_CONTENT_PATH + "/" + PLUGIN_PATH + "/" + getFoldericon();
+            return (USE_WORKAROUND ? "" : Stapler.getCurrentRequest().getContextPath()) + Jenkins.RESOURCE_PATH + "/" + USER_CONTENT_PATH
+                    + "/" + PLUGIN_PATH + "/" + getFoldericon();
         } else {
-            return (USE_WORKAROUND ? "" : Stapler.getCurrentRequest().getContextPath()) + Jenkins.RESOURCE_PATH + "/"
-                    + DEFAULT_ICON_PATH;
+            return (USE_WORKAROUND ? "" : Stapler.getCurrentRequest().getContextPath()) + Jenkins.RESOURCE_PATH + "/" + DEFAULT_ICON_PATH;
         }
     }
 
@@ -136,8 +133,7 @@ public class CustomFolderIcon extends FolderIcon {
         /**
          * Uploads an icon.
          * 
-         * @param req
-         *            the request containing the file
+         * @param req the request containing the file
          * 
          * @return the filename or an error message
          * 
@@ -151,8 +147,7 @@ public class CustomFolderIcon extends FolderIcon {
                 // Parse the request
                 List<FileItem> files = upload.parseRequest(req);
                 if (files == null || files.isEmpty() || files.get(0) == null) {
-                    return HttpResponses.errorWithoutStack(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                            Messages.Upload_invalidFile());
+                    return HttpResponses.errorWithoutStack(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Messages.Upload_invalidFile());
                 }
 
                 String filename = UUID.randomUUID().toString() + ".png";
@@ -172,14 +167,11 @@ public class CustomFolderIcon extends FolderIcon {
         /**
          * Cleanup unused icons.
          * 
-         * @param req
-         *            the request
+         * @param req the request
          * @return OK
          * 
-         * @throws InterruptedException
-         *             if there is a file handling error
-         * @throws IOException
-         *             if there is a file handling error
+         * @throws InterruptedException if there is a file handling error
+         * @throws IOException          if there is a file handling error
          */
         public HttpResponse doCleanup(StaplerRequest req) throws InterruptedException, IOException {
             Jenkins jenkins = Jenkins.get();
@@ -188,13 +180,10 @@ public class CustomFolderIcon extends FolderIcon {
             FilePath iconDir = jenkins.getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
 
             if (iconDir.exists()) {
-                List<String> existingIcons = iconDir.list().stream().map(FilePath::getName)
-                        .collect(Collectors.toList());
+                List<String> existingIcons = iconDir.list().stream().map(FilePath::getName).collect(Collectors.toList());
 
-                List<String> usedIcons = jenkins.getAllItems(AbstractFolder.class).stream()
-                        .filter(CustomFolderIcon.class::isInstance)
-                        .map(folder -> ((CustomFolderIcon) folder.getIcon()).getFoldericon())
-                        .collect(Collectors.toList());
+                List<String> usedIcons = jenkins.getAllItems(AbstractFolder.class).stream().filter(CustomFolderIcon.class::isInstance)
+                        .map(folder -> ((CustomFolderIcon) folder.getIcon()).getFoldericon()).collect(Collectors.toList());
 
                 if (usedIcons.isEmpty() || existingIcons.removeAll(usedIcons)) {
                     for (String icon : existingIcons) {
