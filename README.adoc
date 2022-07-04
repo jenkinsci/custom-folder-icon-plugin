@@ -13,7 +13,7 @@ image:https://img.shields.io/github/release/jenkinsci/custom-folder-icon-plugin.
 
 [#introduction]
 == Introduction
-This plugin extends the link:https://github.com/jenkinsci/cloudbees-folder-plugin[Folders plugin] to to provide custom icons for Folders.
+This plugin extends the link:https://github.com/jenkinsci/cloudbees-folder-plugin[Folders plugin] to to provide custom icons for folders.
 
 toc::[]
 
@@ -22,24 +22,24 @@ toc::[]
 Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-plugin/releases[GitHub Releases] 
 
 === Version 2.x
-This version is compatible with Jenkins 2.357 and above.
+This version requires Jenkins 2.357 and above.
 
-Version 2.x introduces a new type of icon. The `BuildStatusFolderIcon` displays the combined Build Status of the Jobs within a Folder.
+Version 2.x introduces a new type of icon. The `BuildStatusFolderIcon` displays the combined build status of the jobs within a folder.
 
 === Version 1.x
-Since https://github.com/jenkinsci/branch-api-plugin/releases/tag/2.1044.v2c007e51b_87f[2.1044] of the https://github.com/jenkinsci/branch-api-plugin[branch-api-plugin] the Custom Folder Icons can be used for Multi-Branch or Organization Projects.
+Since https://github.com/jenkinsci/branch-api-plugin/releases/tag/2.1044.v2c007e51b_87f[2.1044] of the https://github.com/jenkinsci/branch-api-plugin[branch-api-plugin] the Custom Folder Icons Plugin can be used for Multi-Branch or Organization Projects.
 
 [#configuration]
 == Configuration
 
 [#folder-configuration]
 === Folder Configuration
-There are two types of custom icons to select.
+There are two types of custom icons provided by this plugin. 
 
 image:images/overview.png[]
 
 ==== Custom Folder Icon
-Use your Custom Icon for each Folder.
+Use your custom icon for a folder.
 
 image:images/custom-folder-icon.png[]
 
@@ -52,16 +52,17 @@ The file name will be randomized during upload.
 image:images/custom-folder-icon-configuration.png[]
 
 ==== Build Status Folder Icon
-See the combined Build Status of the Jobs within a Folder.
+See the combined build status of the jobs within a folder.
 
 image:images/build-status-folder-icon.png[]
 
-Select the Build Status Folder Icon to use the combined Build Status of the Jobs within a Folder as icon.
+Select the Build Status Folder Icon option to use the combined build status of the jobs within a folder as icon.
 
 image:images/build-status-folder-icon-configuration.png[]
 
 [#global-configuration]
 === Global Configuration
 Check for unused custom folder icon files and delete them.
+This operation will delete all images that are currently not used by any folder configuration. 
 
 image:images/global-configuration.png[]
