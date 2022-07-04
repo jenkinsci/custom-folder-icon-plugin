@@ -41,8 +41,8 @@
 
 	<properties>
 		<gitHubRepo>jenkinsci/custom-folder-icon-plugin</gitHubRepo>
-		<jenkins.version>2.319.1</jenkins.version>
-		<revision>1.12</revision>
+		<jenkins.version>2.357</jenkins.version>
+		<revision>2.0</revision>
 		<changelist>-SNAPSHOT</changelist>
 	</properties>
 
@@ -59,21 +59,21 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>org.mockito</groupId>
-		    <artifactId>mockito-core</artifactId>
-		    <scope>test</scope>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
-		<groupId>org.mockito</groupId>
-		    <artifactId>mockito-inline</artifactId>
-		    <scope>test</scope>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-inline</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
-	      <groupId>org.apache.httpcomponents</groupId>
-	      <artifactId>httpmime</artifactId>
-	      <version>4.5.13</version>
-	      <scope>test</scope>
-	    </dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>4.5.13</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<repositories>
