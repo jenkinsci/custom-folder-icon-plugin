@@ -20,7 +20,7 @@ toc::[]
 
 [#changelog]
 == Changelog
-Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-plugin/releases[GitHub Releases] 
+Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-plugin/releases[GitHub Releases].
 
 === Version 2.x
 This version requires Jenkins 2.357 and above.
