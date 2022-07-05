@@ -13,7 +13,8 @@ image:https://img.shields.io/github/release/jenkinsci/custom-folder-icon-plugin.
 
 [#introduction]
 == Introduction
-This plugin extends the link:https://github.com/jenkinsci/cloudbees-folder-plugin[Folders plugin] to to provide custom icons for folders.
+This plugin extends the link:https://github.com/jenkinsci/cloudbees-folder-plugin[Folders Plugin] to to provide custom icons for folders.
+You can upload your own images or use the combined build status of the jobs within a folder as icon.
 
 toc::[]
 

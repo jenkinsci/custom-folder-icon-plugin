@@ -1,4 +1,4 @@
-package jenkins.plugins.foldericon;
+package jenkins.plugins.foldericon.utils;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -42,7 +42,9 @@ import org.kohsuke.stapler.lang.Klass;
 import net.sf.json.JSONObject;
 
 /**
- * @author dkraemer
+ * Mock request for multi-part uploads.
+ * 
+ * @author strangelookingnerd
  */
 public class MockMultiPartRequest implements StaplerRequest {
 

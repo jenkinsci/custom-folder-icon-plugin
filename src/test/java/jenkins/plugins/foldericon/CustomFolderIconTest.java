@@ -28,6 +28,8 @@ import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import hudson.FilePath;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.CustomFolderIcon.DescriptorImpl;
+import jenkins.plugins.foldericon.utils.MockMultiPartRequest;
+import jenkins.plugins.foldericon.utils.TestUtils;
 
 /**
  * Custom Folder Icon Tests
@@ -60,9 +62,8 @@ public class CustomFolderIconTest {
 
 	assertTrue(icon instanceof CustomFolderIcon);
 
-	customIcon = ((CustomFolderIcon) icon);
 	assertEquals("dummy", customIcon.getFoldericon());
-	assertEquals(project.getPronoun(), customIcon.getDescription());
+	assertEquals(project.getPronoun(), icon.getDescription());
     }
 
     /**
@@ -82,9 +83,8 @@ public class CustomFolderIconTest {
 
 	assertTrue(icon instanceof CustomFolderIcon);
 
-	customIcon = ((CustomFolderIcon) icon);
 	assertEquals("dummy", customIcon.getFoldericon());
-	assertEquals(project.getPronoun(), customIcon.getDescription());
+	assertEquals(project.getPronoun(), icon.getDescription());
     }
 
     /**
@@ -101,17 +101,9 @@ public class CustomFolderIconTest {
 
 	assertTrue(icon instanceof CustomFolderIcon);
 
-	customIcon = ((CustomFolderIcon) icon);
-
 	try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-	    StaplerRequest mockReq = Mockito.mock(StaplerRequest.class);
-	    stapler.when(Stapler::getCurrentRequest).thenReturn(mockReq);
-	    Mockito.when(mockReq.getContextPath()).thenReturn("/jenkins");
-
-	    String image = customIcon.getImageOf("42");
-	    assertTrue(StringUtils.endsWith(image, "default.png"));
-	    assertTrue(StringUtils.contains(image, "/jenkins"));
-	    assertFalse(StringUtils.contains(image, "/jenkins/jenkins"));
+	    TestUtils.mockStaplerRequest(stapler);
+	    TestUtils.validateIcon(icon, "default.png", null);
 	}
     }
 
@@ -129,17 +121,9 @@ public class CustomFolderIconTest {
 
 	assertTrue(icon instanceof CustomFolderIcon);
 
-	customIcon = ((CustomFolderIcon) icon);
-
 	try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-	    StaplerRequest mockReq = Mockito.mock(StaplerRequest.class);
-	    stapler.when(Stapler::getCurrentRequest).thenReturn(mockReq);
-	    Mockito.when(mockReq.getContextPath()).thenReturn("/jenkins");
-
-	    String image = customIcon.getImageOf("42");
-	    assertTrue(StringUtils.endsWith(image, "dummy"));
-	    assertTrue(StringUtils.contains(image, "/jenkins"));
-	    assertFalse(StringUtils.contains(image, "/jenkins/jenkins"));
+	    TestUtils.mockStaplerRequest(stapler);
+	    TestUtils.validateIcon(icon, "dummy", null);
 	}
     }
 
@@ -228,12 +212,14 @@ public class CustomFolderIconTest {
     public void testDoUploadBrokenRequest() throws Exception {
 	DescriptorImpl descriptor = new DescriptorImpl();
 
-	StaplerRequest mockReq = Mockito.mock(StaplerRequest.class);
+	try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
+	    StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
 
-	HttpResponse response = descriptor.doUploadIcon(mockReq);
-	Field field = response.getClass().getDeclaredField("val$code");
-	field.setAccessible(true);
-	assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, field.get(response));
+	    HttpResponse response = descriptor.doUploadIcon(mockReq);
+	    Field field = response.getClass().getDeclaredField("val$code");
+	    field.setAccessible(true);
+	    assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, field.get(response));
+	}
     }
 
     /**
@@ -245,19 +231,21 @@ public class CustomFolderIconTest {
     public void testDoCleanup() throws Exception {
 	DescriptorImpl descriptor = new DescriptorImpl();
 
-	StaplerRequest mockReq = Mockito.mock(StaplerRequest.class);
+	try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
+	    StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
 
-	FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
-	parent.mkdirs();
-	FilePath file = parent.child(System.currentTimeMillis() + ".png");
-	file.touch(System.currentTimeMillis());
-	assertTrue(file.exists());
+	    FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
+	    parent.mkdirs();
+	    FilePath file = parent.child(System.currentTimeMillis() + ".png");
+	    file.touch(System.currentTimeMillis());
+	    assertTrue(file.exists());
 
-	HttpResponse response = descriptor.doCleanup(mockReq);
-	Field field = response.getClass().getDeclaredField("val$code");
-	field.setAccessible(true);
-	assertEquals(HttpServletResponse.SC_OK, field.get(response));
-	assertFalse(file.exists());
+	    HttpResponse response = descriptor.doCleanup(mockReq);
+	    Field field = response.getClass().getDeclaredField("val$code");
+	    field.setAccessible(true);
+	    assertEquals(HttpServletResponse.SC_OK, field.get(response));
+	    assertFalse(file.exists());
+	}
     }
 
     /**
@@ -269,16 +257,18 @@ public class CustomFolderIconTest {
     public void testDoCleanupNoRoot() throws Exception {
 	DescriptorImpl descriptor = new DescriptorImpl();
 
-	StaplerRequest mockReq = Mockito.mock(StaplerRequest.class);
+	try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
+	    StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
 
-	FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
-	assertTrue(parent.delete());
+	    FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
+	    assertTrue(parent.delete());
 
-	HttpResponse response = descriptor.doCleanup(mockReq);
-	Field field = response.getClass().getDeclaredField("val$code");
-	field.setAccessible(true);
-	assertEquals(HttpServletResponse.SC_OK, field.get(response));
-	assertFalse(parent.exists());
+	    HttpResponse response = descriptor.doCleanup(mockReq);
+	    Field field = response.getClass().getDeclaredField("val$code");
+	    field.setAccessible(true);
+	    assertEquals(HttpServletResponse.SC_OK, field.get(response));
+	    assertFalse(parent.exists());
+	}
     }
 
     /**
@@ -290,39 +280,41 @@ public class CustomFolderIconTest {
     public void testDoCleanupFileNotDeleted() throws Exception {
 	DescriptorImpl descriptor = new DescriptorImpl();
 
-	StaplerRequest mockReq = Mockito.mock(StaplerRequest.class);
+	try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
+	    StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
 
-	FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
-	parent.mkdirs();
-	FilePath file = parent.child(System.currentTimeMillis() + ".png");
-	file.touch(System.currentTimeMillis());
-	File remoteFile = new File(file.getRemote());
+	    FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
+	    parent.mkdirs();
+	    FilePath file = parent.child(System.currentTimeMillis() + ".png");
+	    file.touch(System.currentTimeMillis());
+	    File remoteFile = new File(file.getRemote());
 
-	// jenkins is pretty brutal when deleting files...
-	Thread blocker = new Thread() {
-	    @Override
-	    public void run() {
-		while (!this.isInterrupted()) {
-		    remoteFile.setReadOnly();
+	    // jenkins is pretty brutal when deleting files...
+	    Thread blocker = new Thread() {
+		@Override
+		public void run() {
+		    while (!this.isInterrupted()) {
+			remoteFile.setReadOnly();
+		    }
 		}
-	    }
-	};
+	    };
 
-	blocker.start();
-	assertTrue(file.exists());
+	    blocker.start();
+	    assertTrue(file.exists());
 
-	HttpResponse response = descriptor.doCleanup(mockReq);
-	Field field = response.getClass().getDeclaredField("val$code");
-	field.setAccessible(true);
-	assertEquals(HttpServletResponse.SC_OK, field.get(response));
+	    HttpResponse response = descriptor.doCleanup(mockReq);
+	    Field field = response.getClass().getDeclaredField("val$code");
+	    field.setAccessible(true);
+	    assertEquals(HttpServletResponse.SC_OK, field.get(response));
 
-	blocker.interrupt();
+	    blocker.interrupt();
 
-	response = descriptor.doCleanup(mockReq);
-	field = response.getClass().getDeclaredField("val$code");
-	field.setAccessible(true);
-	assertEquals(HttpServletResponse.SC_OK, field.get(response));
-	assertFalse(file.exists());
+	    response = descriptor.doCleanup(mockReq);
+	    field = response.getClass().getDeclaredField("val$code");
+	    field.setAccessible(true);
+	    assertEquals(HttpServletResponse.SC_OK, field.get(response));
+	    assertFalse(file.exists());
+	}
     }
 
 }
