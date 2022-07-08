@@ -23,7 +23,7 @@ toc::[]
 Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-plugin/releases[GitHub Releases].
 
 === Version 2.x
-This version requires Jenkins 2.357 and above.
+This version requires Jenkins 2.357 and above in order to support the transition to https://www.jenkins.io/blog/2022/06/28/require-java-11/[Java 11].
 
 Version 2.x introduces a new type of icon. The `BuildStatusFolderIcon` displays the combined build status of the jobs within a folder.
 
