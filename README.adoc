@@ -1,5 +1,5 @@
 [[custom-folder-icon-plugin]]
-= image:src/main/webapp/icons/default.png[] Custom Folder Icon Plugin image:src/main/webapp/icons/default.png[]
+= image:src/main/webapp/icons/default.png[48,48] Custom Folder Icon Plugin
 :toc: macro
 :toc-title:
 
@@ -10,39 +10,60 @@ image:https://img.shields.io/github/contributors/jenkinsci/custom-folder-icon-pl
 image:https://img.shields.io/jenkins/plugin/i/custom-folder-icon.svg?color=blue&label=installations[link="https://plugins.jenkins.io/custom-folder-icon"]
 image:https://img.shields.io/github/release/jenkinsci/custom-folder-icon-plugin.svg?label=changelog[link="https://github.com/jenkinsci/custom-folder-icon-plugin/releases/latest"]
 
+
 [#introduction]
 == Introduction
-
-This plugin extends the link:https://github.com/jenkinsci/cloudbees-folder-plugin[Folders plugin] to enable a custom icon for each folder.
+This plugin extends the link:https://github.com/jenkinsci/cloudbees-folder-plugin[Folders Plugin] to to provide custom icons for folders.
+You can upload your own images or use the combined build status of the jobs within a folder as icon.
 
 toc::[]
 
 [#changelog]
 == Changelog
+Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-plugin/releases[GitHub Releases].
 
-Since https://github.com/jenkinsci/branch-api-plugin/releases/tag/2.1044.v2c007e51b_87f[2.1044] of the https://github.com/jenkinsci/branch-api-plugin[branch-api-plugin] the Custom Folder Icons can be used for Multi-Branch or Organization Projects.
+=== Version 2.x
+This version requires Jenkins 2.357 and above.
 
-Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-plugin/releases[GitHub Releases] 
+Version 2.x introduces a new type of icon. The `BuildStatusFolderIcon` displays the combined build status of the jobs within a folder.
+
+=== Version 1.x
+Since https://github.com/jenkinsci/branch-api-plugin/releases/tag/2.1044.v2c007e51b_87f[2.1044] of the https://github.com/jenkinsci/branch-api-plugin[branch-api-plugin] the Custom Folder Icons Plugin can be used for Multi-Branch or Organization Projects.
 
 [#configuration]
 == Configuration
 
 [#folder-configuration]
 === Folder Configuration
+There are two types of custom icons provided by this plugin. 
+
+image:images/overview.png[]
+
+==== Custom Folder Icon
+Use your custom icon for a folder.
+
+image:images/custom-folder-icon.png[]
+
 Select the Custom Folder Icon option and use "Browse..." to chose a file. 
 
 You can crop the image to the desired result and upload it using the "Apply" button. 
 
 The file name will be randomized during upload.
 
-image:images/folder-configuration.png[]
+image:images/custom-folder-icon-configuration.png[]
 
-Use your Custom Icon for each Folder.
+==== Build Status Folder Icon
+See the combined build status of the jobs within a folder.
 
-image:images/folder-icon.png[]
+image:images/build-status-folder-icon.png[]
+
+Select the Build Status Folder Icon option to use the combined build status of the jobs within a folder as icon.
+
+image:images/build-status-folder-icon-configuration.png[]
 
 [#global-configuration]
 === Global Configuration
-Check for unused folder icon files and delete them.
+Check for unused custom folder icon files and delete them.
+This operation will delete all images that are currently not used by any folder configuration. 
 
 image:images/global-configuration.png[]

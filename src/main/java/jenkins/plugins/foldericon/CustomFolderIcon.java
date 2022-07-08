@@ -1,3 +1,27 @@
+/*
+ * The MIT License
+ *
+ * Copyright (c) 2022 strangelookingnerd
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package jenkins.plugins.foldericon;
 
 import java.io.IOException;
@@ -27,7 +51,6 @@ import com.cloudbees.hudson.plugins.folder.FolderIconDescriptor;
 
 import hudson.Extension;
 import hudson.FilePath;
-import hudson.util.VersionNumber;
 import jenkins.model.Jenkins;
 
 /**
@@ -48,17 +71,6 @@ public class CustomFolderIcon extends FolderIcon {
 
     private AbstractFolder<?> owner;
 
-    private static final boolean USE_WORKAROUND;
-
-    static {
-        // workaround for https://issues.jenkins.io/browse/JENKINS-68894 introduced with 2.334 and fixed in 2.357
-        // this can be removed once the minimal jenkins version is >= 2.357
-        VersionNumber version = Jenkins.getVersion();
-        USE_WORKAROUND = version != null 
-                && version.isNewerThan(new VersionNumber("2.334"))
-                && version.isOlderThan(new VersionNumber("2.357"));
-    }
-
     /**
      * Ctor.
      * 
@@ -66,46 +78,43 @@ public class CustomFolderIcon extends FolderIcon {
      */
     @DataBoundConstructor
     public CustomFolderIcon(String foldericon) {
-        this.foldericon = foldericon;
+	this.foldericon = foldericon;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void setOwner(AbstractFolder<?> folder) {
-        this.owner = folder;
+	this.owner = folder;
     }
 
     /**
      * @return the foldericon
      */
     public String getFoldericon() {
-        return foldericon;
+	return foldericon;
     }
 
     @Override
     public String getImageOf(String size) {
-        if (StringUtils.isNotEmpty(getFoldericon())) {
-            return (USE_WORKAROUND ? "" : Stapler.getCurrentRequest().getContextPath()) + Jenkins.RESOURCE_PATH + "/" + USER_CONTENT_PATH
-                    + "/" + PLUGIN_PATH + "/" + getFoldericon();
-        } else {
-            return (USE_WORKAROUND ? "" : Stapler.getCurrentRequest().getContextPath()) + Jenkins.RESOURCE_PATH + "/" + DEFAULT_ICON_PATH;
-        }
+	if (StringUtils.isNotEmpty(getFoldericon())) {
+	    return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH + "/" + USER_CONTENT_PATH + "/" + PLUGIN_PATH + "/"
+		    + getFoldericon();
+	} else {
+	    return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH + "/" + DEFAULT_ICON_PATH;
+	}
     }
 
     @Override
     public String getDescription() {
-        if (owner != null) {
-            return owner.getPronoun();
-        } else {
-            return Messages.Folder_description();
-        }
+	if (owner != null) {
+	    return owner.getPronoun();
+	} else {
+	    return Messages.Folder_description();
+	}
     }
 
     @Override
     public DescriptorImpl getDescriptor() {
-        return (DescriptorImpl) Jenkins.get().getDescriptorOrDie(getClass());
+	return (DescriptorImpl) Jenkins.get().getDescriptorOrDie(getClass());
     }
 
     /**
@@ -117,87 +126,87 @@ public class CustomFolderIcon extends FolderIcon {
     @Extension
     public static class DescriptorImpl extends FolderIconDescriptor {
 
-        private static final int CHMOD = 0644;
-        private static final long FILE_SIZE_MAX = 1024L * 1024L;
+	private static final int CHMOD = 0644;
+	private static final long FILE_SIZE_MAX = 1024L * 1024L;
 
-        @Override
-        public String getDisplayName() {
-            return Messages.Icon_description();
-        }
+	@Override
+	public String getDisplayName() {
+	    return Messages.CustomFolderIcon_description();
+	}
 
-        @Override
-        public boolean isApplicable(Class<? extends AbstractFolder> folderType) {
-            return true;
-        }
+	@Override
+	public boolean isApplicable(Class<? extends AbstractFolder> folderType) {
+	    return true;
+	}
 
-        /**
-         * Uploads an icon.
-         * 
-         * @param req the request containing the file
-         * 
-         * @return the filename or an error message
-         * 
-         */
-        @RequirePOST
-        public HttpResponse doUploadIcon(StaplerRequest req) {
-            try {
-                ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
-                upload.setFileSizeMax(FILE_SIZE_MAX);
+	/**
+	 * Uploads an icon.
+	 * 
+	 * @param req the request containing the file
+	 * 
+	 * @return the filename or an error message
+	 * 
+	 */
+	@RequirePOST
+	public HttpResponse doUploadIcon(StaplerRequest req) {
+	    try {
+		ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
+		upload.setFileSizeMax(FILE_SIZE_MAX);
 
-                // Parse the request
-                List<FileItem> files = upload.parseRequest(req);
-                if (files == null || files.isEmpty() || files.get(0) == null) {
-                    return HttpResponses.errorWithoutStack(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Messages.Upload_invalidFile());
-                }
+		// Parse the request
+		List<FileItem> files = upload.parseRequest(req);
+		if (files == null || files.isEmpty() || files.get(0) == null) {
+		    return HttpResponses.errorWithoutStack(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Messages.Upload_invalidFile());
+		}
 
-                String filename = UUID.randomUUID().toString() + ".png";
-                FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
-                iconDir.mkdirs();
-                FilePath icon = iconDir.child(filename);
-                icon.copyFrom(files.get(0).getInputStream());
-                icon.chmod(CHMOD);
+		String filename = UUID.randomUUID().toString() + ".png";
+		FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
+		iconDir.mkdirs();
+		FilePath icon = iconDir.child(filename);
+		icon.copyFrom(files.get(0).getInputStream());
+		icon.chmod(CHMOD);
 
-                return HttpResponses.text(filename);
-            } catch (IOException | FileUploadException | InterruptedException ex) {
-                LOGGER.log(Level.WARNING, "Error during Folder Icon upload!", ex);
-                return HttpResponses.errorWithoutStack(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
-            }
-        }
+		return HttpResponses.text(filename);
+	    } catch (IOException | FileUploadException | InterruptedException ex) {
+		LOGGER.log(Level.WARNING, "Error during Folder Icon upload!", ex);
+		return HttpResponses.errorWithoutStack(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
+	    }
+	}
 
-        /**
-         * Cleanup unused icons.
-         * 
-         * @param req the request
-         * @return OK
-         * 
-         * @throws InterruptedException if there is a file handling error
-         * @throws IOException          if there is a file handling error
-         */
-        public HttpResponse doCleanup(StaplerRequest req) throws InterruptedException, IOException {
-            Jenkins jenkins = Jenkins.get();
-            jenkins.checkPermission(Jenkins.ADMINISTER);
+	/**
+	 * Cleanup unused icons.
+	 * 
+	 * @param req the request
+	 * @return OK
+	 * 
+	 * @throws InterruptedException if there is a file handling error
+	 * @throws IOException          if there is a file handling error
+	 */
+	public HttpResponse doCleanup(StaplerRequest req) throws InterruptedException, IOException {
+	    Jenkins jenkins = Jenkins.get();
+	    jenkins.checkPermission(Jenkins.ADMINISTER);
 
-            FilePath iconDir = jenkins.getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
+	    FilePath iconDir = jenkins.getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
 
-            if (iconDir.exists()) {
-                List<String> existingIcons = iconDir.list().stream().map(FilePath::getName).collect(Collectors.toList());
+	    if (iconDir.exists()) {
+		List<String> existingIcons = iconDir.list().stream().map(FilePath::getName).collect(Collectors.toList());
 
-                List<String> usedIcons = jenkins.getAllItems(AbstractFolder.class).stream().filter(CustomFolderIcon.class::isInstance)
-                        .map(folder -> ((CustomFolderIcon) folder.getIcon()).getFoldericon()).collect(Collectors.toList());
+		List<String> usedIcons = jenkins.getAllItems(AbstractFolder.class).stream().filter(CustomFolderIcon.class::isInstance)
+			.map(folder -> ((CustomFolderIcon) folder.getIcon()).getFoldericon()).collect(Collectors.toList());
 
-                if (usedIcons.isEmpty() || existingIcons.removeAll(usedIcons)) {
-                    for (String icon : existingIcons) {
-                        try {
-                            if (!iconDir.child(icon).delete()) {
-                                LOGGER.warning(() -> "Unable to delete unused Folder Icon '" + icon + "'!");
-                            }
-                        } catch (IOException ex) {
-                            LOGGER.log(Level.WARNING, ex, () -> "Unable to delete unused Folder Icon '" + icon + "'!");
-                        }
-                    }
-                }
-            }
-            return HttpResponses.ok();
-        }
+		if (usedIcons.isEmpty() || existingIcons.removeAll(usedIcons)) {
+		    for (String icon : existingIcons) {
+			try {
+			    if (!iconDir.child(icon).delete()) {
+				LOGGER.warning(() -> "Unable to delete unused Folder Icon '" + icon + "'!");
+			    }
+			} catch (IOException ex) {
+			    LOGGER.log(Level.WARNING, ex, () -> "Unable to delete unused Folder Icon '" + icon + "'!");
+			}
+		    }
+		}
+	    }
+	    return HttpResponses.ok();
+	}
     }
 }
