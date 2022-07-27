@@ -24,15 +24,15 @@
 
 package jenkins.plugins.foldericon;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.kohsuke.stapler.Stapler;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -56,13 +56,8 @@ import jenkins.plugins.foldericon.utils.TestUtils;
  * @author strangelookingnerd
  *
  */
-public class BuildStatusFolderIconTest {
-
-    /**
-     * The rule.
-     */
-    @Rule
-    public JenkinsRule r = new JenkinsRule();
+@WithJenkins
+class BuildStatusFolderIconTest {
 
     /**
      * Test behavior on a regular {@link Folder}.
@@ -70,7 +65,7 @@ public class BuildStatusFolderIconTest {
      * @throws Exception
      */
     @Test
-    public void testFolder() throws Exception {
+    void testFolder(JenkinsRule r) throws Exception {
 	BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
 	assertTrue(StringUtils.startsWith(customIcon.getDescription(), Messages.Folder_description()));
 
@@ -88,7 +83,7 @@ public class BuildStatusFolderIconTest {
      * @throws Exception
      */
     @Test
-    public void testOrganzationFolder() throws Exception {
+    void testOrganzationFolder(JenkinsRule r) throws Exception {
 	BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
 	assertTrue(StringUtils.startsWith(customIcon.getDescription(), Messages.Folder_description()));
 
@@ -106,7 +101,7 @@ public class BuildStatusFolderIconTest {
      * @throws Exception
      */
     @Test
-    public void testDescriptor() throws Exception {
+    void testDescriptor(JenkinsRule r) throws Exception {
 	BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
 	DescriptorImpl descriptor = customIcon.getDescriptor();
 	assertEquals(Messages.BuildStatusFolderIcon_description(), descriptor.getDisplayName());
@@ -119,7 +114,7 @@ public class BuildStatusFolderIconTest {
      * @throws Exception
      */
     @Test
-    public void testFinishedBuildStatusIcon() throws Exception {
+    void testFinishedBuildStatusIcon(JenkinsRule r) throws Exception {
 	BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
 	Folder project = r.jenkins.createProject(Folder.class, "folder");
 	project.setIcon(customIcon);
@@ -176,7 +171,7 @@ public class BuildStatusFolderIconTest {
      * @throws Exception
      */
     @Test
-    public void testRunningBuildStatusIcon() throws Exception {
+    void testRunningBuildStatusIcon(JenkinsRule r) throws Exception {
 	BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
 	Folder project = r.jenkins.createProject(Folder.class, "folder");
 	project.setIcon(customIcon);
@@ -208,7 +203,7 @@ public class BuildStatusFolderIconTest {
      * @throws Exception
      */
     @Test
-    public void testRunningNoPreviousBuildStatusIcon() throws Exception {
+    void testRunningNoPreviousBuildStatusIcon(JenkinsRule r) throws Exception {
 	BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
 	Folder project = r.jenkins.createProject(Folder.class, "folder");
 	project.setIcon(customIcon);

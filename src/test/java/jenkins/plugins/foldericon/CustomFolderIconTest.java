@@ -24,9 +24,9 @@
 
 package jenkins.plugins.foldericon;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -37,9 +37,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
@@ -61,13 +61,9 @@ import jenkins.plugins.foldericon.utils.TestUtils;
  * @author strangelookingnerd
  *
  */
-public class CustomFolderIconTest {
 
-    /**
-     * The rule.
-     */
-    @Rule
-    public JenkinsRule r = new JenkinsRule();
+@WithJenkins
+class CustomFolderIconTest {
 
     /**
      * Test behavior on a regular {@link Folder}.
@@ -75,7 +71,7 @@ public class CustomFolderIconTest {
      * @throws Exception
      */
     @Test
-    public void testFolder() throws Exception {
+    void testFolder(JenkinsRule r) throws Exception {
 	CustomFolderIcon customIcon = new CustomFolderIcon("dummy");
 	assertEquals("dummy", customIcon.getFoldericon());
 	assertEquals(Messages.Folder_description(), customIcon.getDescription());
@@ -96,7 +92,7 @@ public class CustomFolderIconTest {
      * @throws Exception
      */
     @Test
-    public void testOrganzationFolder() throws Exception {
+    void testOrganzationFolder(JenkinsRule r) throws Exception {
 	CustomFolderIcon customIcon = new CustomFolderIcon("dummy");
 	assertEquals("dummy", customIcon.getFoldericon());
 	assertEquals(Messages.Folder_description(), customIcon.getDescription());
@@ -117,7 +113,7 @@ public class CustomFolderIconTest {
      * @throws Exception
      */
     @Test
-    public void testDefaultImagePath() throws Exception {
+    void testDefaultImagePath(JenkinsRule r) throws Exception {
 	CustomFolderIcon customIcon = new CustomFolderIcon(null);
 	Folder project = r.jenkins.createProject(Folder.class, "folder");
 	project.setIcon(customIcon);
@@ -137,7 +133,7 @@ public class CustomFolderIconTest {
      * @throws Exception
      */
     @Test
-    public void testImagePath() throws Exception {
+    void testImagePath(JenkinsRule r) throws Exception {
 	CustomFolderIcon customIcon = new CustomFolderIcon("dummy");
 	Folder project = r.jenkins.createProject(Folder.class, "folder");
 	project.setIcon(customIcon);
@@ -157,7 +153,7 @@ public class CustomFolderIconTest {
      * @throws Exception
      */
     @Test
-    public void testDescriptor() throws Exception {
+    void testDescriptor(JenkinsRule r) throws Exception {
 	CustomFolderIcon customIcon = new CustomFolderIcon("dummy");
 	DescriptorImpl descriptor = customIcon.getDescriptor();
 	assertEquals(Messages.CustomFolderIcon_description(), descriptor.getDisplayName());
@@ -170,7 +166,7 @@ public class CustomFolderIconTest {
      * @throws Exception
      */
     @Test
-    public void testDoUploadIcon() throws Exception {
+    void testDoUploadIcon(JenkinsRule r) throws Exception {
 	File upload = new File("./src/main/webapp/icons/default.png");
 
 	MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -206,7 +202,7 @@ public class CustomFolderIconTest {
      * @throws Exception
      */
     @Test
-    public void testDoUploadIconNoFile() throws Exception {
+    void testDoUploadIconNoFile(JenkinsRule r) throws Exception {
 	MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 	builder.setBoundary("myboundary");
 
@@ -233,7 +229,7 @@ public class CustomFolderIconTest {
      * @throws Exception
      */
     @Test
-    public void testDoUploadBrokenRequest() throws Exception {
+    void testDoUploadBrokenRequest(JenkinsRule r) throws Exception {
 	DescriptorImpl descriptor = new DescriptorImpl();
 
 	try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
@@ -252,7 +248,7 @@ public class CustomFolderIconTest {
      * @throws Exception
      */
     @Test
-    public void testDoCleanup() throws Exception {
+    void testDoCleanup(JenkinsRule r) throws Exception {
 	DescriptorImpl descriptor = new DescriptorImpl();
 
 	try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
@@ -278,7 +274,7 @@ public class CustomFolderIconTest {
      * @throws Exception
      */
     @Test
-    public void testDoCleanupNoRoot() throws Exception {
+    void testDoCleanupNoRoot(JenkinsRule r) throws Exception {
 	DescriptorImpl descriptor = new DescriptorImpl();
 
 	try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
@@ -301,7 +297,7 @@ public class CustomFolderIconTest {
      * @throws Exception
      */
     @Test
-    public void testDoCleanupFileNotDeleted() throws Exception {
+    void testDoCleanupFileNotDeleted(JenkinsRule r) throws Exception {
 	DescriptorImpl descriptor = new DescriptorImpl();
 
 	try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
