@@ -41,7 +41,7 @@
 
 	<properties>
 		<gitHubRepo>jenkinsci/custom-folder-icon-plugin</gitHubRepo>
-		<jenkins.version>2.357</jenkins.version>
+		<jenkins.version>2.359</jenkins.version>
 		<revision>2.1</revision>
 		<changelist>-SNAPSHOT</changelist>
 	</properties>
@@ -50,7 +50,7 @@
 		<dependency>
 			<groupId>org.jenkins-ci.plugins</groupId>
 			<artifactId>cloudbees-folder</artifactId>
-			<version>6.740.ve4f4ffa_dea_54</version>
+			<version>6.758.vfd75d09eea_a_1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jenkins-ci.plugins</groupId>
