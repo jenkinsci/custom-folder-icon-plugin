@@ -41,7 +41,7 @@
 
 	<properties>
 		<gitHubRepo>jenkinsci/custom-folder-icon-plugin</gitHubRepo>
-		<jenkins.version>2.357</jenkins.version>
+		<jenkins.version>2.359</jenkins.version>
 		<revision>2.1</revision>
 		<changelist>-SNAPSHOT</changelist>
 	</properties>
