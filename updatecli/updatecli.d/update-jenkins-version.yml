@@ -25,7 +25,6 @@ targets:
     scmid: github
     kind: file
     spec:
-      forcecreate: true
       file: {{ requiredEnv "GITHUB_WORKSPACE" }}/Jenkinsfile
       matchpattern: '\d\..+\d'
 pullrequests:
