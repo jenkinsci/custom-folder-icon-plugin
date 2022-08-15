@@ -3,11 +3,6 @@ param(
   [string] $JenkinsfilePath
 )
 
-$regex = "\[ platform: '\w+', jdk: '\d{2}', jenkins: '(?<version>\d+.\d+.\d)' \]"
-
-if((Get-Content $JenkinsfilePath) -match $regex) {
+if((Get-Content $JenkinsfilePath) -match "\[ platform: '\w+', jdk: '\d{2}', jenkins: '(?<version>\d+.\d+.\d)' \]") {
   Write-Output $Matches.version
-} else {
-  Write-Output $regex
 }
-
