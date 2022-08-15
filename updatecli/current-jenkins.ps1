@@ -5,7 +5,7 @@ param(
 
 $regex = "\[ platform: '\w+', jdk: '\d{2}', jenkins: '(?<version>\d+.\d+.\d)' \]"
 
-Write-Output "2.363"
+Write-Output (Get-Content $JenkinsfilePath)
 
 if((Get-Content $JenkinsfilePath) -match $regex) {
   Write-Output $Matches.version
