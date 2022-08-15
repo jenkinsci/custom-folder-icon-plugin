@@ -18,6 +18,9 @@ if ($null -ne $CurrentVersion -and $NewVersion -gt $CurrentVersion) {
 
 if ($changed) {
   Write-Output "$NewVersion"
+  $Old = (Get-Content $JenkinsfilePath)
+  Write-Output "$Old"
+  
   if ($ENV:DRY_RUN -eq $false) {
     $NewContent = (Get-Content $JenkinsfilePath) -replace $CurrentVersion, $NewVersion
     Set-Content -Path $JenkinsfilePath -Value $NewContent
