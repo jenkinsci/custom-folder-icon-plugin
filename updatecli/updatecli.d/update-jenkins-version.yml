@@ -29,7 +29,7 @@ targets:
       matchpattern: '\d\..+\d'
 pullrequests:
   jenkins:
-    title: Bump Jenkins Version from {{ source "current-jenkins" }} to {{ source "jenkins" }}
+    title: Bump Jenkins Version to {{ source "jenkins" }}
     kind: github
     scmid: github
     targets:
