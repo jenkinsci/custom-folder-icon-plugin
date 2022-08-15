@@ -22,7 +22,7 @@ sources:
     name: Get Current Jenkins Version
     kind: shell
     spec:
-      command: cat {{ requiredEnv "GITHUB_WORKSPACE" }}/Jenkinsfile | grep -oP "(?<=\[ platform: 'linux', jdk: '17', jenkins: ')\d+.\d+.\d(?=' \])"
+      command: cat Jenkinsfile | grep -oP "(?<=\[ platform: 'linux', jdk: '17', jenkins: ')\d+.\d+.\d(?=' \])"
 targets:
   jenkins:
     name: Update Jenkins Version
