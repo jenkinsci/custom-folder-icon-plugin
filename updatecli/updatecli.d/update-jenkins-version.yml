@@ -14,7 +14,7 @@ sources:
     name: Get Jenkins Weekly Version
     kind: jenkins
     spec:
-      release: stable
+      release: weekly
       github:
         token: '{{ requiredEnv .github.token }}'
         username: '{{ .github.username }}'
@@ -23,16 +23,6 @@ sources:
     kind: shell
     spec:
       command: pwsh -NoProfile -File {{ requiredEnv "GITHUB_WORKSPACE" }}/updatecli/current-jenkins.ps1 -JenkinsfilePath Jenkinsfile
-conditions:
-  jenkins:
-    name: Test if Jenkins Stable published
-    kind: maven
-    sourceid: jenkins
-    spec:
-      url: repo.jenkins-ci.org
-      repository: releases
-      groupId: org.jenkins-ci.main
-      artifactId: jenkins-war
 targets:
   jenkins:
     name: Update Jenkins Version
