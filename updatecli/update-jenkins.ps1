@@ -5,14 +5,10 @@ param(
   [version] $NewVersion
 )
 
-$regex = "\[ platform: '\w+', jdk: '\d{2}', jenkins: '(?<version>\d+.\d+.\d)' \]"
+[version]$CurrentVersion = (Get-Content $JenkinsfilePath) | Select-String -Pattern "\[ platform: 'linux', jdk: '17', jenkins: '(.+)' \]" | %{$_.Matches.Groups[1].value}
 
-if((Get-Content $JenkinsfilePath) -match $regex) {
-  [version]$CurrentVersion = $Matches.version
-
-  if ($null -ne $CurrentVersion -and $NewVersion -gt $CurrentVersion) {
-    $NewContent = (Get-Content $JenkinsfilePath) -replace $CurrentVersion, $NewVersion
-    Set-Content -Path $JenkinsfilePath -Value $NewContent
-    Write-Output "$NewVersion"
-  }
+if ($null -ne $CurrentVersion -and $NewVersion -gt $CurrentVersion) {
+  $NewContent = (Get-Content $JenkinsfilePath) -replace $CurrentVersion, $NewVersion
+  Set-Content -Path $JenkinsfilePath -Value $NewContent
+  $NewVersion
 }
