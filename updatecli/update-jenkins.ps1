@@ -13,7 +13,7 @@ if ($null -eq $ENV:DRY_RUN) {
 [version]$CurrentVersion = (Get-Content $JenkinsfilePath) | Select-String -Pattern "\[ platform: 'linux', jdk: '17', jenkins: '(.+)' \]" | %{$_.Matches.Groups[1].value}
 
 if ($null -ne $CurrentVersion -and $NewVersion -gt $CurrentVersion) {
-  changed = $true
+  $changed = $true
 }
 
 if ($changed) {
