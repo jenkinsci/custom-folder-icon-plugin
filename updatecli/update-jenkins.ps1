@@ -10,5 +10,5 @@ param(
 if ($null -ne $CurrentVersion -and $NewVersion -gt $CurrentVersion) {
   $NewContent = (Get-Content $JenkinsfilePath) -replace $CurrentVersion, $NewVersion
   Set-Content -Path $JenkinsfilePath -Value $NewContent
-  $NewVersion
+  Write-Output "$NewVersion"
 }
