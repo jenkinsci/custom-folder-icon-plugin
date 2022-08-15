@@ -3,8 +3,4 @@ param(
   [string] $JenkinsfilePath
 )
 
-if((Get-Content $JenkinsfilePath) -match "\[ platform: '\w+', jdk: '\d{2}', jenkins: '(?<version>\d+.\d+.\d)' \]") {
-  $Matches.version
-} else {
-  "Why is it not matching!?"
-}
+(Get-Content $JenkinsfilePath) | Select-String -Pattern "\[ platform: 'linux', jdk: '17', jenkins: '(.+)' \]" | %{$_.Matches.Groups[1].value}
