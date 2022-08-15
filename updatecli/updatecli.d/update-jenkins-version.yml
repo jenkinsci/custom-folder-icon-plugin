@@ -22,7 +22,7 @@ sources:
     name: Get Current Jenkins Version
     kind: shell
     spec:
-      command: pwsh -File {{ requiredEnv "GITHUB_WORKSPACE" }}/updatecli/current-jenkins.ps1 -JenkinsfilePath {{ requiredEnv "GITHUB_WORKSPACE" }}/Jenkinsfile
+      command: pwsh -NoProfile -File {{ requiredEnv "GITHUB_WORKSPACE" }}/updatecli/current-jenkins.ps1 -JenkinsfilePath {{ requiredEnv "GITHUB_WORKSPACE" }}/Jenkinsfile
 targets:
   jenkins:
     name: Update Jenkins Version
@@ -30,7 +30,7 @@ targets:
     scmid: github
     kind: shell
     spec:
-      command: pwsh -File {{ requiredEnv "GITHUB_WORKSPACE" }}/updatecli/update-jenkins.ps1 -JenkinsfilePath {{ requiredEnv "GITHUB_WORKSPACE" }}/Jenkinsfile -NewVersion
+      command: pwsh -NoProfile -File {{ requiredEnv "GITHUB_WORKSPACE" }}/updatecli/update-jenkins.ps1 -JenkinsfilePath {{ requiredEnv "GITHUB_WORKSPACE" }}/Jenkinsfile -NewVersion
 pullrequests:
   jenkins:
     title: Bump Jenkins Version from {{ source "current-jenkins" }} to {{ source "jenkins" }}
