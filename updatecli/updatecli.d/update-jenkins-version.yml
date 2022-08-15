@@ -18,19 +18,15 @@ sources:
       github:
         token: '{{ requiredEnv .github.token }}'
         username: '{{ .github.username }}'
-  current-jenkins:
-    name: Get Current Jenkins Version
-    kind: shell
-    spec:
-      command: pwsh -NoProfile -File {{ requiredEnv "GITHUB_WORKSPACE" }}/updatecli/current-jenkins.ps1 -JenkinsfilePath {{ requiredEnv "GITHUB_WORKSPACE" }}/Jenkinsfile
 targets:
   jenkins:
     name: Update Jenkins Version
     sourceid: jenkins
     scmid: github
-    kind: shell
+    kind: file
     spec:
-      command: pwsh -NoProfile -File {{ requiredEnv "GITHUB_WORKSPACE" }}/updatecli/update-jenkins.ps1 -JenkinsfilePath {{ requiredEnv "GITHUB_WORKSPACE" }}/Jenkinsfile -NewVersion
+      file: {{ requiredEnv "GITHUB_WORKSPACE" }}/Jenkinsfile
+      matchpattern: '\d\..+\d'
 pullrequests:
   jenkins:
     title: Bump Jenkins Version from {{ source "current-jenkins" }} to {{ source "jenkins" }}
