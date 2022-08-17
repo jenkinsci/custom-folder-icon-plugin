@@ -10,7 +10,7 @@
 
 	<groupId>io.jenkins.plugins</groupId>
 	<artifactId>custom-folder-icon</artifactId>
-	<version>2.1</version>
+	<version>${revision}${changelist}</version>
 	<packaging>hpi</packaging>
 
 	<name>Custom Folder Icon Plugin</name>
@@ -36,13 +36,13 @@
 		<connection>scm:git:git://github.com/${gitHubRepo}.git</connection>
 		<developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
 		<url>https://github.com/${gitHubRepo}</url>
-		<tag>custom-folder-icon-2.1</tag>
+		<tag>${scmTag}</tag>
 	</scm>
 
 	<properties>
 		<gitHubRepo>jenkinsci/custom-folder-icon-plugin</gitHubRepo>
 		<jenkins.version>2.359</jenkins.version>
-		<revision>2.1</revision>
+		<revision>2.2</revision>
 		<changelist>-SNAPSHOT</changelist>
 	</properties>
 
