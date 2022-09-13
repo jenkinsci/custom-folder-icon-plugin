@@ -191,7 +191,8 @@ public class CustomFolderIcon extends FolderIcon {
 	    if (iconDir.exists()) {
 		List<String> existingIcons = iconDir.list().stream().map(FilePath::getName).collect(Collectors.toList());
 
-		List<String> usedIcons = jenkins.getAllItems(AbstractFolder.class).stream().filter(CustomFolderIcon.class::isInstance)
+		List<String> usedIcons = jenkins.getAllItems(AbstractFolder.class).stream()
+			.filter(folder -> folder.getIcon() instanceof CustomFolderIcon)
 			.map(folder -> ((CustomFolderIcon) folder.getIcon()).getFoldericon()).collect(Collectors.toList());
 
 		if (usedIcons.isEmpty() || existingIcons.removeAll(usedIcons)) {

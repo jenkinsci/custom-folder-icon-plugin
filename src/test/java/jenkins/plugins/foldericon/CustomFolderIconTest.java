@@ -65,6 +65,8 @@ import jenkins.plugins.foldericon.utils.TestUtils;
 @WithJenkins
 class CustomFolderIconTest {
 
+    private static final String DUMMY_PNG = "dummy.png";
+
     /**
      * Test behavior on a regular {@link Folder}.
      * 
@@ -72,8 +74,8 @@ class CustomFolderIconTest {
      */
     @Test
     void testFolder(JenkinsRule r) throws Exception {
-	CustomFolderIcon customIcon = new CustomFolderIcon("dummy");
-	assertEquals("dummy", customIcon.getFoldericon());
+	CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
+	assertEquals(DUMMY_PNG, customIcon.getFoldericon());
 	assertEquals(Messages.Folder_description(), customIcon.getDescription());
 
 	Folder project = r.jenkins.createProject(Folder.class, "folder");
@@ -82,7 +84,7 @@ class CustomFolderIconTest {
 
 	assertTrue(icon instanceof CustomFolderIcon);
 
-	assertEquals("dummy", customIcon.getFoldericon());
+	assertEquals(DUMMY_PNG, customIcon.getFoldericon());
 	assertEquals(project.getPronoun(), icon.getDescription());
     }
 
@@ -93,8 +95,8 @@ class CustomFolderIconTest {
      */
     @Test
     void testOrganzationFolder(JenkinsRule r) throws Exception {
-	CustomFolderIcon customIcon = new CustomFolderIcon("dummy");
-	assertEquals("dummy", customIcon.getFoldericon());
+	CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
+	assertEquals(DUMMY_PNG, customIcon.getFoldericon());
 	assertEquals(Messages.Folder_description(), customIcon.getDescription());
 
 	OrganizationFolder project = r.jenkins.createProject(OrganizationFolder.class, "org");
@@ -103,7 +105,7 @@ class CustomFolderIconTest {
 
 	assertTrue(icon instanceof CustomFolderIcon);
 
-	assertEquals("dummy", customIcon.getFoldericon());
+	assertEquals(DUMMY_PNG, customIcon.getFoldericon());
 	assertEquals(project.getPronoun(), icon.getDescription());
     }
 
@@ -134,7 +136,7 @@ class CustomFolderIconTest {
      */
     @Test
     void testImagePath(JenkinsRule r) throws Exception {
-	CustomFolderIcon customIcon = new CustomFolderIcon("dummy");
+	CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
 	Folder project = r.jenkins.createProject(Folder.class, "folder");
 	project.setIcon(customIcon);
 	FolderIcon icon = project.getIcon();
@@ -143,7 +145,7 @@ class CustomFolderIconTest {
 
 	try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
 	    TestUtils.mockStaplerRequest(stapler);
-	    TestUtils.validateIcon(icon, "dummy", null);
+	    TestUtils.validateIcon(icon, DUMMY_PNG, null);
 	}
     }
 
@@ -154,7 +156,7 @@ class CustomFolderIconTest {
      */
     @Test
     void testDescriptor(JenkinsRule r) throws Exception {
-	CustomFolderIcon customIcon = new CustomFolderIcon("dummy");
+	CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
 	DescriptorImpl descriptor = customIcon.getDescriptor();
 	assertEquals(Messages.CustomFolderIcon_description(), descriptor.getDisplayName());
 	assertTrue(descriptor.isApplicable(null));
@@ -248,7 +250,7 @@ class CustomFolderIconTest {
      * @throws Exception
      */
     @Test
-    void testDoCleanup(JenkinsRule r) throws Exception {
+    void testDoCleanupNoItems(JenkinsRule r) throws Exception {
 	DescriptorImpl descriptor = new DescriptorImpl();
 
 	try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
@@ -265,6 +267,81 @@ class CustomFolderIconTest {
 	    field.setAccessible(true);
 	    assertEquals(HttpServletResponse.SC_OK, field.get(response));
 	    assertFalse(file.exists());
+	}
+    }
+
+    /**
+     * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    void testDoCleanupOnlyUsedIcons(JenkinsRule r) throws Exception {
+	DescriptorImpl descriptor = new DescriptorImpl();
+
+	CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
+
+	Folder project1 = r.jenkins.createProject(Folder.class, "folder");
+	OrganizationFolder project2 = r.jenkins.createProject(OrganizationFolder.class, "org");
+
+	project1.setIcon(customIcon);
+	project2.setIcon(customIcon);
+
+	FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
+	parent.mkdirs();
+	FilePath dummy = parent.child(DUMMY_PNG);
+	dummy.touch(System.currentTimeMillis());
+	assertTrue(dummy.exists());
+
+	try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
+	    StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
+
+	    HttpResponse response = descriptor.doCleanup(mockReq);
+	    Field field = response.getClass().getDeclaredField("val$code");
+	    field.setAccessible(true);
+	    assertEquals(HttpServletResponse.SC_OK, field.get(response));
+
+	    assertTrue(dummy.exists());
+	}
+    }
+
+    /**
+     * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    void testDoCleanupUsedAndUnusedIcons(JenkinsRule r) throws Exception {
+	DescriptorImpl descriptor = new DescriptorImpl();
+
+	CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
+
+	Folder project1 = r.jenkins.createProject(Folder.class, "folder");
+	OrganizationFolder project2 = r.jenkins.createProject(OrganizationFolder.class, "org");
+
+	project1.setIcon(customIcon);
+	project2.setIcon(customIcon);
+
+	FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
+	parent.mkdirs();
+	FilePath dummy = parent.child(DUMMY_PNG);
+	dummy.touch(System.currentTimeMillis());
+	assertTrue(dummy.exists());
+
+	FilePath unused = parent.child("unused.png");
+	unused.touch(System.currentTimeMillis());
+	assertTrue(unused.exists());
+
+	try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
+	    StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
+
+	    HttpResponse response = descriptor.doCleanup(mockReq);
+	    Field field = response.getClass().getDeclaredField("val$code");
+	    field.setAccessible(true);
+	    assertEquals(HttpServletResponse.SC_OK, field.get(response));
+
+	    assertTrue(dummy.exists());
+	    assertFalse(unused.exists());
 	}
     }
 
