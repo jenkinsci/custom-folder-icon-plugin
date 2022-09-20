@@ -25,8 +25,14 @@
 package jenkins.plugins.foldericon;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -36,6 +42,8 @@ import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 
+import hudson.PluginManager;
+import hudson.PluginWrapper;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.IoniconFolderIcon.DescriptorImpl;
 
@@ -119,8 +127,45 @@ class IoniconFolderIconTest {
 	DescriptorImpl descriptor = customIcon.getDescriptor();
 	assertEquals(Messages.IoniconFolderIcon_description(), descriptor.getDisplayName());
 	assertTrue(descriptor.isApplicable(null));
+
+	assertNotNull(descriptor.getAvailableIcons());
+	assertNotNull(descriptor.doFillIoniconItems());
+
+	assertFalse(descriptor.getAvailableIcons().isEmpty());
+	assertFalse(descriptor.doFillIoniconItems().isEmpty());
+
+	assertEquals(descriptor.getAvailableIcons().size(), descriptor.doFillIoniconItems().size());
     }
 
+    /**
+     * Test behavior of {@link DescriptorImpl} when the ionicons-api plugin is missing.
+     * 
+     * @throws Exception
+     */
+    @Test
+    void testMissingIoniconPlugin(JenkinsRule r) throws Exception {
+	Field field = PluginManager.class.getDeclaredField("plugins");
+	field.setAccessible(true);
+	List<PluginWrapper> plugins = (List<PluginWrapper>) field.get(r.getPluginManager());
+	List<PluginWrapper> copy = new CopyOnWriteArrayList<>(plugins);
 
+	plugins.removeIf(plugin -> StringUtils.equals(plugin.getShortName(), "ionicons-api"));
+
+	try {
+	    DescriptorImpl descriptor = new DescriptorImpl();
+	    assertEquals(Messages.IoniconFolderIcon_description(), descriptor.getDisplayName());
+	    assertTrue(descriptor.isApplicable(null));
+
+	    assertNotNull(descriptor.getAvailableIcons());
+	    assertNotNull(descriptor.doFillIoniconItems());
+
+	    assertTrue(descriptor.getAvailableIcons().isEmpty());
+	    assertTrue(descriptor.doFillIoniconItems().isEmpty());
+
+	    assertEquals(descriptor.getAvailableIcons().size(), descriptor.doFillIoniconItems().size());
+	} finally {
+	    field.set(r.getPluginManager(), copy);
+	}
+    }
 
 }

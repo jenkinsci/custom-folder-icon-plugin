@@ -25,6 +25,7 @@
 package jenkins.plugins.foldericon;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Set;
 import java.util.TreeSet;
@@ -120,30 +121,22 @@ public class IoniconFolderIcon extends FolderIcon {
 	private static final String SVG_FORMAT = ".svg";
 	private static final String IMAGES_SYMBOLS_PATH = "images/symbols/";
 
-	@Override
-	public String getDisplayName() {
-	    return Messages.IoniconFolderIcon_description();
-	}
-
-	@Override
-	public boolean isApplicable(Class<? extends AbstractFolder> folderType) {
-	    return true;
-	}
+	private final ListBoxModel listbox = new ListBoxModel();
+	private final Set<String> availableIcons = new TreeSet<>();
 
 	/**
-	 * Populate the drop-down list with all available icons.
+	 * Ctor.
 	 * 
-	 * @return the list of available icons.
+	 * Populates the list of available icons.
 	 */
-	public ListBoxModel doFillIoniconItems() {
-	    Set<String> availableIcons = new TreeSet<>();
+	public DescriptorImpl() {
 	    Plugin plugin = Jenkins.get().getPlugin("ionicons-api");
 
 	    if (plugin != null) {
 		URL baseUrl = plugin.getWrapper().baseResourceURL;
 
-		try (ZipInputStream zip = new ZipInputStream(
-			new URL(baseUrl.toExternalForm() + "WEB-INF/lib/ionicons-api.jar").openStream())) {
+		try (InputStream is = new URL(baseUrl.toExternalForm() + "WEB-INF/lib/ionicons-api.jar").openStream();
+			ZipInputStream zip = new ZipInputStream(is)) {
 		    while (true) {
 			ZipEntry entry = zip.getNextEntry();
 			if (entry == null) {
@@ -160,10 +153,35 @@ public class IoniconFolderIcon extends FolderIcon {
 	    } else {
 		LOGGER.warning("Unable to read available ionicons: Plugin unavailable.");
 	    }
+	    this.availableIcons.stream().forEach(listbox::add);
+	}
 
-	    ListBoxModel icons = new ListBoxModel();
-	    availableIcons.stream().forEach(icons::add);
-	    return icons;
+	@Override
+	public String getDisplayName() {
+	    return Messages.IoniconFolderIcon_description();
+	}
+
+	@Override
+	public boolean isApplicable(Class<? extends AbstractFolder> folderType) {
+	    return true;
+	}
+
+	/**
+	 * Get a drop-down list with all available icons.
+	 * 
+	 * @return the list of available icons.
+	 */
+	public ListBoxModel doFillIoniconItems() {
+	    return this.listbox;
+	}
+
+	/**
+	 * Get a set of all available icons.
+	 * 
+	 * @return the set of available icons.
+	 */
+	public Set<String> getAvailableIcons() {
+	    return this.availableIcons;
 	}
     }
 }

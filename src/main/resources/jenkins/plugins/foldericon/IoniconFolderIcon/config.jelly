@@ -24,7 +24,12 @@ SOFTWARE.
 
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-	<f:entry id="icon-name" name="ionicon" title="Choose an Icon" field="ionicon">
+	<f:entry name="ionicon" title="${%Choose}" field="ionicon">
 		<f:select />
 	</f:entry>
+	<f:optionalBlock title="${%AvailableIcons}">
+		<j:forEach var="icon" items="${descriptor.availableIcons}">
+			<l:icon src="symbol-${icon} plugin-ionicons-api" tooltip="${icon}" class="icon-md" />
+		</j:forEach>
+	</f:optionalBlock>
 </j:jelly>
