@@ -23,6 +23,6 @@ SOFTWARE.
 -->
 
 <?jelly escape-by-default='true'?>
-<div>
-  Use the combined build status of the jobs within this folder as icon.
-</div>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<f:entry title="${%Details}" />
+</j:jelly>
