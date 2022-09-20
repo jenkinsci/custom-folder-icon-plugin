@@ -25,5 +25,5 @@ SOFTWARE.
 <?jelly escape-by-default='true'?>
 <div>
   This plugin extends the <a href="https://github.com/jenkinsci/cloudbees-folder-plugin" target="_blank">Folders Plugin</a> to provide custom icons for folders.
-  You can upload your own images or use the combined build status of the jobs within a folder as icon.
+  You can upload your own images, use predefined icons or use the combined build status of the jobs within a folder as icon.
 </div>
