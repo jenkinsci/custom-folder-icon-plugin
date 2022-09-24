@@ -24,40 +24,24 @@
 
 package jenkins.plugins.foldericon;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import org.apache.commons.lang.StringUtils;
-import org.kohsuke.stapler.DataBoundConstructor;
-
 import com.cloudbees.hudson.plugins.folder.AbstractFolder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import com.cloudbees.hudson.plugins.folder.FolderIconDescriptor;
-
 import hudson.Extension;
-import hudson.Plugin;
 import hudson.util.ListBoxModel;
+import io.jenkins.plugins.ionicons.Ionicons;
 import jenkins.model.Jenkins;
+import org.apache.commons.lang.StringUtils;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * A Ionicon Folder Icon.
- * 
- * @author strangelookingnerd
  *
+ * @author strangelookingnerd
  */
 public class IoniconFolderIcon extends FolderIcon {
 
-    private static final Logger LOGGER = Logger.getLogger(IoniconFolderIcon.class.getName());
-
     private static final String DEFAULT_ICON = "jenkins";
-    private static final String ICON_CLASS_NAME_PATTERN = "symbol-%s plugin-ionicons-api";
 
     private final String ionicon;
 
@@ -65,123 +49,86 @@ public class IoniconFolderIcon extends FolderIcon {
 
     /**
      * Ctor.
-     * 
+     *
      * @param ionicon the icon to use
      */
     @DataBoundConstructor
     public IoniconFolderIcon(String ionicon) {
-	this.ionicon = StringUtils.isEmpty(ionicon) ? DEFAULT_ICON : ionicon;
+        this.ionicon = StringUtils.isEmpty(ionicon) ? DEFAULT_ICON : ionicon;
     }
 
     @Override
     protected void setOwner(AbstractFolder<?> folder) {
-	this.owner = folder;
+        this.owner = folder;
     }
 
     /**
      * @return the icon
      */
     public String getIonicon() {
-	return ionicon;
+        return ionicon;
     }
 
     @Override
     public String getImageOf(String size) {
-	return null;
+        return null;
     }
 
     @Override
     public String getIconClassName() {
-	return String.format(ICON_CLASS_NAME_PATTERN, getIonicon());
+        return Ionicons.getIconClassName(getIonicon());
     }
 
     @Override
     public String getDescription() {
-	if (owner != null) {
-	    return owner.getPronoun();
-	} else {
-	    return Messages.Folder_description();
-	}
+        if (owner != null) {
+            return owner.getPronoun();
+        } else {
+            return Messages.Folder_description();
+        }
     }
 
     @Override
     public DescriptorImpl getDescriptor() {
-	return (DescriptorImpl) Jenkins.get().getDescriptorOrDie(getClass());
+        return (DescriptorImpl) Jenkins.get().getDescriptorOrDie(getClass());
     }
 
     /**
      * The Descriptor.
-     * 
-     * @author strangelookingnerd
      *
+     * @author strangelookingnerd
      */
     @Extension
     public static class DescriptorImpl extends FolderIconDescriptor {
 
-	private static final String SVG_FORMAT = ".svg";
-	private static final String IMAGES_SYMBOLS_PATH = "images/symbols/";
+        private final ListBoxModel listbox = new ListBoxModel();
 
-	private final ListBoxModel listbox = new ListBoxModel();
-	private final Set<String> availableIcons = new TreeSet<>();
+        /**
+         * Ctor.
+         * <p>
+         * Populates the list of available icons.
+         */
+        public DescriptorImpl() {
+            Ionicons.getAvailableIcons().keySet().forEach(listbox::add);
+        }
 
-	/**
-	 * Ctor.
-	 * 
-	 * Populates the list of available icons.
-	 */
-	public DescriptorImpl() {
-	    Plugin plugin = Jenkins.get().getPlugin("ionicons-api");
+        @Override
+        public String getDisplayName() {
+            return Messages.IoniconFolderIcon_description();
+        }
 
-	    if (plugin != null) {
-		URL baseUrl = plugin.getWrapper().baseResourceURL;
+        @Override
+        public boolean isApplicable(Class<? extends AbstractFolder> folderType) {
+            return true;
+        }
 
-		try (InputStream is = new URL(baseUrl.toExternalForm() + "WEB-INF/lib/ionicons-api.jar").openStream();
-			ZipInputStream zip = new ZipInputStream(is)) {
-		    while (true) {
-			ZipEntry entry = zip.getNextEntry();
-			if (entry == null) {
-			    break;
-			}
-			String name = entry.getName();
-			if (StringUtils.startsWith(name, IMAGES_SYMBOLS_PATH) && StringUtils.endsWith(name, SVG_FORMAT)) {
-			    availableIcons.add(StringUtils.substringAfter(StringUtils.removeEnd(name, SVG_FORMAT), IMAGES_SYMBOLS_PATH));
-			}
-		    }
-		} catch (IOException ex) {
-		    LOGGER.log(Level.WARNING, "Unable to read available ionicons.", ex);
-		}
-	    } else {
-		LOGGER.warning("Unable to read available ionicons: Plugin unavailable.");
-	    }
-	    this.availableIcons.stream().forEach(listbox::add);
-	}
-
-	@Override
-	public String getDisplayName() {
-	    return Messages.IoniconFolderIcon_description();
-	}
-
-	@Override
-	public boolean isApplicable(Class<? extends AbstractFolder> folderType) {
-	    return true;
-	}
-
-	/**
-	 * Get a drop-down list with all available icons.
-	 * 
-	 * @return the list of available icons.
-	 */
-	public ListBoxModel doFillIoniconItems() {
-	    return this.listbox;
-	}
-
-	/**
-	 * Get a set of all available icons.
-	 * 
-	 * @return the set of available icons.
-	 */
-	public Set<String> getAvailableIcons() {
-	    return this.availableIcons;
-	}
+        /**
+         * Get a drop-down list with all available icons.
+         *
+         * @return the list of available icons.
+         */
+        public ListBoxModel doFillIoniconItems() {
+            return this.listbox;
+        }
     }
 }

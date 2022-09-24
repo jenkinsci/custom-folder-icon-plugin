@@ -28,8 +28,9 @@ SOFTWARE.
 		<f:select />
 	</f:entry>
 	<f:optionalBlock title="${%AvailableIcons}">
-		<j:forEach var="icon" items="${descriptor.availableIcons}">
-			<l:icon src="symbol-${icon} plugin-ionicons-api" tooltip="${icon}" class="icon-md" />
+		<j:invokeStatic var="icons" method="getAvailableIcons" className="io.jenkins.plugins.ionicons.Ionicons" />
+		<j:forEach var="icon" items="${icons}">
+			<l:icon src="${icon.value}" tooltip="${icon.key}" class="icon-md" />
 		</j:forEach>
 	</f:optionalBlock>
 </j:jelly>

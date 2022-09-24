@@ -33,10 +33,10 @@ pullrequests:
     kind: github
     scmid: github
     targets:
-    - jenkins
+      - jenkins
     spec:
       labels:
-      - dependencies
+        - dependencies
       automerge: true
       mergemethod: squash
       usetitleforautomerge: true
