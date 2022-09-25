@@ -33,32 +33,31 @@ import hudson.tasks.Publisher;
 
 /**
  * Force build results.
- * 
- * @author strangelookingnerd
  *
+ * @author strangelookingnerd
  */
 public class ResultPublisher extends Publisher {
     private final Result result;
 
     /**
      * Ctor.
-     * 
+     *
      * @param result the desired result.
      */
     @SuppressWarnings("deprecation")
     public ResultPublisher(Result result) {
-	this.result = result;
+        this.result = result;
     }
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException {
-	build.setResult(result);
-	return true;
+        build.setResult(result);
+        return true;
     }
 
     @Override
     public Descriptor<Publisher> getDescriptor() {
-	return new Descriptor<Publisher>(ResultPublisher.class) {
-	};
+        return new Descriptor<Publisher>(ResultPublisher.class) {
+        };
     }
 }

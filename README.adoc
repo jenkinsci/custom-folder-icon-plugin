@@ -14,7 +14,7 @@ image:https://img.shields.io/github/release/jenkinsci/custom-folder-icon-plugin.
 [#introduction]
 == Introduction
 This plugin extends the link:https://github.com/jenkinsci/cloudbees-folder-plugin[Folders Plugin] to to provide custom icons for folders.
-You can upload your own images or use the combined build status of the jobs within a folder as icon.
+You can upload your own images, use predefined icons or use the combined build status of the jobs within a folder as icon.
 
 toc::[]
 
@@ -25,10 +25,13 @@ Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-pl
 === Version 2.x
 This version requires Jenkins 2.357 and above in order to support the transition to https://www.jenkins.io/blog/2022/06/28/require-java-11/[Java 11].
 
-Version 2.x introduces a new type of icon. The `BuildStatusFolderIcon` displays the combined build status of the jobs within a folder.
+* Version 2.3 introduces a new type of icon. The `IoniconFolderIcon` provides icons from https://github.com/jenkinsci/ionicons-api-plugin[ionicons-api-plugin].
+* Version 2.0 introduces a new type of icon. The `BuildStatusFolderIcon` displays the combined build status of the jobs within a folder.
 
 === Version 1.x
-Since https://github.com/jenkinsci/branch-api-plugin/releases/tag/2.1044.v2c007e51b_87f[2.1044] of the https://github.com/jenkinsci/branch-api-plugin[branch-api-plugin] the Custom Folder Icons Plugin can be used for Multi-Branch or Organization Projects.
+Legacy version for Jenkins versions before 2.357.
+
+* Since https://github.com/jenkinsci/branch-api-plugin/releases/tag/2.1044.v2c007e51b_87f[2.1044] of the https://github.com/jenkinsci/branch-api-plugin[branch-api-plugin] the Custom Folder Icons Plugin can be used for Multi-Branch or Organization Projects.
 
 [#configuration]
 == Configuration
@@ -60,6 +63,14 @@ image:images/build-status-folder-icon.png[]
 Select the Build Status Folder Icon option to use the combined build status of the jobs within a folder as icon.
 
 image:images/build-status-folder-icon-configuration.png[]
+
+==== Ionicon Folder Icon
+Use https://ionic.io/ionicons[Ionicons] provided by https://github.com/jenkinsci/ionicons-api-plugin[ionicons-api-plugin] as icon.
+image:images/ionicon-folder-icon.png[]
+
+Select the Ionicon Folder Icon option and select any of the available icons.
+
+image:images/ionicon-folder-icon-configuration.png[]
 
 [#global-configuration]
 === Global Configuration
