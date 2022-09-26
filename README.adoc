@@ -38,7 +38,7 @@ Legacy version for Jenkins versions before 2.357.
 
 [#folder-configuration]
 === Folder Configuration
-There are two types of custom icons provided by this plugin. 
+There are multiple types of custom icons provided by this plugin. 
 
 image:images/overview.png[]
 
