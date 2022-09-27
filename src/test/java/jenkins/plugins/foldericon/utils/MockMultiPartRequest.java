@@ -110,6 +110,11 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
+    public void setCharacterEncoding(String s) throws UnsupportedEncodingException {
+        // NOP
+    }
+
+    @Override
     public String getHeader(String name) {
         return null;
     }
@@ -242,11 +247,6 @@ public class MockMultiPartRequest implements StaplerRequest {
     @Override
     public Enumeration getAttributeNames() {
         return null;
-    }
-
-    @Override
-    public void setCharacterEncoding(String s) throws UnsupportedEncodingException {
-        // NOP
     }
 
     @Override

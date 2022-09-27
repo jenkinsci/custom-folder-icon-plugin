@@ -23,24 +23,24 @@ SOFTWARE.
 -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-	<f:entry name="ionicon" title="${%Choose}" field="ionicon">
-		<f:select id="ionicon" />
-	</f:entry>
-	<f:advanced title="${%AvailableIcons}">
-		<j:invokeStatic var="icons" method="getAvailableIcons" className="io.jenkins.plugins.ionicons.Ionicons" />
-		<j:forEach var="icon" items="${icons}">
-		    <a id="select-${icon.key}" style="color:unset; cursor: pointer;">
-			    <l:icon id="icon-${icon.key}" src="${icon.value}" tooltip="${icon.key}" class="icon-md" />
-			</a>
-			<script>
-			    // set value dropdown for on click
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:f="/lib/form">
+    <f:entry name="ionicon" title="${%Choose}" field="ionicon">
+        <f:select id="ionicon" />
+    </f:entry>
+    <f:advanced title="${%AvailableIcons}">
+        <j:invokeStatic var="icons" method="getAvailableIcons" className="io.jenkins.plugins.ionicons.Ionicons" />
+        <j:forEach var="icon" items="${icons}">
+            <a id="select-${icon.key}" style="color:unset; cursor: pointer;">
+                <l:icon id="icon-${icon.key}" src="${icon.value}" tooltip="${icon.key}" class="icon-md" />
+            </a>
+            <script>
+                // set value dropdown for on click
                 var select = document.getElementById("ionicon");
-                document.getElementById("select-${icon.key}").addEventListener("click", function(e) {
+                document.getElementById("select-${icon.key}").addEventListener("click", function (e) {
                     select.setValue("${icon.key}");
                     select.dispatchEvent(new Event("change"));
                 });
-			</script>
-		</j:forEach>
-	</f:advanced>
+            </script>
+        </j:forEach>
+    </f:advanced>
 </j:jelly>
