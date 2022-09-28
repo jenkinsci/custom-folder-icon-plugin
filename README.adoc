@@ -4,7 +4,7 @@
 :toc-title:
 
 image:https://ci.jenkins.io/job/Plugins/job/custom-folder-icon-plugin/job/master/badge/icon[link="https://ci.jenkins.io/job/Plugins/job/custom-folder-icon-plugin/job/master/"]
-image:https://github.com/jenkinsci/custom-folder-icon-plugin/workflows/CodeQL/badge.svg[link="https://github.com/jenkinsci/custom-folder-icon-plugin"]
+image:https://github.com/jenkinsci/custom-folder-icon-plugin/actions/workflows/jenkins-security-scan.yml/badge.svg[link="https://github.com/jenkinsci/custom-folder-icon-plugin/actions/workflows/jenkins-security-scan.yml"]
 image:https://codecov.io/gh/jenkinsci/custom-folder-icon-plugin/branch/master/graph/badge.svg[link="https://codecov.io/gh/jenkinsci/custom-folder-icon-plugin"]
 image:https://img.shields.io/github/contributors/jenkinsci/custom-folder-icon-plugin.svg?color=blue[link="https://github.com/jenkinsci/custom-folder-icon-plugin/graphs/contributors"]
 image:https://img.shields.io/jenkins/plugin/i/custom-folder-icon.svg?color=blue&label=installations[link="https://plugins.jenkins.io/custom-folder-icon"]
