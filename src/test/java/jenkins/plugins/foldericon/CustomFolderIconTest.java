@@ -304,6 +304,41 @@ class CustomFolderIconTest {
     }
 
     /**
+     * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest, Item)} with an empty file.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testDoUploadEmptyFile(JenkinsRule r) throws Exception {
+        File upload = File.createTempFile("empty", ".png");
+        upload.deleteOnExit();
+
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.setBoundary("myboundary");
+        builder.addBinaryBody(upload.getName(), upload, ContentType.DEFAULT_BINARY, upload.getName());
+
+        byte[] buffer;
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            builder.build().writeTo(outputStream);
+            outputStream.flush();
+
+            buffer = outputStream.toByteArray();
+        }
+
+        MockMultiPartRequest mockRequest = new MockMultiPartRequest(buffer) {
+            @Override
+            public int getContentLength() {
+                return 0;
+            }
+        };
+
+        DescriptorImpl descriptor = new DescriptorImpl();
+        HttpResponse response = descriptor.doUploadIcon(mockRequest, null);
+
+        TestUtils.validateResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, null, Messages.Upload_invalidFile());
+    }
+
+    /**
      * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest, Item)} when there are exceptions thrown.
      *
      * @throws Exception
@@ -337,7 +372,6 @@ class CustomFolderIconTest {
         }
     }
 
-
     /**
      * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)}.
      *
@@ -369,6 +403,30 @@ class CustomFolderIconTest {
      * @throws Exception
      */
     @Test
+    void testDoCleanupMissingIcon(JenkinsRule r) throws Exception {
+        DescriptorImpl descriptor = new DescriptorImpl();
+        CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+
+        FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
+        parent.mkdirs();
+        assertTrue(parent.exists());
+
+        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
+            StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
+            HttpResponse response = descriptor.doCleanup(mockReq);
+
+            TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
+        }
+    }
+
+    /**
+     * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)}.
+     *
+     * @throws Exception
+     */
+    @Test
     void testDoCleanupOnlyUsedIcons(JenkinsRule r) throws Exception {
         DescriptorImpl descriptor = new DescriptorImpl();
 
@@ -388,7 +446,6 @@ class CustomFolderIconTest {
 
         try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
             StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
-
             HttpResponse response = descriptor.doCleanup(mockReq);
 
             TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
@@ -425,7 +482,6 @@ class CustomFolderIconTest {
 
         try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
             StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
-
             HttpResponse response = descriptor.doCleanup(mockReq);
 
             TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
