@@ -27,6 +27,7 @@ package jenkins.plugins.foldericon;
 import com.cloudbees.hudson.plugins.folder.AbstractFolder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import com.cloudbees.hudson.plugins.folder.FolderIconDescriptor;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.util.ListBoxModel;
 import io.jenkins.plugins.ionicons.Ionicons;
@@ -35,7 +36,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * A Ionicon Folder Icon.
+ * An Ionicon Folder Icon.
  *
  * @author strangelookingnerd
  */
@@ -113,6 +114,7 @@ public class IoniconFolderIcon extends FolderIcon {
         }
 
         @Override
+        @NonNull
         public String getDisplayName() {
             return Messages.IoniconFolderIcon_description();
         }

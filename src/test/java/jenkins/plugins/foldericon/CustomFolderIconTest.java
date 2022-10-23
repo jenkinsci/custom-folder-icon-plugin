@@ -27,11 +27,12 @@ package jenkins.plugins.foldericon;
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import hudson.FilePath;
+import hudson.model.Item;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.CustomFolderIcon.DescriptorImpl;
 import jenkins.plugins.foldericon.utils.MockMultiPartRequest;
 import jenkins.plugins.foldericon.utils.TestUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.fileupload.FileItem;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.junit.jupiter.api.Test;
@@ -43,10 +44,12 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
+import java.io.*;
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,6 +63,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class CustomFolderIconTest {
 
     private static final String DUMMY_PNG = "dummy.png";
+
+    private static final String FILE_NAME_PATTERN = "" +
+            "^[0-9a-fA-F]{8}" +
+            "\\b-[0-9a-fA-F]{4}" +
+            "\\b-[0-9a-fA-F]{4}" +
+            "\\b-[0-9a-fA-F]{4}" +
+            "\\b-[0-9a-fA-F]{12}" +
+            "\\.png$";
 
     /**
      * Test behavior on a regular {@link Folder}.
@@ -157,7 +168,7 @@ class CustomFolderIconTest {
     }
 
     /**
-     * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest)}.
+     * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest, Item)}.
      *
      * @throws Exception
      */
@@ -178,14 +189,14 @@ class CustomFolderIconTest {
         }
 
         MockMultiPartRequest mockRequest = new MockMultiPartRequest(buffer);
-
         DescriptorImpl descriptor = new DescriptorImpl();
+        HttpResponse response = descriptor.doUploadIcon(mockRequest, null);
 
-        HttpResponse response = descriptor.doUploadIcon(mockRequest);
-        Field field = response.getClass().getDeclaredField("val$text");
-        field.setAccessible(true);
-        String filename = (String) field.get(response);
-        assertTrue(StringUtils.endsWith(filename, ".png"));
+        TestUtils.validateResponse(response, 0, FILE_NAME_PATTERN, null);
+
+        Field code = response.getClass().getDeclaredField("val$text");
+        code.setAccessible(true);
+        String filename = (String) code.get(response);
 
         FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
         FilePath file = parent.child(filename);
@@ -193,34 +204,58 @@ class CustomFolderIconTest {
     }
 
     /**
-     * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest)} when there is no file in the request.
+     * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest, Item)} with an item.
      *
      * @throws Exception
      */
     @Test
-    void testDoUploadIconNoFile(JenkinsRule r) throws Exception {
+    void testDoUploadWithItem(JenkinsRule r) throws Exception {
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        File upload = new File("./src/main/webapp/icons/default.png");
+
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setBoundary("myboundary");
+        builder.addBinaryBody(upload.getName(), upload, ContentType.DEFAULT_BINARY, upload.getName());
 
         byte[] buffer;
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             builder.build().writeTo(outputStream);
             outputStream.flush();
+
             buffer = outputStream.toByteArray();
         }
 
         MockMultiPartRequest mockRequest = new MockMultiPartRequest(buffer);
-
         DescriptorImpl descriptor = new DescriptorImpl();
+        HttpResponse response = descriptor.doUploadIcon(mockRequest, project);
 
-        HttpResponse response = descriptor.doUploadIcon(mockRequest);
-        Field field = response.getClass().getDeclaredField("val$code");
-        field.setAccessible(true);
-        assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, field.get(response));
+        TestUtils.validateResponse(response, 0, FILE_NAME_PATTERN, null);
+
+        Field code = response.getClass().getDeclaredField("val$text");
+        code.setAccessible(true);
+        String filename = (String) code.get(response);
+
+        FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
+        FilePath file = parent.child(filename);
+        assertTrue(file.exists());
     }
 
     /**
-     * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest)} with a broken request.
+     * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest, Item)} when there is no file in the request.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testDoUploadIconNoFile(JenkinsRule r) throws Exception {
+        MockMultiPartRequest mockRequest = new MockMultiPartRequest(null);
+        DescriptorImpl descriptor = new DescriptorImpl();
+        HttpResponse response = descriptor.doUploadIcon(mockRequest, null);
+
+        TestUtils.validateResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, null, Messages.Upload_invalidFile());
+    }
+
+    /**
+     * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest, Item)} with a broken request.
      *
      * @throws Exception
      */
@@ -230,13 +265,78 @@ class CustomFolderIconTest {
 
         try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
             StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
+            HttpResponse response = descriptor.doUploadIcon(mockReq, null);
 
-            HttpResponse response = descriptor.doUploadIcon(mockReq);
-            Field field = response.getClass().getDeclaredField("val$code");
-            field.setAccessible(true);
-            assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, field.get(response));
+            TestUtils.validateResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, null, Messages.Upload_invalidFile());
         }
     }
+
+    /**
+     * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest, Item)} with a large file.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testDoUploadLargeFile(JenkinsRule r) throws Exception {
+        File upload = File.createTempFile("large", ".png");
+        upload.deleteOnExit();
+        try (RandomAccessFile raf = new RandomAccessFile(upload, "rw")) {
+            raf.setLength(1024L * 1024L * 2L);
+        }
+
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.setBoundary("myboundary");
+        builder.addBinaryBody(upload.getName(), upload, ContentType.DEFAULT_BINARY, upload.getName());
+
+        byte[] buffer;
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            builder.build().writeTo(outputStream);
+            outputStream.flush();
+
+            buffer = outputStream.toByteArray();
+        }
+
+        MockMultiPartRequest mockRequest = new MockMultiPartRequest(buffer);
+        DescriptorImpl descriptor = new DescriptorImpl();
+        HttpResponse response = descriptor.doUploadIcon(mockRequest, null);
+
+        TestUtils.validateResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, null, Messages.Upload_exceedsFileSize(mockRequest.getContentLength(), 1024L * 1024L));
+    }
+
+    /**
+     * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest, Item)} when there are exceptions thrown.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testDoUploadIconThrowingExceptions(JenkinsRule r) throws Exception {
+        List<String> exceptions = Arrays.asList("IOException", "InterruptedException", "ServletException");
+        String exceptionMessage = "Oh no :(";
+
+        for (String exception : exceptions) {
+            MockMultiPartRequest mockRequest = new MockMultiPartRequest(null) {
+                @Override
+                public FileItem getFileItem(String name) throws ServletException, IOException {
+                    switch (exception) {
+                        case "IOException":
+                            throw new IOException(exceptionMessage);
+                        case "InterruptedException":
+                            throw new InterruptedIOException(exceptionMessage);
+                        case "ServletException":
+                            throw new ServletException(exceptionMessage);
+                        default:
+                            return null;
+                    }
+                }
+            };
+
+            DescriptorImpl descriptor = new DescriptorImpl();
+            HttpResponse response = descriptor.doUploadIcon(mockRequest, null);
+
+            TestUtils.validateResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, null, exceptionMessage);
+        }
+    }
+
 
     /**
      * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)}.
@@ -257,9 +357,8 @@ class CustomFolderIconTest {
             assertTrue(file.exists());
 
             HttpResponse response = descriptor.doCleanup(mockReq);
-            Field field = response.getClass().getDeclaredField("val$code");
-            field.setAccessible(true);
-            assertEquals(HttpServletResponse.SC_OK, field.get(response));
+
+            TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
             assertFalse(file.exists());
         }
     }
@@ -291,10 +390,8 @@ class CustomFolderIconTest {
             StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
 
             HttpResponse response = descriptor.doCleanup(mockReq);
-            Field field = response.getClass().getDeclaredField("val$code");
-            field.setAccessible(true);
-            assertEquals(HttpServletResponse.SC_OK, field.get(response));
 
+            TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
             assertTrue(dummy.exists());
         }
     }
@@ -330,10 +427,8 @@ class CustomFolderIconTest {
             StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
 
             HttpResponse response = descriptor.doCleanup(mockReq);
-            Field field = response.getClass().getDeclaredField("val$code");
-            field.setAccessible(true);
-            assertEquals(HttpServletResponse.SC_OK, field.get(response));
 
+            TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
             assertTrue(dummy.exists());
             assertFalse(unused.exists());
         }
@@ -355,9 +450,8 @@ class CustomFolderIconTest {
             assertTrue(parent.delete());
 
             HttpResponse response = descriptor.doCleanup(mockReq);
-            Field field = response.getClass().getDeclaredField("val$code");
-            field.setAccessible(true);
-            assertEquals(HttpServletResponse.SC_OK, field.get(response));
+
+            TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
             assertFalse(parent.exists());
         }
     }
@@ -394,16 +488,12 @@ class CustomFolderIconTest {
             assertTrue(file.exists());
 
             HttpResponse response = descriptor.doCleanup(mockReq);
-            Field field = response.getClass().getDeclaredField("val$code");
-            field.setAccessible(true);
-            assertEquals(HttpServletResponse.SC_OK, field.get(response));
+            TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
 
             blocker.interrupt();
-
             response = descriptor.doCleanup(mockReq);
-            field = response.getClass().getDeclaredField("val$code");
-            field.setAccessible(true);
-            assertEquals(HttpServletResponse.SC_OK, field.get(response));
+
+            TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
             assertFalse(file.exists());
         }
     }

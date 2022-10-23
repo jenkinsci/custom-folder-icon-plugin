@@ -30,15 +30,14 @@ import com.cloudbees.hudson.plugins.folder.FolderIconDescriptor;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.FilePath;
+import hudson.model.Item;
 import jenkins.model.Jenkins;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.*;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
@@ -135,30 +134,35 @@ public class CustomFolderIcon extends FolderIcon {
         /**
          * Uploads an icon.
          *
-         * @param req the request containing the file
+         * @param req  the request containing the file
+         * @param item the item to configure
          * @return the filename or an error message
          */
         @RequirePOST
-        public HttpResponse doUploadIcon(StaplerRequest req) {
-            try {
-                ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
-                upload.setFileSizeMax(FILE_SIZE_MAX);
+        public HttpResponse doUploadIcon(StaplerRequest req, @AncestorInPath Item item) {
+            if (item != null) {
+                item.checkPermission(Item.CONFIGURE);
+            } else {
+                Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+            }
 
-                // Parse the request
-                List<FileItem> files = upload.parseRequest(req);
-                if (files == null || files.isEmpty() || files.get(0) == null) {
+            try {
+                FileItem file = req.getFileItem("file");
+                if (file == null || file.getSize() == 0) {
                     return HttpResponses.errorWithoutStack(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Messages.Upload_invalidFile());
+                } else if (file.getSize() > FILE_SIZE_MAX) {
+                    return HttpResponses.errorWithoutStack(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Messages.Upload_exceedsFileSize(file.getSize(), FILE_SIZE_MAX));
                 }
 
                 String filename = UUID.randomUUID() + ".png";
                 FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
                 iconDir.mkdirs();
                 FilePath icon = iconDir.child(filename);
-                icon.copyFrom(files.get(0).getInputStream());
+                icon.copyFrom(file.getInputStream());
                 icon.chmod(CHMOD);
 
                 return HttpResponses.text(filename);
-            } catch (IOException | FileUploadException | InterruptedException ex) {
+            } catch (IOException | InterruptedException | ServletException ex) {
                 LOGGER.log(Level.WARNING, "Error during Folder Icon upload!", ex);
                 return HttpResponses.errorWithoutStack(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
             }

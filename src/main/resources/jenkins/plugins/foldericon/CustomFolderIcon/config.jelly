@@ -74,10 +74,10 @@ SOFTWARE.
                 if (this.readyState == 4) {
                     if (this.status == 200) {
                         document.getElementById("file-name").setAttribute("value", this.responseText);
-                        alert("${%UploadSuccess}" + this.responseText);
+                        alert("${%UploadSuccess} " + this.responseText);
                     } else {
                         var error = this.responseText.substring(this.responseText.lastIndexOf("<title>")+7, this.responseText.lastIndexOf("</title>"));
-                        alert("${%UploadFailed}" + error);
+                        alert("${%UploadFailed} " + error);
                     }
                 }
             };

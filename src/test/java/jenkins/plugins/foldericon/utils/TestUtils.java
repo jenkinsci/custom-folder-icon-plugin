@@ -26,11 +26,16 @@ package jenkins.plugins.foldericon.utils;
 
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import org.apache.commons.lang3.StringUtils;
+import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.lang.reflect.Field;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -49,7 +54,7 @@ public final class TestUtils {
     /**
      * Common mocking of a {@link StaplerRequest}.
      *
-     * @param stapler
+     * @param stapler the static mock to use
      * @return the mocked request
      */
     public static StaplerRequest mockStaplerRequest(MockedStatic<Stapler> stapler) {
@@ -77,6 +82,35 @@ public final class TestUtils {
             assertTrue(StringUtils.endsWith(iconClass, expectedIconClass));
         } else {
             assertNull(iconClass);
+        }
+    }
+
+    /**
+     * Common validation of responses.
+     *
+     * @param response the response to validate
+     * @param expectedCode the expected CODE or 0 if none
+     * @param expectedTextPattern the expected TEXT pattern
+     * @param expectedErrorMessage the expected ERROR_MESSAGE
+     * @throws Exception in case anything goes wrong
+     */
+    public static void validateResponse(HttpResponse response, int expectedCode, String expectedTextPattern, String expectedErrorMessage) throws Exception {
+        if (expectedCode != 0) {
+            Field code = response.getClass().getDeclaredField("val$code");
+            code.setAccessible(true);
+            assertEquals(expectedCode, code.get(response));
+        }
+
+        if (StringUtils.isNotEmpty(expectedTextPattern)) {
+            Field text = response.getClass().getDeclaredField("val$text");
+            text.setAccessible(true);
+            assertThat((String) text.get(response), matchesPattern(expectedTextPattern));
+        }
+
+        if (StringUtils.isNotEmpty(expectedErrorMessage)) {
+            Field message = response.getClass().getDeclaredField("val$errorMessage");
+            message.setAccessible(true);
+            assertEquals(expectedErrorMessage, message.get(response));
         }
     }
 

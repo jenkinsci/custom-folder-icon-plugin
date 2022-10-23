@@ -26,16 +26,15 @@ package jenkins.plugins.foldericon.utils;
 
 import net.sf.json.JSONObject;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemHeaders;
+import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.*;
 import org.kohsuke.stapler.bind.BoundObjectTable;
 import org.kohsuke.stapler.lang.Klass;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.security.Principal;
 import java.util.*;
@@ -48,55 +47,65 @@ import java.util.*;
 public class MockMultiPartRequest implements StaplerRequest {
 
     private final byte[] buffer;
-    private final ByteArrayInputStream stream;
+    private ByteArrayInputStream stream = null;
 
     /**
      * @param buffer buffer
      */
     public MockMultiPartRequest(byte[] buffer) {
         this.buffer = buffer;
-        this.stream = new ByteArrayInputStream(buffer);
+        if (buffer != null) {
+            this.stream = new ByteArrayInputStream(buffer);
+        }
     }
 
     @Override
     public int getContentLength() {
-        return buffer.length;
+        if (buffer != null) {
+            return buffer.length;
+        } else {
+            return 0;
+        }
     }
 
     @Override
     public ServletInputStream getInputStream() throws IOException {
-        return new ServletInputStream() {
-            @Override
-            public int read() throws IOException {
-                return stream.read();
-            }
+        if (buffer != null) {
+            return new ServletInputStream() {
+                @Override
+                public int read() throws IOException {
+                    return stream.read();
+                }
 
-            @Override
-            public int read(byte[] b) throws IOException {
-                return stream.read(b);
-            }
+                @Override
+                public int read(byte[] b) throws IOException {
+                    return stream.read(b);
+                }
 
-            @Override
-            public int read(byte[] b, int off, int len) throws IOException {
-                return stream.read(b, off, len);
-            }
+                @Override
+                public int read(byte[] b, int off, int len) throws IOException {
+                    return stream.read(b, off, len);
+                }
 
-            @Override
-            public boolean isFinished() {
-                return stream.available() != 0;
-            }
+                @Override
+                public boolean isFinished() {
+                    return stream.available() != 0;
+                }
 
-            @Override
-            public boolean isReady() {
-                return true;
-            }
+                @Override
+                public boolean isReady() {
+                    return true;
+                }
 
-            @Override
-            public void setReadListener(ReadListener readListener) {
-                // NOP
-            }
+                @Override
+                public void setReadListener(ReadListener readListener) {
+                    // NOP
+                }
 
-        };
+            };
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -611,7 +620,96 @@ public class MockMultiPartRequest implements StaplerRequest {
 
     @Override
     public FileItem getFileItem(String name) throws ServletException, IOException {
-        return null;
+        if (buffer != null && StringUtils.equals(name, "file")) {
+            return new FileItem() {
+                @Override
+                public InputStream getInputStream() throws IOException {
+                    return MockMultiPartRequest.this.getInputStream();
+                }
+
+                @Override
+                public String getContentType() {
+                    return MockMultiPartRequest.this.getContentType();
+                }
+
+                @Override
+                public String getName() {
+                    return "file";
+                }
+
+                @Override
+                public boolean isInMemory() {
+                    return true;
+                }
+
+                @Override
+                public long getSize() {
+                    return MockMultiPartRequest.this.getContentLength();
+                }
+
+                @Override
+                public byte[] get() {
+                    return new byte[0];
+                }
+
+                @Override
+                public String getString(String encoding) throws UnsupportedEncodingException {
+                    return null;
+                }
+
+                @Override
+                public String getString() {
+                    return null;
+                }
+
+                @Override
+                public void write(File file) throws Exception {
+
+                }
+
+                @Override
+                public void delete() {
+
+                }
+
+                @Override
+                public String getFieldName() {
+                    return null;
+                }
+
+                @Override
+                public void setFieldName(String name) {
+
+                }
+
+                @Override
+                public boolean isFormField() {
+                    return true;
+                }
+
+                @Override
+                public void setFormField(boolean state) {
+
+                }
+
+                @Override
+                public OutputStream getOutputStream() throws IOException {
+                    return null;
+                }
+
+                @Override
+                public FileItemHeaders getHeaders() {
+                    return null;
+                }
+
+                @Override
+                public void setHeaders(FileItemHeaders headers) {
+
+                }
+            };
+        } else {
+            return null;
+        }
     }
 
     @Override
