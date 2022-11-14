@@ -26,12 +26,17 @@ package jenkins.plugins.foldericon.utils;
 
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.lang.reflect.Field;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -88,9 +93,9 @@ public final class TestUtils {
     /**
      * Common validation of responses.
      *
-     * @param response the response to validate
-     * @param expectedCode the expected CODE or 0 if none
-     * @param expectedTextPattern the expected TEXT pattern
+     * @param response             the response to validate
+     * @param expectedCode         the expected CODE or 0 if none
+     * @param expectedTextPattern  the expected TEXT pattern
      * @param expectedErrorMessage the expected ERROR_MESSAGE
      * @throws Exception in case anything goes wrong
      */
@@ -112,6 +117,27 @@ public final class TestUtils {
             message.setAccessible(true);
             assertEquals(expectedErrorMessage, message.get(response));
         }
+    }
+
+    /**
+     * Create a Multipart Entity byte buffer of a file.
+     *
+     * @param file the file to convert
+     * @return the byte buffer
+     * @throws Exception in case anything goes wrong
+     */
+    public static byte[] createMultipartEntityBuffer(File file) throws Exception {
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.setBoundary("myboundary");
+        builder.addBinaryBody(file.getName(), file, ContentType.DEFAULT_BINARY, file.getName());
+
+        byte[] buffer;
+        try (HttpEntity entity = builder.build(); ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            entity.writeTo(os);
+            os.flush();
+            buffer = os.toByteArray();
+        }
+        return buffer;
     }
 
 }

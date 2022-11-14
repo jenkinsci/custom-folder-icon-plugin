@@ -33,8 +33,6 @@ import jenkins.plugins.foldericon.CustomFolderIcon.DescriptorImpl;
 import jenkins.plugins.foldericon.utils.MockMultiPartRequest;
 import jenkins.plugins.foldericon.utils.TestUtils;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
@@ -46,7 +44,10 @@ import org.mockito.Mockito;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
@@ -176,18 +177,7 @@ class CustomFolderIconTest {
     void testDoUploadIcon(JenkinsRule r) throws Exception {
         File upload = new File("./src/main/webapp/icons/default.png");
 
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.setBoundary("myboundary");
-        builder.addBinaryBody(upload.getName(), upload, ContentType.DEFAULT_BINARY, upload.getName());
-
-        byte[] buffer;
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            builder.build().writeTo(outputStream);
-            outputStream.flush();
-
-            buffer = outputStream.toByteArray();
-        }
-
+        byte[] buffer = TestUtils.createMultipartEntityBuffer(upload);
         MockMultiPartRequest mockRequest = new MockMultiPartRequest(buffer);
         DescriptorImpl descriptor = new DescriptorImpl();
         HttpResponse response = descriptor.doUploadIcon(mockRequest, null);
@@ -213,18 +203,7 @@ class CustomFolderIconTest {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         File upload = new File("./src/main/webapp/icons/default.png");
 
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.setBoundary("myboundary");
-        builder.addBinaryBody(upload.getName(), upload, ContentType.DEFAULT_BINARY, upload.getName());
-
-        byte[] buffer;
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            builder.build().writeTo(outputStream);
-            outputStream.flush();
-
-            buffer = outputStream.toByteArray();
-        }
-
+        byte[] buffer = TestUtils.createMultipartEntityBuffer(upload);
         MockMultiPartRequest mockRequest = new MockMultiPartRequest(buffer);
         DescriptorImpl descriptor = new DescriptorImpl();
         HttpResponse response = descriptor.doUploadIcon(mockRequest, project);
@@ -284,18 +263,7 @@ class CustomFolderIconTest {
             raf.setLength(1024L * 1024L * 2L);
         }
 
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.setBoundary("myboundary");
-        builder.addBinaryBody(upload.getName(), upload, ContentType.DEFAULT_BINARY, upload.getName());
-
-        byte[] buffer;
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            builder.build().writeTo(outputStream);
-            outputStream.flush();
-
-            buffer = outputStream.toByteArray();
-        }
-
+        byte[] buffer = TestUtils.createMultipartEntityBuffer(upload);
         MockMultiPartRequest mockRequest = new MockMultiPartRequest(buffer);
         DescriptorImpl descriptor = new DescriptorImpl();
         HttpResponse response = descriptor.doUploadIcon(mockRequest, null);
@@ -313,18 +281,7 @@ class CustomFolderIconTest {
         File upload = File.createTempFile("empty", ".png");
         upload.deleteOnExit();
 
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.setBoundary("myboundary");
-        builder.addBinaryBody(upload.getName(), upload, ContentType.DEFAULT_BINARY, upload.getName());
-
-        byte[] buffer;
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            builder.build().writeTo(outputStream);
-            outputStream.flush();
-
-            buffer = outputStream.toByteArray();
-        }
-
+        byte[] buffer = TestUtils.createMultipartEntityBuffer(upload);
         MockMultiPartRequest mockRequest = new MockMultiPartRequest(buffer) {
             @Override
             public int getContentLength() {
