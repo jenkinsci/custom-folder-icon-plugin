@@ -27,10 +27,10 @@ targets:
     spec:
       file: Jenkinsfile
       matchpattern: '\d\..+\d'
-pullrequests:
+actions:
   jenkins:
     title: Bump Jenkins Version to {{ source "jenkins" }}
-    kind: github
+    kind: github/pullrequest
     scmid: github
     targets:
       - jenkins
