@@ -30,7 +30,7 @@ SOFTWARE.
     <f:advanced title="${%AvailableIcons}">
         <j:invokeStatic var="icons" method="getAvailableIcons" className="io.jenkins.plugins.ionicons.Ionicons" />
         <j:forEach var="icon" items="${icons}">
-            <a id="select-${icon.key}" style="color:unset; cursor: pointer;">
+            <a id="select-${icon.key}" style="color: unset; cursor: pointer;">
                 <l:icon id="icon-${icon.key}" src="${icon.value}" tooltip="${icon.key}" class="icon-md" />
             </a>
             <script>

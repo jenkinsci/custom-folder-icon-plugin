@@ -30,8 +30,7 @@ SOFTWARE.
         <div id="icon-preview">
             <div id="file-cropper"></div>
             <!-- @size is for other browsers, @style is for IE -->
-            <!-- TODO switch to f:file after baseline includes https://github.com/jenkinsci/jenkins/pull/7452 -->
-            <input type="file" class="jenkins-file-upload" style="width:80%" size="40" accept="image/*" id="file-input" />
+            <f:file style="width: 80%" size="40" jsonAware="false" accept="image/*" id="file-input" />
             <st:nbsp />
             <input type="button" value="${%Apply}" id="apply-button" />
         </div>
