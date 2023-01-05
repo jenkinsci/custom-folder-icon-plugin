@@ -24,13 +24,14 @@ SOFTWARE.
 
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:f="/lib/form">
+    <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/ionicon.css" type="text/css" />
     <f:entry name="ionicon" title="${%Choose}" field="ionicon">
         <f:select id="ionicon" />
     </f:entry>
     <f:advanced title="${%AvailableIcons}">
         <j:invokeStatic var="icons" method="getAvailableIcons" className="io.jenkins.plugins.ionicons.Ionicons" />
         <j:forEach var="icon" items="${icons}">
-            <a id="select-${icon.key}" style="color: unset; cursor: pointer;">
+            <a id="select-${icon.key}" class="icon-selection">
                 <l:icon id="icon-${icon.key}" src="${icon.value}" tooltip="${icon.key}" class="icon-md" />
             </a>
             <script>

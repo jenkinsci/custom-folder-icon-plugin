@@ -24,19 +24,20 @@ SOFTWARE.
 
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
+    <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/custom-icon.css" type="text/css" />
+    <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/croppie.css" type="text/css" />
+    <script src="${rootURL}/plugin/custom-folder-icon/scripts/croppie.js" type="text/javascript" />
+
     <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('upload')}">
-        <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/croppie/croppie.css" type="text/css" />
-        <script src="${rootURL}/plugin/custom-folder-icon/croppie/croppie.js" type="text/javascript"></script>
         <div id="icon-preview">
             <div id="file-cropper"></div>
-            <!-- @size is for other browsers, @style is for IE -->
-            <f:file style="width: 80%" size="40" jsonAware="false" accept="image/*" id="file-input" />
+            <f:file jsonAware="false" accept="image/*" id="file-input" />
             <st:nbsp />
             <input type="button" value="${%Apply}" id="apply-button" />
         </div>
     </f:entry>
     <f:entry field="foldericon">
-        <f:textbox id="file-name" value="${instance.foldericon}" style="display: none" />
+        <f:textbox id="file-name" value="${instance.foldericon}" clazz="file-name" />
     </f:entry>
     <script>
         // init preview url
@@ -76,7 +77,8 @@ SOFTWARE.
                         document.getElementById("file-name").setAttribute("value", this.responseText);
                         alert("${%UploadSuccess} " + this.responseText);
                     } else {
-                        var error = this.responseText.substring(this.responseText.lastIndexOf("<title>")+7, this.responseText.lastIndexOf("</title>"));
+                        var error = this.responseText.substring(this.responseText.lastIndexOf("<title>")+7,
+                        this.responseText.lastIndexOf("</title>"));
                         alert("${%UploadFailed} " + error);
                     }
                 }
