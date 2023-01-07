@@ -24,18 +24,10 @@ SOFTWARE.
 
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <script src="${rootURL}/plugin/custom-folder-icon/js/custom-icon-global.js" type="text/javascript" />
     <f:section title="${%CustomFolderIcons}">
         <f:entry title="${%CleanupIcons}" help="${descriptor.getHelpFile('global-cleanup')}">
-            <input type="button" value="${%Cleanup}" id="cleanup-button" />
+            <input type="button" value="${%Cleanup}" onclick="doCleanup('${%CleanupSuccess}', '${%CleanupFailed}')" />
         </f:entry>
-        <script>
-            document.getElementById("cleanup-button").addEventListener("click", function (e) {
-                new Ajax.Request("${rootURL}/descriptor/jenkins.plugins.foldericon.CustomFolderIcon/cleanup", {
-                    onSuccess: function (rsp) {
-                        alert("${%CleanupSuccess}");
-                    }
-                });
-            });
-        </script>
     </f:section>
 </j:jelly>

@@ -25,23 +25,16 @@ SOFTWARE.
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:f="/lib/form">
     <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/ionicon.css" type="text/css" />
+    <script src="${rootURL}/plugin/custom-folder-icon/js/ionicon-config.js" type="text/javascript" />
     <f:entry name="ionicon" title="${%Choose}" field="ionicon">
         <f:select id="ionicon" />
     </f:entry>
     <f:advanced title="${%AvailableIcons}">
         <j:invokeStatic var="icons" method="getAvailableIcons" className="io.jenkins.plugins.ionicons.Ionicons" />
         <j:forEach var="icon" items="${icons}">
-            <a id="select-${icon.key}" class="icon-selection">
+            <a id="select-${icon.key}" class="icon-selection" onclick="setIcon('${icon.key}')">
                 <l:icon id="icon-${icon.key}" src="${icon.value}" tooltip="${icon.key}" class="icon-md" />
             </a>
-            <script>
-                // set value dropdown for on click
-                var select = document.getElementById("ionicon");
-                document.getElementById("select-${icon.key}").addEventListener("click", function (e) {
-                    select.setValue("${icon.key}");
-                    select.dispatchEvent(new Event("change"));
-                });
-            </script>
         </j:forEach>
     </f:advanced>
 </j:jelly>
