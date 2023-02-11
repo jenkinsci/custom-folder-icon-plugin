@@ -1,4 +1,5 @@
 .icon-selection {
     color: unset;
     cursor: pointer;
+    text-decoration: none !important;
 }

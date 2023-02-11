@@ -1,0 +1,17 @@
+.preview {
+    font-size: 48px;
+    width: 85px;
+    height: 85px;
+    text-align: center;
+    cursor: default;
+}
+
+.emoji {
+    display: none;
+}
+
+.emoji-selection {
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none !important;
+}
