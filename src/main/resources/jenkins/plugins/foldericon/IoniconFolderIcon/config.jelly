@@ -37,4 +37,8 @@ SOFTWARE.
             </a>
         </j:forEach>
     </f:advanced>
+    <script>
+        // init the preview
+        window.addEventListener("DOMContentLoaded", setIcon('${instance.ionicon}'));
+    </script>
 </j:jelly>

@@ -24,9 +24,10 @@ Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-pl
 === Version 2.x
 This version requires Jenkins 2.357 and above in order to support the transition to https://www.jenkins.io/blog/2022/06/28/require-java-11/[Java 11].
 
-* Once https://github.com/jenkinsci/job-dsl-plugin/pull/1258[#1258] of the https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin] is merged the Custom Folder Icons Plugin can be used in Job DSL configurations.
+* Version 2.5 introduces a new type of icon. The `EmojiFolderIcon` provides https://unicode.org/emoji/charts/full-emoji-list.html[unicode emojis] as icon.
 * Version 2.3 introduces a new type of icon. The `IoniconFolderIcon` provides icons from https://github.com/jenkinsci/ionicons-api-plugin[ionicons-api-plugin].
 * Version 2.0 introduces a new type of icon. The `BuildStatusFolderIcon` displays the combined build status of the jobs within a folder.
+* Once https://github.com/jenkinsci/job-dsl-plugin/pull/1258[#1258] of the https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin] is merged the Custom Folder Icons Plugin can be used in Job DSL configurations.
 
 === Version 1.x
 Legacy version for Jenkins versions before 2.357.
@@ -87,6 +88,29 @@ Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
 folder('build-status') {
   icon {
       buildStatusFolderIcon()
+  }
+}
+----
+
+==== Emoji Folder Icon
+Use https://unicode.org/emoji/charts/full-emoji-list.html[unicode emojis] as icon.
+
+image:images/emoji-folder-icon.png[]
+
+Select the Emjoi Folder Icon option and select any of the available emojis.
+
+image:images/emoji-folder-icon-configuration.png[]
+
+===== Job DSL
+Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
+
+[source]
+----
+folder('emoji') {
+  icon {
+    emojiFolderIcon {
+      emoji('sloth')
+    }
   }
 }
 ----

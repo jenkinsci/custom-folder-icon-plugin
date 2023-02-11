@@ -93,7 +93,6 @@ public class EmojiFolderIcon extends FolderIcon {
         return (DescriptorImpl) Jenkins.get().getDescriptorOrDie(getClass());
     }
 
-
     /**
      * The Descriptor.
      *
@@ -114,6 +113,4 @@ public class EmojiFolderIcon extends FolderIcon {
         }
 
     }
-
-
 }

@@ -4,6 +4,8 @@
     height: 85px;
     text-align: center;
     cursor: default;
+    padding-bottom: 15px;
+    padding-left: 8px;
 }
 
 .emoji {

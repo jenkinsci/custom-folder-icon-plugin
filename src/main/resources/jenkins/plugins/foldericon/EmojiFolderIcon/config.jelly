@@ -42,4 +42,8 @@ SOFTWARE.
     <f:entry field="emoji">
         <f:textbox id="emoji" value="${instance.emoji}" clazz="emoji" />
     </f:entry>
+    <script>
+        // init the preview
+        window.addEventListener("DOMContentLoaded", setEmoji('${instance.emoji}'));
+    </script>
 </j:jelly>
