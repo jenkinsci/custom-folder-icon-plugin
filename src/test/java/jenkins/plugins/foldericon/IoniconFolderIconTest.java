@@ -37,7 +37,7 @@ import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Custom Folder Icon Tests
+ * Ionicon Folder Icon Tests
  *
  * @author strangelookingnerd
  */
