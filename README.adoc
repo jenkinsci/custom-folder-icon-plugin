@@ -118,11 +118,11 @@ folder('emoji') {
 ==== Ionicon Folder Icon
 Use https://ionic.io/ionicons[Ionicons] provided by https://github.com/jenkinsci/ionicons-api-plugin[ionicons-api-plugin] as icon.
 
-image:images/ionicon-folder-icon.png[]
+image:images/emoji-folder-icon.png[]
 
 Select the Ionicon Folder Icon option and select any of the available icons.
 
-image:images/ionicon-folder-icon-configuration.png[]
+image:images/ionicon-folder-icon.png[]
 
 ===== Job DSL
 Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
