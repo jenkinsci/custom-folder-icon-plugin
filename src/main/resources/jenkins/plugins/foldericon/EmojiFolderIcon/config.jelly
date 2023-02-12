@@ -28,7 +28,7 @@ SOFTWARE.
     <script src="${rootURL}/plugin/custom-folder-icon/js/emoji-config.js" type="text/javascript" />
     <j:invokeStatic var="emojis" method="getAvailableEmojis" className="jenkins.plugins.foldericon.Emojis" />
     <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('preview')}">
-        <f:readOnlyTextbox id="preview" value="${emojis.get(instance.emoji)}" clazz="preview" />
+        <f:readOnlyTextbox id="preview" value="${emojis.get(instance.emoji)}" clazz="emoji-preview" />
     </f:entry>
     <f:advanced title="${%AvailableEmojis}">
         <j:forEach var="emoji" items="${emojis}">
@@ -40,10 +40,10 @@ SOFTWARE.
         </j:forEach>
     </f:advanced>
     <f:entry field="emoji">
-        <f:textbox id="emoji" value="${instance.emoji}" clazz="emoji" />
+        <f:textbox id="emoji-name" value="${instance.emoji}" clazz="emoji-name" />
     </f:entry>
     <script>
         // init the preview
-        window.addEventListener("DOMContentLoaded", setEmoji('${instance.emoji}'));
+        window.addEventListener("DOMContentLoaded", setEmoji('${instance.emoji}', '${emojis.get(instance.emoji)}'));
     </script>
 </j:jelly>

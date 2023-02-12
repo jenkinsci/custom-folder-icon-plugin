@@ -4,20 +4,19 @@
  * @param {string} icon - The value.
  */
 function setIcon(icon) {
-    let dropdown = document.getElementById("ionicon");
+    let dropdown = document.getElementById("ionicon-name");
 
     if(icon == null || icon == "") {
         icon = "jenkins";
-
         dropdown.setAttribute("value", icon);
         dropdown.setAttribute("selected", icon);
-        dropdown.dispatchEvent(new Event("change"));
     } else {
-        for (let i = 0; i < dropdown.options.length; i++) {
-            if (dropdown.options[i].value == icon) {
-                dropdown.options[i].selected = true;
+        for (let option of dropdown.options) {
+            if (option.value == icon) {
+                option.selected = true;
                 break;
             }
         }
     }
+    dropdown.dispatchEvent(new Event("change"));
 }

@@ -10,12 +10,12 @@ function setEmoji(key, emoji) {
         emoji = "🦥";
     }
 
-    let emoji_field = document.getElementById("emoji");
-    emoji_field.setAttribute("value", key);
-    emoji_field.dispatchEvent(new Event("change"));
+    let emojiName = document.getElementById("emoji-name");
+    emojiName.setAttribute("value", key);
+    emojiName.dispatchEvent(new Event("change"));
 
-    let preview = document.getElementById("preview")
-    preview.setValue(emoji);
+    let preview = document.getElementById("preview");
+    preview.setAttribute("value", emoji);
+    preview.setAttribute("title", key);
     preview.setAttribute("tooltip", key);
-    preview.dispatchEvent(new Event("change"));
 }

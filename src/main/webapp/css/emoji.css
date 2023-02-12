@@ -1,14 +1,14 @@
-.preview {
+.emoji-preview {
     font-size: 48px;
-    width: 85px;
-    height: 85px;
+    width: 86px;
+    height: 86px;
     text-align: center;
     cursor: default;
     padding-bottom: 15px;
     padding-left: 8px;
 }
 
-.emoji {
+.emoji-name {
     display: none;
 }
 
