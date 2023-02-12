@@ -111,7 +111,7 @@ Use https://unicode.org/emoji/charts/full-emoji-list.html[unicode emojis] as ico
 
 image:images/emoji-folder-icon.png[]
 
-Select the Emjoi Folder Icon option and select any of the available emojis.
+Select the Emoji Folder Icon option and select any of the available emojis.
 
 image:images/emoji-folder-icon-configuration.png[]
 
