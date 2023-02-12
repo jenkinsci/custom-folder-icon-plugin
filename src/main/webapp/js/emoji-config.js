@@ -1,11 +1,11 @@
 /**
- * Set the emoji src in the preview.
+ * Set the emoji value in the preview.
  *
  * @param {string} key - The emoji key.
  * @param {string} emoji - The unicode emoji.
  */
 function setEmoji(key, emoji) {
-    if(key == null || key == "") {
+    if (key == null || key == "") {
         key = "sloth";
         emoji = "🦥";
     }

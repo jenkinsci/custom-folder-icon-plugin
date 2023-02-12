@@ -6,7 +6,7 @@
 function setIcon(icon) {
     let dropdown = document.getElementById("ionicon-name");
 
-    if(icon == null || icon == "") {
+    if (icon == null || icon == "") {
         icon = "jenkins";
         dropdown.setAttribute("value", icon);
         dropdown.setAttribute("selected", icon);

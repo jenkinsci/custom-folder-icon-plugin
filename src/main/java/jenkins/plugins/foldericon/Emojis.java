@@ -55,7 +55,7 @@ public final class Emojis {
     private Emojis() {
         try {
             URL url = getClass().getClassLoader().getResource(EMOJIS_LIST_RESOURCE_PATH);
-            if(url != null) {
+            if (url != null) {
                 String entries = FileUtils.readFileToString(new File(url.toURI()), StandardCharsets.UTF_8);
                 availableEmojis = Splitter.onPattern("\r?\n")
                         .withKeyValueSeparator(':')
