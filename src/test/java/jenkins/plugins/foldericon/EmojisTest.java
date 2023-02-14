@@ -24,7 +24,11 @@
 
 package jenkins.plugins.foldericon;
 
+import jenkins.plugins.foldericon.utils.TestUtils;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -41,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author strangelookingnerd
  */
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class EmojisTest {
 
     /**
@@ -49,6 +54,7 @@ class EmojisTest {
      * @throws Exception
      */
     @Test
+    @Order(0)
     void testSVG() throws Exception {
         File emojiList = new File("./src/main/resources/jenkins/plugins/foldericon/EmojiFolderIcon/emojis.list");
         File svgFolder = new File("./src/main/resources/images/symbols");
@@ -77,6 +83,49 @@ class EmojisTest {
 
             String svg = Files.readString(new File(svgFolder, files.get(0)).toPath(), StandardCharsets.UTF_8);
             assertTrue(svg.contains(emoji));
+        }
+    }
+
+    /**
+     * Test missing 'emojis.list'.
+     *
+     * @throws Exception
+     */
+    @Test
+    @Order(1)
+    void testMissingResource() throws Exception {
+        File emojiList = new File("./target/classes/jenkins/plugins/foldericon/EmojiFolderIcon/emojis.list");
+        File backup = new File("./target/classes/jenkins/plugins/foldericon/EmojiFolderIcon/emojis.list.backup");
+
+        try {
+            assertTrue(emojiList.renameTo(backup));
+
+            TestUtils.validateEmojisInstance();
+        } finally {
+            assertTrue(backup.renameTo(emojiList));
+        }
+    }
+
+    /**
+     * Test invalid 'emojis.list'.
+     *
+     * @throws Exception
+     */
+    @Test
+    @Order(2)
+    void testInvalidResource() throws Exception {
+        File emojiList = new File("./target/classes/jenkins/plugins/foldericon/EmojiFolderIcon/emojis.list");
+        File backup = new File("./target/classes/jenkins/plugins/foldericon/EmojiFolderIcon/emojis.list.backup");
+
+        try {
+            assertTrue(emojiList.renameTo(backup));
+            assertTrue(emojiList.createNewFile());
+            Files.writeString(emojiList.toPath(), "invalid", StandardCharsets.UTF_8);
+
+            TestUtils.validateEmojisInstance();
+        } finally {
+            assertTrue(emojiList.delete());
+            assertTrue(backup.renameTo(emojiList));
         }
     }
 
