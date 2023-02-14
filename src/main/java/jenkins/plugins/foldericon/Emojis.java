@@ -70,7 +70,6 @@ public final class Emojis {
         }
     }
 
-
     /**
      * Takes an emoji name and generates an icon class name from it.
      *
@@ -80,7 +79,6 @@ public final class Emojis {
     public static String getIconClassName(String emoji) {
         return String.format(ICON_CLASS_NAME_PATTERN, emoji);
     }
-
 
     /**
      * Get all available icons provided by the custom-folder-icon-plugin.
