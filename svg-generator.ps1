@@ -24,9 +24,9 @@ $SymbolsPath = $PSScriptRoot + "\src\main\resources\images\symbols\"
 $EmojiList = $PSScriptRoot + "\src\main\resources\jenkins\plugins\foldericon\EmojiFolderIcon\emojis.list"
 $SVG = ".svg"
 $EmojiPrefix = "emoji_"
-$Placeholer = "PLACEHOLDER"
+$Placeholder = "PLACEHOLDER"
 $SVGTemplate = "<svg xmlns=`"http://www.w3.org/2000/svg`" class=`"emoji`" viewBox=`"0 -50 100 100`" preserveAspectRatio=`"xMidYMid meet`">"`
-               + "<text transform=`"scale(2, 2)`" font-size=`"40`" dy=`".25em`" dx=`"-.05em`">" + $Placeholer + "</text></svg>"
+               + "<text transform=`"scale(2, 2)`" font-size=`"40`" dy=`".25em`" dx=`"-.05em`">" + $Placeholder + "</text></svg>"
 
 
 "Creating SVGs from " + $EmojiList | Out-Host
@@ -40,7 +40,7 @@ $performance = Measure-Command {
         $name = $splitLine[0]
         $emoji = $splitLine[1]
 
-        $content = $SVGTemplate.Replace($Placeholer, $emoji)
+        $content = $SVGTemplate.Replace($Placeholder, $emoji)
         $filename = $SymbolsPath + $EmojiPrefix + $name + $SVG
 
         "Writing " + $filename | Out-Host
