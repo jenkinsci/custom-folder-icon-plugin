@@ -24,11 +24,9 @@
 
 package jenkins.plugins.foldericon;
 
-import com.google.common.base.Splitter;
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.net.URL;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -50,22 +48,25 @@ public final class Emojis {
     private static final Emojis INSTANCE = new Emojis();
 
     private final Map<String, String> availableIcons = new LinkedHashMap<>();
-    private Map<String, String> availableEmojis;
+    private final Map<String, String> availableEmojis = new LinkedHashMap<>();
 
     private Emojis() {
-        try {
-            URL url = getClass().getClassLoader().getResource(EMOJIS_LIST_RESOURCE_PATH);
-            if (url != null) {
-                String entries = FileUtils.readFileToString(new File(url.toURI()), StandardCharsets.UTF_8);
-                availableEmojis = Splitter.onPattern("\r?\n")
-                        .withKeyValueSeparator(':')
-                        .split(entries);
-                availableEmojis.keySet().forEach(entry -> availableIcons.put(entry, getIconClassName(entry)));
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream(EMOJIS_LIST_RESOURCE_PATH)) {
+            if (stream != null) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        String[] splitLine = line.split(":");
+                        String entry = splitLine[0];
+                        String emoji = splitLine[1];
+                        availableEmojis.put(entry, emoji);
+                        availableIcons.put(entry, getIconClassName(entry));
+                    }
+                }
             } else {
-                availableEmojis = Map.of();
+                LOGGER.warning("Unable to read available emojis: Resource unavailable.");
             }
         } catch (Exception ex) {
-            availableEmojis = Map.of();
             LOGGER.log(Level.WARNING, "Unable to read available emojis: Resource unavailable.", ex);
         }
     }
@@ -92,7 +93,7 @@ public final class Emojis {
     /**
      * Get all available emojis provided by the custom-folder-icon-plugin.
      *
-     * @return an immutable sorted map of available emojis with emoji name as key and the actual unicode emoji as value.
+     * @return a sorted map of available emojis with emoji name as key and the actual unicode emoji as value.
      */
     public static Map<String, String> getAvailableEmojis() {
         return INSTANCE.availableEmojis;

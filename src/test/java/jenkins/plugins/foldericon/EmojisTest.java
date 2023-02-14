@@ -24,11 +24,11 @@
 
 package jenkins.plugins.foldericon;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,7 +58,7 @@ class EmojisTest {
         assertEquals(folderContents.length, Emojis.getAvailableIcons().size());
         assertEquals(folderContents.length, Emojis.getAvailableEmojis().size());
 
-        List<String> entries = FileUtils.readLines(emojiList, StandardCharsets.UTF_8);
+        List<String> entries = Files.readAllLines(emojiList.toPath(), StandardCharsets.UTF_8);
         assertEquals(folderContents.length, entries.size());
 
         for (String entry : entries) {
@@ -75,7 +75,7 @@ class EmojisTest {
             String emoji = Emojis.getAvailableEmojis().get(content[0]);
             assertNotNull(emoji);
 
-            String svg = FileUtils.readFileToString(new File(svgFolder, files.get(0)), StandardCharsets.UTF_8);
+            String svg = Files.readString(new File(svgFolder, files.get(0)).toPath(), StandardCharsets.UTF_8);
             assertTrue(svg.contains(emoji));
         }
     }
