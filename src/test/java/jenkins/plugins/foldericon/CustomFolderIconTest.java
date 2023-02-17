@@ -498,14 +498,14 @@ class CustomFolderIconTest {
             };
 
             blocker.start();
-            assertTrue(file.exists());
 
             HttpResponse response = descriptor.doCleanup(mockReq);
             TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
+            assertTrue(file.exists());
 
             blocker.interrupt();
-            response = descriptor.doCleanup(mockReq);
 
+            response = descriptor.doCleanup(mockReq);
             TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
             assertFalse(file.exists());
         }
