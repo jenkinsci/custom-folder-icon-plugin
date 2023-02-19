@@ -19,7 +19,7 @@ function init() {
         boundary: {width: 200, height: 200},
         enforceBoundary: false,
         url: url
-    })
+    });
 }
 
 /**
