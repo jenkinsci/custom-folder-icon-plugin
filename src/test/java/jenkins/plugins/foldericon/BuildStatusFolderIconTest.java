@@ -45,8 +45,7 @@ import org.mockito.Mockito;
 
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Build Status Folder Icon Tests
@@ -217,6 +216,57 @@ class BuildStatusFolderIconTest {
             running.scheduleBuild2(0).getStartCondition().get();
 
             TestUtils.validateIcon(icon, BallColor.NOTBUILT_ANIME.getImage(), BallColor.NOTBUILT_ANIME.getIconClassName());
+        }
+    }
+
+    /**
+     * Test behavior of possible {@link Result}s on disabled builds.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testDisabledBuildStatusIcon(JenkinsRule r) throws Exception {
+        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+        FolderIcon icon = project.getIcon();
+
+        assertTrue(icon instanceof BuildStatusFolderIcon);
+
+        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
+            TestUtils.mockStaplerRequest(stapler);
+
+            // Disabled Build
+            FreeStyleProject disabled = project.createProject(FreeStyleProject.class, "Disabled");
+            disabled.setDisabled(true);
+
+            assertFalse(disabled.isBuildable());
+            assertTrue(disabled.isDisabled());
+            TestUtils.validateIcon(icon, BallColor.DISABLED.getImage(), BallColor.DISABLED.getIconClassName());
+        }
+    }
+
+    /**
+     * Test behavior of possible {@link Result}s on no builds.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testNoBuildStatusIcon(JenkinsRule r) throws Exception {
+        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+        FolderIcon icon = project.getIcon();
+
+        assertTrue(icon instanceof BuildStatusFolderIcon);
+
+        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
+            TestUtils.mockStaplerRequest(stapler);
+
+            // No Build
+            project.createProject(FreeStyleProject.class, "No Build");
+
+            TestUtils.validateIcon(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconClassName());
         }
     }
 }
