@@ -557,4 +557,48 @@ class CustomFolderIconTest {
         }
     }
 
+    /**
+     * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)} if a file can not be deleted due to an exception.
+     *
+     * @implNote Sometimes {@link CustomFolderIconTest#testDoCleanupFileNotDeletedWithMockedException(JenkinsRule)} does not work, to here is another approach.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testDoCleanupFileNotDeletedWithMockedException(JenkinsRule r) throws Exception {
+        DescriptorImpl descriptor = new DescriptorImpl();
+
+        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
+            StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
+
+            FilePath userContent = r.jenkins.getRootPath().child("userContent");
+            FilePath iconDir = userContent.child("customFolderIcons");
+            iconDir.mkdirs();
+            String filename = System.currentTimeMillis() + ".png";
+            FilePath file = userContent.child(filename);
+            file.touch(System.currentTimeMillis());
+
+            try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
+                String call = invocation.toString();
+                if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
+                    return userContent;
+                } else if (StringUtils.equals(call, "filePath.exists();")) {
+                    return true;
+                } else if (StringUtils.equals(call, "filePath.list();")) {
+                    return List.of(file);
+                } else if (invocation.toString().equals("filePath.child(\"" + filename + "\");")) {
+                    throw new IOException("Mocked Exception!");
+                }
+                throw new IllegalStateException("Unexpected invocation '" + invocation + "' - Test is broken :(");
+            })) {
+                HttpResponse response = descriptor.doCleanup(mockReq);
+                TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
+            }
+
+            assertTrue(file.exists());
+            assertTrue(file.delete());
+            assertFalse(file.exists());
+        }
+    }
+
 }
