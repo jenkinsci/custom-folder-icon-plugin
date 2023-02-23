@@ -44,7 +44,6 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author strangelookingnerd
  */
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class EmojisTest {
 

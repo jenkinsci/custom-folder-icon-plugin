@@ -93,11 +93,9 @@ class BuildStatusFolderIconTest {
 
     /**
      * Test behavior of {@link DescriptorImpl}.
-     *
-     * @throws Exception
      */
     @Test
-    void testDescriptor(JenkinsRule r) throws Exception {
+    void testDescriptor(JenkinsRule r) {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.BuildStatusFolderIcon_description(), descriptor.getDisplayName());
@@ -186,10 +184,12 @@ class BuildStatusFolderIconTest {
             TestUtils.validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
 
             // Running Build
-            success.getBuildersList().replaceBy(Collections.singleton(new DelayBuilder()));
+            DelayBuilder builder = new DelayBuilder();
+            success.getBuildersList().replaceBy(Collections.singleton(builder));
             success.scheduleBuild2(0).getStartCondition().get();
 
             TestUtils.validateIcon(icon, BallColor.BLUE_ANIME.getImage(), BallColor.BLUE_ANIME.getIconClassName());
+            builder.release();
         }
     }
 
@@ -212,10 +212,12 @@ class BuildStatusFolderIconTest {
 
             // Running Build
             FreeStyleProject running = project.createProject(FreeStyleProject.class, "Running");
-            running.getBuildersList().replaceBy(Collections.singleton(new DelayBuilder()));
+            DelayBuilder builder = new DelayBuilder();
+            running.getBuildersList().replaceBy(Collections.singleton(builder));
             running.scheduleBuild2(0).getStartCondition().get();
 
             TestUtils.validateIcon(icon, BallColor.NOTBUILT_ANIME.getImage(), BallColor.NOTBUILT_ANIME.getIconClassName());
+            builder.release();
         }
     }
 

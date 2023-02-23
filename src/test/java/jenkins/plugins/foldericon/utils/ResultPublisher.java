@@ -50,14 +50,14 @@ public class ResultPublisher extends Publisher {
     }
 
     @Override
-    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException {
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
         build.setResult(result);
         return true;
     }
 
     @Override
     public Descriptor<Publisher> getDescriptor() {
-        return new Descriptor<Publisher>(ResultPublisher.class) {
+        return new Descriptor<>(ResultPublisher.class) {
         };
     }
 }

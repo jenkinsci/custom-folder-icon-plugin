@@ -40,7 +40,6 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author strangelookingnerd
  */
-
 @WithJenkins
 class EmojiFolderIconTest {
 
@@ -104,11 +103,9 @@ class EmojiFolderIconTest {
 
     /**
      * Test behavior of {@link DescriptorImpl}.
-     *
-     * @throws Exception
      */
     @Test
-    void testDescriptor(JenkinsRule r) throws Exception {
+    void testDescriptor(JenkinsRule r) {
         EmojiFolderIcon customIcon = new EmojiFolderIcon(DUMMY_ICON);
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.EmojiFolderIcon_description(), descriptor.getDisplayName());

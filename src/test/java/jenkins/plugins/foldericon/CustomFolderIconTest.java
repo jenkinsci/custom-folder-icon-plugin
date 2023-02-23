@@ -61,7 +61,6 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author strangelookingnerd
  */
-
 @WithJenkins
 class CustomFolderIconTest {
 
@@ -159,11 +158,9 @@ class CustomFolderIconTest {
 
     /**
      * Test behavior of {@link DescriptorImpl}.
-     *
-     * @throws Exception
      */
     @Test
-    void testDescriptor(JenkinsRule r) throws Exception {
+    void testDescriptor(JenkinsRule r) {
         CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.CustomFolderIcon_description(), descriptor.getDisplayName());
@@ -561,7 +558,7 @@ class CustomFolderIconTest {
      * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)} if a file can not be deleted due to an exception.
      *
      * @throws Exception
-     * @implNote Sometimes {@link CustomFolderIconTest#testDoCleanupFileNotDeletedWithMockedException(JenkinsRule)} does not work.
+     * @implNote Sometimes {@link CustomFolderIconTest#testDoCleanupFileNotDeletedWithException(JenkinsRule)} does not work.
      */
     @Test
     void testDoCleanupFileNotDeletedWithMockedException(JenkinsRule r) throws Exception {

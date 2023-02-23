@@ -155,6 +155,7 @@ public final class TestUtils {
 
         Field availableIconsField = emojis.getClass().getDeclaredField("availableIcons");
         availableIconsField.setAccessible(true);
+        @SuppressWarnings("unchecked")
         Map<String, String> availableIcons = (Map<String, String>) availableIconsField.get(emojis);
 
         assertNotNull(availableIcons);
@@ -162,6 +163,7 @@ public final class TestUtils {
 
         Field availableEmojisField = emojis.getClass().getDeclaredField("availableEmojis");
         availableEmojisField.setAccessible(true);
+        @SuppressWarnings("unchecked")
         Map<String, String> availableEmojis = (Map<String, String>) availableEmojisField.get(emojis);
 
         assertNotNull(availableEmojis);
