@@ -75,7 +75,6 @@
         <dependency>
             <groupId>io.jenkins.plugins</groupId>
             <artifactId>apache-httpcomponents-client-5-api</artifactId>
-            <version>5.2.1-1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
