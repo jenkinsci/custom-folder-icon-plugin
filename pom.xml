@@ -51,7 +51,7 @@
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-weekly</artifactId>
-                <version>1883.vcb_768a_7c3610</version>
+                <version>1887.vda_d0ddb_c15c4</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -75,7 +75,6 @@
         <dependency>
             <groupId>io.jenkins.plugins</groupId>
             <artifactId>apache-httpcomponents-client-5-api</artifactId>
-            <version>5.2.1-1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
