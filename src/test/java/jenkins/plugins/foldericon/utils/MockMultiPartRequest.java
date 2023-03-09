@@ -69,11 +69,11 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
-    public ServletInputStream getInputStream() throws IOException {
+    public ServletInputStream getInputStream() {
         if (buffer != null) {
             return new ServletInputStream() {
                 @Override
-                public int read() throws IOException {
+                public int read() {
                     return stream.read();
                 }
 
@@ -83,7 +83,7 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public int read(byte[] b, int off, int len) throws IOException {
+                public int read(byte[] b, int off, int len) {
                     return stream.read(b, off, len);
                 }
 
@@ -119,7 +119,7 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
-    public void setCharacterEncoding(String s) throws UnsupportedEncodingException {
+    public void setCharacterEncoding(String s) {
         // NOP
     }
 
@@ -144,12 +144,12 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
-    public Enumeration getHeaders(String name) {
+    public Enumeration<String> getHeaders(String name) {
         return null;
     }
 
     @Override
-    public Enumeration getHeaderNames() {
+    public Enumeration<String> getHeaderNames() {
         return null;
     }
 
@@ -254,7 +254,7 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
-    public Enumeration getAttributeNames() {
+    public Enumeration<String> getAttributeNames() {
         return null;
     }
 
@@ -264,7 +264,7 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
-    public Enumeration getParameterNames() {
+    public Enumeration<String> getParameterNames() {
         return null;
     }
 
@@ -274,7 +274,7 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
-    public Map getParameterMap() {
+    public Map<String, String[]> getParameterMap() {
         return null;
     }
 
@@ -299,7 +299,7 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
-    public BufferedReader getReader() throws IOException {
+    public BufferedReader getReader() {
         return null;
     }
 
@@ -329,7 +329,7 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
-    public Enumeration getLocales() {
+    public Enumeration<Locale> getLocales() {
         return null;
     }
 
@@ -414,32 +414,32 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
-    public boolean authenticate(HttpServletResponse response) throws IOException, ServletException {
+    public boolean authenticate(HttpServletResponse response) {
         return false;
     }
 
     @Override
-    public void login(String username, String password) throws ServletException {
+    public void login(String username, String password) {
         // NOP
     }
 
     @Override
-    public void logout() throws ServletException {
+    public void logout() {
         // NOP
     }
 
     @Override
-    public Collection<Part> getParts() throws IOException, ServletException {
+    public Collection<Part> getParts() {
         return null;
     }
 
     @Override
-    public Part getPart(String name) throws IOException, ServletException {
+    public Part getPart(String name) {
         return null;
     }
 
     @Override
-    public <T extends HttpUpgradeHandler> T upgrade(Class<T> handlerClass) throws IOException, ServletException {
+    public <T extends HttpUpgradeHandler> T upgrade(Class<T> handlerClass) {
         return null;
     }
 
@@ -474,17 +474,17 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
-    public RequestDispatcher getView(Object it, String viewName) throws IOException {
+    public RequestDispatcher getView(Object it, String viewName) {
         return null;
     }
 
     @Override
-    public RequestDispatcher getView(Class clazz, String viewName) throws IOException {
+    public RequestDispatcher getView(Class clazz, String viewName) {
         return null;
     }
 
     @Override
-    public RequestDispatcher getView(Klass<?> clazz, String viewName) throws IOException {
+    public RequestDispatcher getView(Klass<?> clazz, String viewName) {
         return null;
     }
 
@@ -614,7 +614,7 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
-    public JSONObject getSubmittedForm() throws ServletException {
+    public JSONObject getSubmittedForm() {
         return null;
     }
 
@@ -623,7 +623,7 @@ public class MockMultiPartRequest implements StaplerRequest {
         if (buffer != null && StringUtils.equals(name, "file")) {
             return new FileItem() {
                 @Override
-                public InputStream getInputStream() throws IOException {
+                public InputStream getInputStream() {
                     return MockMultiPartRequest.this.getInputStream();
                 }
 
@@ -653,7 +653,7 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public String getString(String encoding) throws UnsupportedEncodingException {
+                public String getString(String encoding) {
                     return null;
                 }
 
@@ -663,7 +663,7 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public void write(File file) throws Exception {
+                public void write(File file) {
 
                 }
 
@@ -693,7 +693,7 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public OutputStream getOutputStream() throws IOException {
+                public OutputStream getOutputStream() {
                     return null;
                 }
 

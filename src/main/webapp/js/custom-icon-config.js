@@ -1,12 +1,16 @@
-// Initialization of preview image.
 let croppie
-document.addEventListener("DOMContentLoaded", function () {
+
+/**
+ * Initialization of preview image.
+ *
+ */
+function init() {
     let preview = document.getElementById("file-name").getAttribute("value");
     let url;
-    if (preview != null && preview != '') {
-        url = rootURL + "/userContent/customFolderIcons/" + preview;
-    } else {
+    if (preview == null || preview == "") {
         url = rootURL + "/plugin/custom-folder-icon/icons/default.png";
+    } else {
+        url = rootURL + "/userContent/customFolderIcons/" + preview;
     }
 
     // init croppie
@@ -15,8 +19,8 @@ document.addEventListener("DOMContentLoaded", function () {
         boundary: {width: 200, height: 200},
         enforceBoundary: false,
         url: url
-    })
-})
+    });
+}
 
 /**
  * Set the file for cropping.
@@ -45,7 +49,7 @@ function doUploadIcon(successMessage, errorMessage) {
     request.onreadystatechange = function () {
         if (this.readyState == 4) {
             if (this.status == 200) {
-                document.getElementById('file-name').setAttribute("value", this.responseText);
+                document.getElementById("file-name").setAttribute("value", this.responseText);
                 alert(successMessage + " " + this.responseText);
             } else {
                 let error = this.responseText.substring(this.responseText.lastIndexOf("<title>") + 7,

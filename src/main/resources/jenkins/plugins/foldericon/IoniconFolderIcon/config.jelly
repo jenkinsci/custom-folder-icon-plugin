@@ -26,8 +26,8 @@ SOFTWARE.
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:f="/lib/form">
     <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/ionicon.css" type="text/css" />
     <script src="${rootURL}/plugin/custom-folder-icon/js/ionicon-config.js" type="text/javascript" />
-    <f:entry name="ionicon" title="${%Choose}" field="ionicon">
-        <f:select id="ionicon" />
+    <f:entry title="${%Choose}" field="ionicon">
+        <f:select id="ionicon-name" />
     </f:entry>
     <f:advanced title="${%AvailableIcons}">
         <j:invokeStatic var="icons" method="getAvailableIcons" className="io.jenkins.plugins.ionicons.Ionicons" />
@@ -37,4 +37,8 @@ SOFTWARE.
             </a>
         </j:forEach>
     </f:advanced>
+    <script>
+        // init the preview
+        window.addEventListener("DOMContentLoaded", setIcon('${instance.ionicon}'));
+    </script>
 </j:jelly>

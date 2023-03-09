@@ -37,11 +37,10 @@ import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Custom Folder Icon Tests
+ * Ionicon Folder Icon Tests
  *
  * @author strangelookingnerd
  */
-
 @WithJenkins
 class IoniconFolderIconTest {
 
@@ -105,11 +104,9 @@ class IoniconFolderIconTest {
 
     /**
      * Test behavior of {@link DescriptorImpl}.
-     *
-     * @throws Exception
      */
     @Test
-    void testDescriptor(JenkinsRule r) throws Exception {
+    void testDescriptor(JenkinsRule r) {
         IoniconFolderIcon customIcon = new IoniconFolderIcon(DUMMY_ICON);
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.IoniconFolderIcon_description(), descriptor.getDisplayName());

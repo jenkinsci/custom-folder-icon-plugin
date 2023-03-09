@@ -1,0 +1,19 @@
+.emoji-preview {
+    font-size: 48px;
+    width: 86px;
+    height: 86px;
+    text-align: center;
+    cursor: default;
+    padding-bottom: 15px;
+    padding-left: 8px;
+}
+
+.emoji-name {
+    display: none;
+}
+
+.emoji-selection {
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none !important;
+}

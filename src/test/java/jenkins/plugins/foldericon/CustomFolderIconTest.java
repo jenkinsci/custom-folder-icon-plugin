@@ -33,12 +33,14 @@ import jenkins.plugins.foldericon.CustomFolderIcon.DescriptorImpl;
 import jenkins.plugins.foldericon.utils.MockMultiPartRequest;
 import jenkins.plugins.foldericon.utils.TestUtils;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
+import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -59,7 +61,6 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author strangelookingnerd
  */
-
 @WithJenkins
 class CustomFolderIconTest {
 
@@ -157,11 +158,9 @@ class CustomFolderIconTest {
 
     /**
      * Test behavior of {@link DescriptorImpl}.
-     *
-     * @throws Exception
      */
     @Test
-    void testDescriptor(JenkinsRule r) throws Exception {
+    void testDescriptor(JenkinsRule r) {
         CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.CustomFolderIcon_description(), descriptor.getDisplayName());
@@ -481,6 +480,50 @@ class CustomFolderIconTest {
         try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
             StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
 
+            FilePath userContent = r.jenkins.getRootPath().child("userContent");
+            FilePath iconDir = userContent.child("customFolderIcons");
+            iconDir.mkdirs();
+            String filename = System.currentTimeMillis() + ".png";
+            FilePath file = userContent.child(filename);
+            file.touch(System.currentTimeMillis());
+
+            try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
+                String call = invocation.toString();
+                if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
+                    return userContent;
+                } else if (StringUtils.equals(call, "filePath.exists();")) {
+                    return true;
+                } else if (StringUtils.equals(call, "filePath.list();")) {
+                    return List.of(file);
+                } else if (invocation.toString().equals("filePath.child(\"" + filename + "\");")) {
+                    FilePath mock = Mockito.mock(FilePath.class);
+                    Mockito.when(mock.delete()).thenReturn(false);
+                    return mock;
+                }
+                throw new IllegalStateException("Unexpected invocation '" + invocation + "' - Test is broken :(");
+            })) {
+                HttpResponse response = descriptor.doCleanup(mockReq);
+                TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
+            }
+
+            assertTrue(file.exists());
+            assertTrue(file.delete());
+            assertFalse(file.exists());
+        }
+    }
+
+    /**
+     * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)} if a file can not be deleted due to an exception.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testDoCleanupFileNotDeletedWithException(JenkinsRule r) throws Exception {
+        DescriptorImpl descriptor = new DescriptorImpl();
+
+        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
+            StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
+
             FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
             parent.mkdirs();
             FilePath file = parent.child(System.currentTimeMillis() + ".png");
@@ -507,6 +550,49 @@ class CustomFolderIconTest {
             response = descriptor.doCleanup(mockReq);
 
             TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
+            assertFalse(file.exists());
+        }
+    }
+
+    /**
+     * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)} if a file can not be deleted due to an exception.
+     *
+     * @throws Exception
+     * @implNote Sometimes {@link CustomFolderIconTest#testDoCleanupFileNotDeletedWithException(JenkinsRule)} does not work.
+     */
+    @Test
+    void testDoCleanupFileNotDeletedWithMockedException(JenkinsRule r) throws Exception {
+        DescriptorImpl descriptor = new DescriptorImpl();
+
+        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
+            StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
+
+            FilePath userContent = r.jenkins.getRootPath().child("userContent");
+            FilePath iconDir = userContent.child("customFolderIcons");
+            iconDir.mkdirs();
+            String filename = System.currentTimeMillis() + ".png";
+            FilePath file = userContent.child(filename);
+            file.touch(System.currentTimeMillis());
+
+            try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
+                String call = invocation.toString();
+                if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
+                    return userContent;
+                } else if (StringUtils.equals(call, "filePath.exists();")) {
+                    return true;
+                } else if (StringUtils.equals(call, "filePath.list();")) {
+                    return List.of(file);
+                } else if (invocation.toString().equals("filePath.child(\"" + filename + "\");")) {
+                    throw new IOException("Mocked Exception!");
+                }
+                throw new IllegalStateException("Unexpected invocation '" + invocation + "' - Test is broken :(");
+            })) {
+                HttpResponse response = descriptor.doCleanup(mockReq);
+                TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
+            }
+
+            assertTrue(file.exists());
+            assertTrue(file.delete());
             assertFalse(file.exists());
         }
     }

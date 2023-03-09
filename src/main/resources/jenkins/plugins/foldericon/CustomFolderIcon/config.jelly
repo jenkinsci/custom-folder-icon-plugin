@@ -39,4 +39,8 @@ SOFTWARE.
     <f:entry field="foldericon">
         <f:textbox id="file-name" value="${instance.foldericon}" clazz="file-name" />
     </f:entry>
+    <script>
+        // init the preview
+        window.addEventListener("DOMContentLoaded", init());
+    </script>
 </j:jelly>

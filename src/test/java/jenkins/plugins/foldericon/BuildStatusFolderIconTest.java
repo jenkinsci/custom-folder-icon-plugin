@@ -45,8 +45,7 @@ import org.mockito.Mockito;
 
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Build Status Folder Icon Tests
@@ -94,11 +93,9 @@ class BuildStatusFolderIconTest {
 
     /**
      * Test behavior of {@link DescriptorImpl}.
-     *
-     * @throws Exception
      */
     @Test
-    void testDescriptor(JenkinsRule r) throws Exception {
+    void testDescriptor(JenkinsRule r) {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.BuildStatusFolderIcon_description(), descriptor.getDisplayName());
@@ -187,10 +184,12 @@ class BuildStatusFolderIconTest {
             TestUtils.validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
 
             // Running Build
-            success.getBuildersList().replaceBy(Collections.singleton(new DelayBuilder()));
+            DelayBuilder builder = new DelayBuilder();
+            success.getBuildersList().replaceBy(Collections.singleton(builder));
             success.scheduleBuild2(0).getStartCondition().get();
 
             TestUtils.validateIcon(icon, BallColor.BLUE_ANIME.getImage(), BallColor.BLUE_ANIME.getIconClassName());
+            builder.release();
         }
     }
 
@@ -213,10 +212,63 @@ class BuildStatusFolderIconTest {
 
             // Running Build
             FreeStyleProject running = project.createProject(FreeStyleProject.class, "Running");
-            running.getBuildersList().replaceBy(Collections.singleton(new DelayBuilder()));
+            DelayBuilder builder = new DelayBuilder();
+            running.getBuildersList().replaceBy(Collections.singleton(builder));
             running.scheduleBuild2(0).getStartCondition().get();
 
             TestUtils.validateIcon(icon, BallColor.NOTBUILT_ANIME.getImage(), BallColor.NOTBUILT_ANIME.getIconClassName());
+            builder.release();
+        }
+    }
+
+    /**
+     * Test behavior of possible {@link Result}s on disabled builds.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testDisabledBuildStatusIcon(JenkinsRule r) throws Exception {
+        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+        FolderIcon icon = project.getIcon();
+
+        assertTrue(icon instanceof BuildStatusFolderIcon);
+
+        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
+            TestUtils.mockStaplerRequest(stapler);
+
+            // Disabled Build
+            FreeStyleProject disabled = project.createProject(FreeStyleProject.class, "Disabled");
+            disabled.setDisabled(true);
+
+            assertFalse(disabled.isBuildable());
+            assertTrue(disabled.isDisabled());
+            TestUtils.validateIcon(icon, BallColor.DISABLED.getImage(), BallColor.DISABLED.getIconClassName());
+        }
+    }
+
+    /**
+     * Test behavior of possible {@link Result}s on no builds.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testNoBuildStatusIcon(JenkinsRule r) throws Exception {
+        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+        FolderIcon icon = project.getIcon();
+
+        assertTrue(icon instanceof BuildStatusFolderIcon);
+
+        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
+            TestUtils.mockStaplerRequest(stapler);
+
+            // No Build
+            project.createProject(FreeStyleProject.class, "No Build");
+
+            TestUtils.validateIcon(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconClassName());
         }
     }
 }
