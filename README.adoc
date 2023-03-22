@@ -33,7 +33,7 @@ The `EmojiFolderIcon` provides https://unicode.org/emoji/charts/full-emoji-list.
 The `IoniconFolderIcon` provides icons from https://github.com/jenkinsci/ionicons-api-plugin[ionicons-api-plugin].
 * Version 2.0 introduces a new type of icon.
 The `BuildStatusFolderIcon` displays the combined build status of the jobs within a folder.
-* Once https://github.com/jenkinsci/job-dsl-plugin/pull/1258[#1258] of the https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin] is merged the Custom Folder Icons Plugin can be used in Job DSL configurations.
+* Since https://github.com/jenkinsci/job-dsl-plugin/releases/tag/job-dsl-1.83[1.83] of the https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin] the Custom Folder Icons Plugin can be used in Job DSL configurations.
 
 === Version 1.x
 
