@@ -73,6 +73,30 @@ public class CustomFolderIcon extends FolderIcon {
         this.foldericon = foldericon;
     }
 
+    /**
+     * Get all icons that are currently available.
+     *
+     * @return the all icons that have been uploaded, sorted by {@link FilePath#lastModified()}.
+     */
+    public static List<String> getAvailableIcons() {
+        try {
+            FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
+
+            if (iconDir.exists()) {
+                return iconDir.list().stream().sorted((file1, file2) -> { try {
+                    return Long.compare(file2.lastModified(), file1.lastModified());
+                } catch (Exception ex) {
+                    return 0;
+                }}).map(FilePath::getName).collect(Collectors.toList());
+            } else {
+                return List.of();
+            }
+        } catch (IOException | InterruptedException ex) {
+            LOGGER.log(Level.WARNING, ex, () -> "Unable to list available icons!");
+            return List.of();
+        }
+    }
+
     @Override
     protected void setOwner(AbstractFolder<?> folder) {
         this.owner = folder;
@@ -183,22 +207,20 @@ public class CustomFolderIcon extends FolderIcon {
 
             FilePath iconDir = jenkins.getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
 
-            if (iconDir.exists()) {
-                List<String> existingIcons = iconDir.list().stream().map(FilePath::getName).collect(Collectors.toList());
+            List<String> existingIcons = getAvailableIcons();
 
-                List<String> usedIcons = jenkins.getAllItems(AbstractFolder.class).stream()
-                        .filter(folder -> folder.getIcon() instanceof CustomFolderIcon)
-                        .map(folder -> ((CustomFolderIcon) folder.getIcon()).getFoldericon()).collect(Collectors.toList());
+            List<String> usedIcons = jenkins.getAllItems(AbstractFolder.class).stream()
+                    .filter(folder -> folder.getIcon() instanceof CustomFolderIcon)
+                    .map(folder -> ((CustomFolderIcon) folder.getIcon()).getFoldericon()).collect(Collectors.toList());
 
-                if (usedIcons.isEmpty() || existingIcons.removeAll(usedIcons)) {
-                    for (String icon : existingIcons) {
-                        try {
-                            if (!iconDir.child(icon).delete()) {
-                                LOGGER.warning(() -> "Unable to delete unused Folder Icon '" + icon + "'!");
-                            }
-                        } catch (IOException ex) {
-                            LOGGER.log(Level.WARNING, ex, () -> "Unable to delete unused Folder Icon '" + icon + "'!");
+            if (usedIcons.isEmpty() || existingIcons.removeAll(usedIcons)) {
+                for (String icon : existingIcons) {
+                    try {
+                        if (!iconDir.child(icon).delete()) {
+                            LOGGER.warning(() -> "Unable to delete unused Folder Icon '" + icon + "'!");
                         }
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.WARNING, ex, () -> "Unable to delete unused Folder Icon '" + icon + "'!");
                     }
                 }
             }

@@ -28,14 +28,23 @@ SOFTWARE.
     <script src="${rootURL}/plugin/custom-folder-icon/js/custom-icon-config.js" type="text/javascript" />
     <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/croppie.css" type="text/css" />
     <script src="${rootURL}/plugin/custom-folder-icon/scripts/croppie.js" type="text/javascript" />
+    <j:invokeStatic var="icons" method="getAvailableIcons" className="jenkins.plugins.foldericon.CustomFolderIcon" />
     <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('upload')}">
         <div>
             <div id="file-cropper"></div>
-            <f:file accept="image/*" onchange="setFile(this.files[0])" />
+            <f:file id="file-upload" accept="image/*" onchange="setFile(this.files[0])" />
             <st:nbsp />
             <input type="button" value="${%Apply}" onclick="doUploadIcon('${%UploadSuccess}', '${%UploadFailed}')" />
         </div>
     </f:entry>
+    <f:advanced title="${%AvailableIcons}">
+        <j:forEach var="icon" items="${icons}">
+            <a tooltip="${icon}">
+                <img class="custom-icon-selection" src="${rootURL}/userContent/customFolderIcons/${icon}" onclick="setIcon(this.src)" />
+            </a>
+            <st:nbsp />
+        </j:forEach>
+    </f:advanced>
     <f:entry field="foldericon">
         <f:textbox id="file-name" value="${instance.foldericon}" clazz="file-name" />
     </f:entry>

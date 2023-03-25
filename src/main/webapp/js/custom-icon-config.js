@@ -20,7 +20,26 @@ function init() {
         enforceBoundary: false,
         url: url
     });
+    croppie.bind({
+        zoom: 1
+    });
 }
+
+/**
+ * Set an icon for cropping.
+ *
+ * @param {string} icon The icon.
+ */
+function setIcon(icon) {
+    fetch(icon)
+        .then(response => response.blob())
+        .then(blob => {
+            setFile(blob)
+        })
+    // reset the name in the upload input element
+    document.getElementById("file-upload").value = "";
+}
+
 
 /**
  * Set the file for cropping.
@@ -32,7 +51,8 @@ function setFile(file) {
     let reader = new FileReader();
     reader.onload = function (ev) {
         croppie.bind({
-            url: ev.target.result
+            url: ev.target.result,
+            zoom: 1
         });
     }
     reader.readAsDataURL(file);
