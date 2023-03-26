@@ -199,7 +199,6 @@ public class CustomFolderIcon extends FolderIcon {
          *
          * @param req the request
          * @return OK
-         * @throws InterruptedException if there is a file handling error
          */
         @RequirePOST
         public HttpResponse doCleanup(StaplerRequest req) {
