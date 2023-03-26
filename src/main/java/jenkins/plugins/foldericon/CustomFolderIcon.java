@@ -202,7 +202,7 @@ public class CustomFolderIcon extends FolderIcon {
          * @throws InterruptedException if there is a file handling error
          */
         @RequirePOST
-        public HttpResponse doCleanup(StaplerRequest req) throws InterruptedException {
+        public HttpResponse doCleanup(StaplerRequest req) {
             Jenkins jenkins = Jenkins.get();
             jenkins.checkPermission(Jenkins.ADMINISTER);
 
@@ -220,7 +220,7 @@ public class CustomFolderIcon extends FolderIcon {
                         if (!iconDir.child(icon).delete()) {
                             LOGGER.warning(() -> "Unable to delete unused Folder Icon '" + icon + "'!");
                         }
-                    } catch (IOException ex) {
+                    } catch (IOException | InterruptedException ex) {
                         LOGGER.log(Level.WARNING, ex, () -> "Unable to delete unused Folder Icon '" + icon + "'!");
                     }
                 }
