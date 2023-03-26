@@ -31,11 +31,12 @@ function init() {
  * @param {string} icon The icon.
  */
 function setIcon(icon) {
+    // load icon image
     fetch(icon)
         .then(response => response.blob())
         .then(blob => {
-            setFile(blob)
-        })
+            setFile(blob);
+        });
     // reset the name in the upload input element
     document.getElementById("file-upload").value = "";
 }

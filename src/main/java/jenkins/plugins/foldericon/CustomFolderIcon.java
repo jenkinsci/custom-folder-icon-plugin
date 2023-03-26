@@ -76,18 +76,20 @@ public class CustomFolderIcon extends FolderIcon {
     /**
      * Get all icons that are currently available.
      *
-     * @return the all icons that have been uploaded, sorted by {@link FilePath#lastModified()}.
+     * @return all the icons that have been uploaded, sorted descending by {@link FilePath#lastModified()}.
      */
     public static List<String> getAvailableIcons() {
         try {
             FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
 
             if (iconDir.exists()) {
-                return iconDir.list().stream().sorted((file1, file2) -> { try {
-                    return Long.compare(file2.lastModified(), file1.lastModified());
-                } catch (Exception ex) {
-                    return 0;
-                }}).map(FilePath::getName).collect(Collectors.toList());
+                return iconDir.list().stream().sorted((file1, file2) -> {
+                    try {
+                        return Long.compare(file2.lastModified(), file1.lastModified());
+                    } catch (Exception ex) {
+                        return 0;
+                    }
+                }).map(FilePath::getName).collect(Collectors.toList());
             } else {
                 return List.of();
             }
@@ -198,10 +200,9 @@ public class CustomFolderIcon extends FolderIcon {
          * @param req the request
          * @return OK
          * @throws InterruptedException if there is a file handling error
-         * @throws IOException          if there is a file handling error
          */
         @RequirePOST
-        public HttpResponse doCleanup(StaplerRequest req) throws InterruptedException, IOException {
+        public HttpResponse doCleanup(StaplerRequest req) throws InterruptedException {
             Jenkins jenkins = Jenkins.get();
             jenkins.checkPermission(Jenkins.ADMINISTER);
 

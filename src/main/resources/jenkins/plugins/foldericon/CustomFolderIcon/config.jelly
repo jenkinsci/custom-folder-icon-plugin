@@ -37,14 +37,17 @@ SOFTWARE.
             <input type="button" value="${%Apply}" onclick="doUploadIcon('${%UploadSuccess}', '${%UploadFailed}')" />
         </div>
     </f:entry>
-    <f:advanced title="${%AvailableIcons}">
-        <j:forEach var="icon" items="${icons}">
-            <a tooltip="${icon}">
-                <img class="custom-icon-selection" src="${rootURL}/userContent/customFolderIcons/${icon}" onclick="setIcon(this.src)" />
-            </a>
-            <st:nbsp />
-        </j:forEach>
-    </f:advanced>
+    <j:if test="${not empty icons}">
+        <f:advanced title="${%AvailableIcons}">
+            <j:forEach var="icon" items="${icons}">
+                <a tooltip="${icon}">
+                    <img class="custom-icon-selection" src="${rootURL}/userContent/customFolderIcons/${icon}"
+                         onclick="setIcon(this.src)" />
+                </a>
+                <st:nbsp />
+            </j:forEach>
+        </f:advanced>
+    </j:if>
     <f:entry field="foldericon">
         <f:textbox id="file-name" value="${instance.foldericon}" clazz="file-name" />
     </f:entry>

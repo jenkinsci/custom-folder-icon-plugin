@@ -52,6 +52,7 @@ import java.io.InterruptedIOException;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -484,7 +485,7 @@ class CustomFolderIconTest {
             FilePath iconDir = userContent.child("customFolderIcons");
             iconDir.mkdirs();
             String filename = System.currentTimeMillis() + ".png";
-            FilePath file = userContent.child(filename);
+            FilePath file = iconDir.child(filename);
             file.touch(System.currentTimeMillis());
 
             try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
@@ -571,7 +572,7 @@ class CustomFolderIconTest {
             FilePath iconDir = userContent.child("customFolderIcons");
             iconDir.mkdirs();
             String filename = System.currentTimeMillis() + ".png";
-            FilePath file = userContent.child(filename);
+            FilePath file = iconDir.child(filename);
             file.touch(System.currentTimeMillis());
 
             try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
@@ -594,6 +595,136 @@ class CustomFolderIconTest {
             assertTrue(file.exists());
             assertTrue(file.delete());
             assertFalse(file.exists());
+        }
+    }
+
+    /**
+     * Test behavior of {@link CustomFolderIcon#getAvailableIcons()}.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testGetAvailableIcons(JenkinsRule r) throws Exception {
+        List<String> icons = CustomFolderIcon.getAvailableIcons();
+
+        assertNotNull(icons);
+        assertTrue(icons.isEmpty());
+
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+
+        String filename1 = System.nanoTime() + ".png";
+        FilePath file1 = iconDir.child(filename1);
+        file1.touch(System.nanoTime());
+
+        String filename2 = System.nanoTime() + ".png";
+        FilePath file2 = iconDir.child(filename2);
+        file2.touch(System.nanoTime());
+
+        icons = CustomFolderIcon.getAvailableIcons();
+
+        assertNotNull(icons);
+        assertEquals(2, icons.size());
+
+        List<String> expected = Arrays.asList(file1.getName(), file2.getName());
+        expected.sort(Comparator.reverseOrder());
+        assertEquals(expected, icons);
+    }
+
+    /**
+     * Test behavior of {@link CustomFolderIcon#getAvailableIcons()} when an exception is thrown in the main logic.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testGetAvailableIconsThrowingExceptions(JenkinsRule r) throws Exception {
+        List<String> icons = CustomFolderIcon.getAvailableIcons();
+
+        assertNotNull(icons);
+        assertTrue(icons.isEmpty());
+
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+
+        String filename1 = System.nanoTime() + ".png";
+        FilePath file1 = iconDir.child(filename1);
+        file1.touch(System.nanoTime());
+
+        String filename2 = System.nanoTime() + ".png";
+        FilePath file2 = iconDir.child(filename2);
+        file2.touch(System.nanoTime());
+
+        try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
+            String call = invocation.toString();
+            if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
+                throw new IOException("Mocked Exception!");
+            }
+            throw new IllegalStateException("Unexpected invocation '" + invocation + "' - Test is broken :(");
+        })) {
+            icons = CustomFolderIcon.getAvailableIcons();
+
+            assertNotNull(icons);
+            assertTrue(icons.isEmpty());
+        }
+    }
+
+    /**
+     * Test behavior of {@link CustomFolderIcon#getAvailableIcons()} when an exception is thrown in the comparator logic.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testGetAvailableIconsComparatorThrowingExceptions(JenkinsRule r) throws Exception {
+        List<String> icons = CustomFolderIcon.getAvailableIcons();
+
+        assertNotNull(icons);
+        assertTrue(icons.isEmpty());
+
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+
+        String filename1 = System.nanoTime() + ".png";
+        FilePath file1 = iconDir.child(filename1);
+        file1.touch(System.nanoTime());
+
+        String filename2 = System.nanoTime() + ".png";
+        FilePath file2 = iconDir.child(filename2);
+        file2.touch(System.nanoTime());
+
+        final boolean[] first = {true};
+
+        try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
+            String call = invocation.toString();
+
+            if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
+                return userContent;
+            } else if (StringUtils.equals(call, "filePath.exists();")) {
+                return true;
+            } else if (StringUtils.equals(call, "filePath.list();")) {
+                return iconDir.list();
+            } else if (StringUtils.equals(call, "filePath.getName();")) {
+                if (first[0]) {
+                    first[0] = false;
+                    return filename2;
+                } else {
+                    return filename1;
+                }
+            } else if (invocation.toString().equals("file2.lastModified()")) {
+                throw new IOException("Mocked Exception!");
+            }
+            throw new IllegalStateException("Unexpected invocation '" + invocation + "' - Test is broken :(");
+        })) {
+            icons = CustomFolderIcon.getAvailableIcons();
+
+            assertNotNull(icons);
+            assertEquals(2, icons.size());
+
+            List<String> expected = Arrays.asList(file1.getName(), file2.getName());
+            expected.sort(Comparator.reverseOrder());
+            assertEquals(expected, icons);
         }
     }
 

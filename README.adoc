@@ -57,6 +57,8 @@ image:images/custom-folder-icon.png[]
 
 Select the Custom Folder Icon option and use "Browse..." to chose a file.
 
+You can also select one of the already available images in the list below.
+
 You can crop the image to the desired result and upload it using the "Apply" button.
 
 The file name will be randomized during upload.
