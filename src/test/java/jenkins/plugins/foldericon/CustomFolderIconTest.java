@@ -728,4 +728,205 @@ class CustomFolderIconTest {
         }
     }
 
+    /**
+     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testCleanupListener(JenkinsRule r) throws Exception {
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+        String filename = System.currentTimeMillis() + ".png";
+        FilePath file = iconDir.child(filename);
+        file.touch(System.currentTimeMillis());
+
+        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+
+        assertTrue(file.exists());
+        project.delete();
+        assertFalse(file.exists());
+    }
+
+    /**
+     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testCleanupListenerNoFile(JenkinsRule r) throws Exception {
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+        String filename = System.currentTimeMillis() + ".png";
+        FilePath file = iconDir.child(filename);
+
+        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+
+        assertFalse(file.exists());
+        project.delete();
+        assertFalse(file.exists());
+    }
+
+    /**
+     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the icon is used elsewhere.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testCleanupListenerIconUsed(JenkinsRule r) throws Exception {
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+        String filename = System.currentTimeMillis() + ".png";
+        FilePath file = iconDir.child(filename);
+        file.touch(System.currentTimeMillis());
+
+        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+
+        Folder project1 = r.jenkins.createProject(Folder.class, "folder1");
+        project1.setIcon(customIcon);
+
+        Folder project2 = r.jenkins.createProject(Folder.class, "folder2");
+        project2.setIcon(customIcon);
+
+        assertTrue(file.exists());
+        project1.delete();
+        assertTrue(file.exists());
+        project2.delete();
+        assertFalse(file.exists());
+    }
+
+    /**
+     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the file is not deleted.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testCleanupListenerFileNotDeleted(JenkinsRule r) throws Exception {
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+        String filename = System.currentTimeMillis() + ".png";
+        FilePath file = iconDir.child(filename);
+        file.touch(System.currentTimeMillis());
+
+        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+
+        try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
+            String call = invocation.toString();
+            if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
+                return userContent;
+            } else if (StringUtils.equals(call, "filePath.exists();")) {
+                return true;
+            } else if (StringUtils.equals(call, "filePath.list();")) {
+                return List.of(file);
+            } else if (invocation.toString().equals("filePath.child(\"" + filename + "\");")) {
+                FilePath mock = Mockito.mock(FilePath.class);
+                Mockito.when(mock.delete()).thenReturn(false);
+                return mock;
+            }
+            throw new IllegalStateException("Unexpected invocation '" + invocation + "' - Test is broken :(");
+        })) {
+            project.delete();
+        }
+
+        assertTrue(file.exists());
+        project.delete();
+        assertFalse(file.exists());
+    }
+
+    /**
+     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the file is not deleted due to an exception.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testCleanupListenerFileNotDeletedWithException(JenkinsRule r) throws Exception {
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+        String filename = System.currentTimeMillis() + ".png";
+        FilePath file = iconDir.child(filename);
+        file.touch(System.currentTimeMillis());
+        File remoteFile = new File(file.getRemote());
+
+        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+
+        // jenkins is pretty brutal when deleting files...
+        Thread blocker = new Thread() {
+            @Override
+            public void run() {
+                while (!this.isInterrupted()) {
+                    remoteFile.setReadOnly();
+                }
+            }
+        };
+
+        blocker.start();
+
+        assertTrue(file.exists());
+        project.delete();
+        assertTrue(file.exists());
+
+        blocker.interrupt();
+
+        project.delete();
+        assertFalse(file.exists());
+    }
+
+    /**
+     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the file is not deleted due to an exception.
+     *
+     * @throws Exception
+     * @implNote Sometimes {@link CustomFolderIconTest#testDoCleanupFileNotDeletedWithException(JenkinsRule)} does not work.
+     */
+    @Test
+    void testCleanupListenerFileNotDeletedWithMockedException(JenkinsRule r) throws Exception {
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+        String filename = System.currentTimeMillis() + ".png";
+        FilePath file = iconDir.child(filename);
+        file.touch(System.currentTimeMillis());
+
+        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+
+        try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
+            String call = invocation.toString();
+            if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
+                return userContent;
+            } else if (StringUtils.equals(call, "filePath.exists();")) {
+                return true;
+            } else if (StringUtils.equals(call, "filePath.list();")) {
+                return List.of(file);
+            } else if (invocation.toString().equals("filePath.child(\"" + filename + "\");")) {
+                throw new IOException("Mocked Exception!");
+            }
+            throw new IllegalStateException("Unexpected invocation '" + invocation + "' - Test is broken :(");
+        })) {
+            project.delete();
+        }
+
+        assertTrue(file.exists());
+        project.delete();
+        assertFalse(file.exists());
+    }
+
 }

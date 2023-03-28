@@ -31,6 +31,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Item;
+import hudson.model.listeners.ItemListener;
 import jenkins.model.Jenkins;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
@@ -210,7 +211,8 @@ public class CustomFolderIcon extends FolderIcon {
 
             List<String> usedIcons = Jenkins.get().getAllItems(AbstractFolder.class).stream()
                     .filter(folder -> folder.getIcon() instanceof CustomFolderIcon)
-                    .map(folder -> ((CustomFolderIcon) folder.getIcon()).getFoldericon()).collect(Collectors.toList());
+                    .map(folder -> ((CustomFolderIcon) folder.getIcon()).getFoldericon())
+                    .collect(Collectors.toList());
 
             if (usedIcons.isEmpty() || existingIcons.removeAll(usedIcons)) {
                 for (String icon : existingIcons) {
@@ -224,6 +226,41 @@ public class CustomFolderIcon extends FolderIcon {
                 }
             }
             return HttpResponses.ok();
+        }
+    }
+
+    /**
+     * Item Listener to cleanup unused icons when the folder is deleted.
+     */
+    @Extension
+    public static class CustomFolderIconCleanup extends ItemListener {
+
+        @Override
+        public void onDeleted(Item item) {
+            if (item instanceof AbstractFolder<?>) {
+                FolderIcon icon = ((AbstractFolder<?>) item).getIcon();
+                if (icon instanceof CustomFolderIcon) {
+                    String foldericon = ((CustomFolderIcon) icon).getFoldericon();
+
+                    // delete the icon only if there is no other usage
+                    boolean orphan = Jenkins.get().getAllItems(AbstractFolder.class).stream()
+                            .filter(folder -> folder.getIcon() instanceof CustomFolderIcon
+                                    && StringUtils.equals(foldericon, ((CustomFolderIcon) folder.getIcon()).getFoldericon()))
+                            .limit(2)
+                            .count() <= 1;
+
+                    if (orphan) {
+                        FilePath file = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH).child(foldericon);
+                        try {
+                            if (!file.delete()) {
+                                LOGGER.warning(() -> "Unable to delete Folder Icon '" + foldericon + "' for Folder ' + " + item.getFullName() + "'!");
+                            }
+                        } catch (IOException | InterruptedException ex) {
+                            LOGGER.log(Level.WARNING, ex, () -> "Unable to delete Folder Icon '" + foldericon + "' for Folder ' + " + item.getFullName() + "'!");
+                        }
+                    }
+                }
+            }
         }
     }
 }
