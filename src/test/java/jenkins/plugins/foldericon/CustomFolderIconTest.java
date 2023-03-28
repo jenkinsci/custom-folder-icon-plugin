@@ -842,7 +842,7 @@ class CustomFolderIconTest {
         }
 
         assertTrue(file.exists());
-        project.delete();
+        file.delete();
         assertFalse(file.exists());
     }
 
@@ -884,7 +884,7 @@ class CustomFolderIconTest {
 
         blocker.interrupt();
 
-        project.delete();
+        file.delete();
         assertFalse(file.exists());
     }
 
@@ -925,7 +925,7 @@ class CustomFolderIconTest {
         }
 
         assertTrue(file.exists());
-        project.delete();
+        file.delete();
         assertFalse(file.exists());
     }
 
