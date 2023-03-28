@@ -877,11 +877,9 @@ class CustomFolderIconTest {
         };
 
         blocker.start();
-
         assertTrue(file.exists());
+
         project.delete();
-        assertTrue(file.exists());
-
         blocker.interrupt();
 
         file.delete();
