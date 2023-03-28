@@ -20,25 +20,35 @@ function init() {
         enforceBoundary: false,
         url: url
     });
-    croppie.bind({
-        zoom: 1
-    });
+
+    // fix to scale the image correctly
+    try {
+        croppie.bind({
+            zoom: 1
+        });
+    } catch (e) {
+        // NOP
+    }
 }
 
 /**
  * Set an icon for cropping.
  *
- * @param {string} icon The icon.
+ * @param {string} url The icon url.
  */
-function setIcon(icon) {
+function setIcon(url) {
     // load icon image
-    fetch(icon)
-        .then(response => response.blob())
-        .then(blob => {
-            setFile(blob);
-        });
+    croppie.bind({
+        url: url,
+        zoom: 1
+    });
+
     // reset the name in the upload input element
     document.getElementById("file-upload").value = "";
+    // set the file name - in case you don't crop / upload the image again it will simply be re-used that way
+    let paths = url.split('/');
+    let icon = paths[paths.length - 1]
+    document.getElementById("file-name").setAttribute("value", icon);
 }
 
 
