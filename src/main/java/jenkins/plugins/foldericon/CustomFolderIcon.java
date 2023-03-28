@@ -202,14 +202,13 @@ public class CustomFolderIcon extends FolderIcon {
          */
         @RequirePOST
         public HttpResponse doCleanup(StaplerRequest req) {
-            Jenkins jenkins = Jenkins.get();
-            jenkins.checkPermission(Jenkins.ADMINISTER);
+            Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 
-            FilePath iconDir = jenkins.getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
+            FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
 
             List<String> existingIcons = getAvailableIcons();
 
-            List<String> usedIcons = jenkins.getAllItems(AbstractFolder.class).stream()
+            List<String> usedIcons = Jenkins.get().getAllItems(AbstractFolder.class).stream()
                     .filter(folder -> folder.getIcon() instanceof CustomFolderIcon)
                     .map(folder -> ((CustomFolderIcon) folder.getIcon()).getFoldericon()).collect(Collectors.toList());
 
