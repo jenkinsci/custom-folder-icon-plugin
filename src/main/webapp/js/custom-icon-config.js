@@ -1,3 +1,27 @@
+/*
+ * The MIT License
+ *
+ * Copyright (c) 2023 strangelookingnerd
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 let croppie
 
 /**
@@ -32,7 +56,7 @@ function init() {
 }
 
 /**
- * Set an icon for cropping.
+ * Set an icon for cropping / preview.
  *
  * @param {string} url The icon url.
  */
@@ -46,14 +70,14 @@ function setIcon(url) {
     // reset the name in the upload input element
     document.getElementById("file-upload").value = "";
     // set the file name - in case you don't crop / upload the image again it will simply be re-used that way
-    let paths = url.split('/');
-    let icon = paths[paths.length - 1]
+    let paths = url.split("/");
+    let icon = paths[paths.length - 1];
     document.getElementById("file-name").setAttribute("value", icon);
 }
 
 
 /**
- * Set the file for cropping.
+ * Set a file for cropping / preview.
  *
  * @param {Blob} file The file input.
  */

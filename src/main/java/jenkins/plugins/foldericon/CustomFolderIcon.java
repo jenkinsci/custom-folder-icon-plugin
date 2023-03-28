@@ -230,7 +230,9 @@ public class CustomFolderIcon extends FolderIcon {
     }
 
     /**
-     * Item Listener to cleanup unused icons when the folder is deleted.
+     * Item Listener to clean up unused icons when the folder is deleted.
+     *
+     * @author strangelookingnerd
      */
     @Extension
     public static class CustomFolderIconCleanup extends ItemListener {

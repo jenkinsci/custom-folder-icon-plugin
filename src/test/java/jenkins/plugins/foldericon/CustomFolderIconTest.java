@@ -892,7 +892,7 @@ class CustomFolderIconTest {
      * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the file is not deleted due to an exception.
      *
      * @throws Exception
-     * @implNote Sometimes {@link CustomFolderIconTest#testDoCleanupFileNotDeletedWithException(JenkinsRule)} does not work.
+     * @implNote Sometimes {@link CustomFolderIconTest#testCleanupListenerFileNotDeletedWithException(JenkinsRule)} does not work.
      */
     @Test
     void testCleanupListenerFileNotDeletedWithMockedException(JenkinsRule r) throws Exception {
