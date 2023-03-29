@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  */
 
-/*************************
- * Version: 2.6.5
- *************************/
+/******************************************************
+ * Version 2.6.5 with changes from strangelookingnerd *
+ ******************************************************/
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
@@ -549,44 +549,10 @@
             _initializeZoom.call(self);
         }
 
-        // if (self.options.enableOrientation) {
-        //     _initRotationControls.call(self);
-        // }
-
         if (self.options.enableResize) {
             _initializeResize.call(self);
         }
     }
-
-    // function _initRotationControls () {
-    //     let self = this,
-    //         wrap, btnLeft, btnRight, iLeft, iRight;
-
-    //     wrap = document.createElement('div');
-    //     self.elements.orientationBtnLeft = btnLeft = document.createElement('button');
-    //     self.elements.orientationBtnRight = btnRight = document.createElement('button');
-
-    //     wrap.appendChild(btnLeft);
-    //     wrap.appendChild(btnRight);
-
-    //     iLeft = document.createElement('i');
-    //     iRight = document.createElement('i');
-    //     btnLeft.appendChild(iLeft);
-    //     btnRight.appendChild(iRight);
-
-    //     addClass(wrap, 'cr-rotate-controls');
-    //     addClass(btnLeft, 'cr-rotate-l');
-    //     addClass(btnRight, 'cr-rotate-r');
-
-    //     self.elements.boundary.appendChild(wrap);
-
-    //     btnLeft.addEventListener('click', function () {
-    //         self.rotate(-90);
-    //     });
-    //     btnRight.addEventListener('click', function () {
-    //         self.rotate(90);
-    //     });
-    // }
 
     function _hasExif() {
         return this.options.enableExif && window.EXIF;
@@ -747,7 +713,7 @@
         addClass(wrap, 'cr-slider-wrap');
         addClass(zoomer, 'cr-slider');
         zoomer.type = 'range';
-        zoomer.step = '0.0001';
+        zoomer.step = '0.001';
         zoomer.value = '1';
         zoomer.style.display = self.options.showZoomer ? '' : 'none';
         zoomer.setAttribute('aria-label', 'zoom');
@@ -1347,8 +1313,6 @@
             sHeight = self._originalImageHeight - sy;
             dHeight = (sHeight / height) * canvasHeight;
         }
-
-        // console.table({ left, right, top, bottom, canvasWidth, canvasHeight, width, height, startX, startY, circle, sx, sy, dx, dy, sWidth, sHeight, dWidth, dHeight });
 
         ctx.drawImage(this.elements.preview, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
         if (circle) {
