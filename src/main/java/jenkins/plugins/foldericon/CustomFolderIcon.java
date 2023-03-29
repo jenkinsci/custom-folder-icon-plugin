@@ -252,13 +252,13 @@ public class CustomFolderIcon extends FolderIcon {
                             .count() <= 1;
 
                     if (orphan) {
-                        FilePath file = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH).child(foldericon);
+                        FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
                         try {
-                            if (!file.delete()) {
-                                LOGGER.warning(() -> "Unable to delete Folder Icon '" + foldericon + "' for Folder ' + " + item.getFullName() + "'!");
+                            if (!iconDir.child(foldericon).delete()) {
+                                LOGGER.warning(() -> "Unable to delete Folder Icon '" + foldericon + "' for Folder '" + item.getFullName() + "'!");
                             }
                         } catch (IOException | InterruptedException ex) {
-                            LOGGER.log(Level.WARNING, ex, () -> "Unable to delete Folder Icon '" + foldericon + "' for Folder ' + " + item.getFullName() + "'!");
+                            LOGGER.log(Level.WARNING, ex, () -> "Unable to delete Folder Icon '" + foldericon + "' for Folder '" + item.getFullName() + "'!");
                         }
                     }
                 }

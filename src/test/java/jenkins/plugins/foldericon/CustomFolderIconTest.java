@@ -27,6 +27,7 @@ package jenkins.plugins.foldericon;
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import hudson.FilePath;
+import hudson.model.FreeStyleProject;
 import hudson.model.Item;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.CustomFolderIcon.DescriptorImpl;
@@ -52,8 +53,8 @@ import java.io.InterruptedIOException;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -343,6 +344,7 @@ class CustomFolderIconTest {
 
             FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
             parent.mkdirs();
+
             FilePath file = parent.child(System.currentTimeMillis() + ".png");
             file.touch(System.currentTimeMillis());
             assertTrue(file.exists());
@@ -397,6 +399,7 @@ class CustomFolderIconTest {
 
         FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
         parent.mkdirs();
+
         FilePath dummy = parent.child(DUMMY_PNG);
         dummy.touch(System.currentTimeMillis());
         assertTrue(dummy.exists());
@@ -429,6 +432,7 @@ class CustomFolderIconTest {
 
         FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
         parent.mkdirs();
+
         FilePath dummy = parent.child(DUMMY_PNG);
         dummy.touch(System.currentTimeMillis());
         assertTrue(dummy.exists());
@@ -484,6 +488,7 @@ class CustomFolderIconTest {
             FilePath userContent = r.jenkins.getRootPath().child("userContent");
             FilePath iconDir = userContent.child("customFolderIcons");
             iconDir.mkdirs();
+
             String filename = System.currentTimeMillis() + ".png";
             FilePath file = iconDir.child(filename);
             file.touch(System.currentTimeMillis());
@@ -496,12 +501,12 @@ class CustomFolderIconTest {
                     return true;
                 } else if (StringUtils.equals(call, "filePath.list();")) {
                     return List.of(file);
-                } else if (invocation.toString().equals("filePath.child(\"" + filename + "\");")) {
+                } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
                     FilePath mock = Mockito.mock(FilePath.class);
                     Mockito.when(mock.delete()).thenReturn(false);
                     return mock;
                 }
-                throw new IllegalStateException("Unexpected invocation '" + invocation + "' - Test is broken :(");
+                return fail("Unexpected invocation '" + call + "' - Test is broken!");
             })) {
                 HttpResponse response = descriptor.doCleanup(mockReq);
                 TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
@@ -527,6 +532,7 @@ class CustomFolderIconTest {
 
             FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
             parent.mkdirs();
+
             FilePath file = parent.child(System.currentTimeMillis() + ".png");
             file.touch(System.currentTimeMillis());
             File remoteFile = new File(file.getRemote());
@@ -571,6 +577,7 @@ class CustomFolderIconTest {
             FilePath userContent = r.jenkins.getRootPath().child("userContent");
             FilePath iconDir = userContent.child("customFolderIcons");
             iconDir.mkdirs();
+
             String filename = System.currentTimeMillis() + ".png";
             FilePath file = iconDir.child(filename);
             file.touch(System.currentTimeMillis());
@@ -583,10 +590,10 @@ class CustomFolderIconTest {
                     return true;
                 } else if (StringUtils.equals(call, "filePath.list();")) {
                     return List.of(file);
-                } else if (invocation.toString().equals("filePath.child(\"" + filename + "\");")) {
+                } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
                     throw new IOException("Mocked Exception!");
                 }
-                throw new IllegalStateException("Unexpected invocation '" + invocation + "' - Test is broken :(");
+                return fail("Unexpected invocation '" + call + "' - Test is broken!");
             })) {
                 HttpResponse response = descriptor.doCleanup(mockReq);
                 TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
@@ -622,13 +629,23 @@ class CustomFolderIconTest {
         FilePath file2 = iconDir.child(filename2);
         file2.touch(System.nanoTime());
 
+        String filename3 = System.nanoTime() + ".png";
+        FilePath file3 = iconDir.child(filename3);
+        file3.touch(System.nanoTime());
+
         icons = CustomFolderIcon.getAvailableIcons();
 
         assertNotNull(icons);
-        assertEquals(2, icons.size());
+        assertEquals(3, icons.size());
 
-        List<String> expected = Arrays.asList(file1.getName(), file2.getName());
-        expected.sort(Comparator.reverseOrder());
+        List<String> expected = Arrays.asList(file1, file2, file3).stream().sorted((filePath1, filePath2) -> {
+            try {
+                return Long.compare(filePath2.lastModified(), filePath1.lastModified());
+            } catch (Exception ex) {
+                return 0;
+            }
+        }).map(FilePath::getName).collect(Collectors.toList());
+
         assertEquals(expected, icons);
     }
 
@@ -661,7 +678,7 @@ class CustomFolderIconTest {
             if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
                 throw new IOException("Mocked Exception!");
             }
-            throw new IllegalStateException("Unexpected invocation '" + invocation + "' - Test is broken :(");
+            return fail("Unexpected invocation '" + call + "' - Test is broken!");
         })) {
             icons = CustomFolderIcon.getAvailableIcons();
 
@@ -694,7 +711,11 @@ class CustomFolderIconTest {
         FilePath file2 = iconDir.child(filename2);
         file2.touch(System.nanoTime());
 
-        final boolean[] first = {true};
+        String filename3 = System.nanoTime() + ".png";
+        FilePath file3 = iconDir.child(filename3);
+        file3.touch(System.nanoTime());
+
+        final int[] counter = {0};
 
         try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
             String call = invocation.toString();
@@ -705,27 +726,49 @@ class CustomFolderIconTest {
                 return true;
             } else if (StringUtils.equals(call, "filePath.list();")) {
                 return iconDir.list();
+
+            } else if (StringUtils.equals(call, "filePath.lastModified();")) {
+                if (counter[0] == 0) {
+                    counter[0] = 1;
+                    return file3.lastModified();
+                } else if(counter[0] == 1) {
+                    counter[0] = 2;
+                    return file2.lastModified();
+                } else if(counter[0] == 2) {
+                    counter[0] = 0;
+                    throw new IOException("Mocked Exception!");
+                }
+                fail("Unexpected invocation '" + call + "' - Test is broken!");
             } else if (StringUtils.equals(call, "filePath.getName();")) {
-                if (first[0]) {
-                    first[0] = false;
+                if (counter[0] == 0) {
+                    counter[0] = 1;
+                    return filename3;
+                } else if(counter[0] == 1) {
+                    counter[0] = 2;
                     return filename2;
-                } else {
+                } else if(counter[0] == 2) {
+                    counter[0] = 0;
                     return filename1;
                 }
-            } else if (invocation.toString().equals("file2.lastModified()")) {
-                throw new IOException("Mocked Exception!");
-            }
-            throw new IllegalStateException("Unexpected invocation '" + invocation + "' - Test is broken :(");
+                fail("Unexpected invocation '" + call + "' - Test is broken!");
+        }
+            return fail("Unexpected invocation '" + call + "' - Test is broken!");
         })) {
             icons = CustomFolderIcon.getAvailableIcons();
 
             assertNotNull(icons);
-            assertEquals(2, icons.size());
-
-            List<String> expected = Arrays.asList(file1.getName(), file2.getName());
-            expected.sort(Comparator.reverseOrder());
-            assertEquals(expected, icons);
+            assertEquals(3, icons.size());
         }
+
+        List<String> expected = Arrays.asList(file1, file2, file3).stream().sorted((filePath1, filePath2) -> {
+            try {
+                return Long.compare(filePath2.lastModified(), filePath1.lastModified());
+            } catch (Exception ex) {
+                return 0;
+            }
+        }).map(FilePath::getName).collect(Collectors.toList());
+
+        assertEquals(expected, icons);
     }
 
     /**
@@ -738,6 +781,7 @@ class CustomFolderIconTest {
         FilePath userContent = r.jenkins.getRootPath().child("userContent");
         FilePath iconDir = userContent.child("customFolderIcons");
         iconDir.mkdirs();
+
         String filename = System.currentTimeMillis() + ".png";
         FilePath file = iconDir.child(filename);
         file.touch(System.currentTimeMillis());
@@ -758,10 +802,47 @@ class CustomFolderIconTest {
      * @throws Exception
      */
     @Test
+    void testCleanupListenerOtherProjects(JenkinsRule r) throws Exception {
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+
+        String filename = System.currentTimeMillis() + ".png";
+        FilePath file = iconDir.child(filename);
+        file.touch(System.currentTimeMillis());
+
+        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+
+        Folder project1 = r.jenkins.createProject(Folder.class, "folder-1");
+        project1.setIcon(customIcon);
+
+        Folder project2 = r.jenkins.createProject(Folder.class, "folder-2");
+        project2.setIcon(new CustomFolderIcon(DUMMY_PNG));
+
+        Folder project3 = r.jenkins.createProject(Folder.class, "folder-3");
+        FreeStyleProject project4 = r.jenkins.createProject(FreeStyleProject.class, "job-1");
+
+        assertTrue(file.exists());
+
+        project1.delete();
+        project2.delete();
+        project3.delete();
+        project4.delete();
+
+        assertFalse(file.exists());
+    }
+
+    /**
+     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
+     *
+     * @throws Exception
+     */
+    @Test
     void testCleanupListenerNoFile(JenkinsRule r) throws Exception {
         FilePath userContent = r.jenkins.getRootPath().child("userContent");
         FilePath iconDir = userContent.child("customFolderIcons");
         iconDir.mkdirs();
+
         String filename = System.currentTimeMillis() + ".png";
         FilePath file = iconDir.child(filename);
 
@@ -785,6 +866,7 @@ class CustomFolderIconTest {
         FilePath userContent = r.jenkins.getRootPath().child("userContent");
         FilePath iconDir = userContent.child("customFolderIcons");
         iconDir.mkdirs();
+
         String filename = System.currentTimeMillis() + ".png";
         FilePath file = iconDir.child(filename);
         file.touch(System.currentTimeMillis());
@@ -814,6 +896,7 @@ class CustomFolderIconTest {
         FilePath userContent = r.jenkins.getRootPath().child("userContent");
         FilePath iconDir = userContent.child("customFolderIcons");
         iconDir.mkdirs();
+
         String filename = System.currentTimeMillis() + ".png";
         FilePath file = iconDir.child(filename);
         file.touch(System.currentTimeMillis());
@@ -827,16 +910,12 @@ class CustomFolderIconTest {
             String call = invocation.toString();
             if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
                 return userContent;
-            } else if (StringUtils.equals(call, "filePath.exists();")) {
-                return true;
-            } else if (StringUtils.equals(call, "filePath.list();")) {
-                return List.of(file);
-            } else if (invocation.toString().equals("filePath.child(\"" + filename + "\");")) {
+            } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
                 FilePath mock = Mockito.mock(FilePath.class);
                 Mockito.when(mock.delete()).thenReturn(false);
                 return mock;
             }
-            throw new IllegalStateException("Unexpected invocation '" + invocation + "' - Test is broken :(");
+            return fail("Unexpected invocation '" + call + "' - Test is broken!");
         })) {
             project.delete();
         }
@@ -856,6 +935,7 @@ class CustomFolderIconTest {
         FilePath userContent = r.jenkins.getRootPath().child("userContent");
         FilePath iconDir = userContent.child("customFolderIcons");
         iconDir.mkdirs();
+
         String filename = System.currentTimeMillis() + ".png";
         FilePath file = iconDir.child(filename);
         file.touch(System.currentTimeMillis());
@@ -897,6 +977,7 @@ class CustomFolderIconTest {
         FilePath userContent = r.jenkins.getRootPath().child("userContent");
         FilePath iconDir = userContent.child("customFolderIcons");
         iconDir.mkdirs();
+
         String filename = System.currentTimeMillis() + ".png";
         FilePath file = iconDir.child(filename);
         file.touch(System.currentTimeMillis());
@@ -910,14 +991,10 @@ class CustomFolderIconTest {
             String call = invocation.toString();
             if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
                 return userContent;
-            } else if (StringUtils.equals(call, "filePath.exists();")) {
-                return true;
-            } else if (StringUtils.equals(call, "filePath.list();")) {
-                return List.of(file);
-            } else if (invocation.toString().equals("filePath.child(\"" + filename + "\");")) {
+            } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
                 throw new IOException("Mocked Exception!");
             }
-            throw new IllegalStateException("Unexpected invocation '" + invocation + "' - Test is broken :(");
+            return fail("Unexpected invocation '" + call + "' - Test is broken!");
         })) {
             project.delete();
         }
@@ -926,5 +1003,4 @@ class CustomFolderIconTest {
         file.delete();
         assertFalse(file.exists());
     }
-
 }
