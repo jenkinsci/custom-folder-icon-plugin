@@ -41,7 +41,8 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
+import java.util.Comparator;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -79,24 +80,24 @@ public class CustomFolderIcon extends FolderIcon {
      *
      * @return all the icons that have been uploaded, sorted descending by {@link FilePath#lastModified()}.
      */
-    public static List<String> getAvailableIcons() {
+    public static Set<String> getAvailableIcons() {
         try {
             FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
 
             if (iconDir.exists()) {
-                return iconDir.list().stream().sorted((file1, file2) -> {
+                return iconDir.list().stream().sorted(Comparator.comparingLong((FilePath file) -> {
                     try {
-                        return Long.compare(file2.lastModified(), file1.lastModified());
-                    } catch (Exception ex) {
+                        return file.lastModified();
+                    } catch (IOException | InterruptedException ex) {
                         return 0;
                     }
-                }).map(FilePath::getName).collect(Collectors.toList());
+                }).reversed()).map(FilePath::getName).collect(Collectors.toSet());
             } else {
-                return List.of();
+                return Set.of();
             }
         } catch (IOException | InterruptedException ex) {
             LOGGER.log(Level.WARNING, ex, () -> "Unable to list available icons!");
-            return List.of();
+            return Set.of();
         }
     }
 
@@ -207,12 +208,12 @@ public class CustomFolderIcon extends FolderIcon {
 
             FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
 
-            List<String> existingIcons = getAvailableIcons();
+            Set<String> existingIcons = getAvailableIcons();
 
-            List<String> usedIcons = Jenkins.get().getAllItems(AbstractFolder.class).stream()
+            Set<String> usedIcons = Jenkins.get().getAllItems(AbstractFolder.class).stream()
                     .filter(folder -> folder.getIcon() instanceof CustomFolderIcon)
                     .map(folder -> ((CustomFolderIcon) folder.getIcon()).getFoldericon())
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
 
             if (usedIcons.isEmpty() || existingIcons.removeAll(usedIcons)) {
                 for (String icon : existingIcons) {

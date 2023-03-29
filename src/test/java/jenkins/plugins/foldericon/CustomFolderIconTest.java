@@ -53,7 +53,9 @@ import java.io.InterruptedIOException;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -612,7 +614,7 @@ class CustomFolderIconTest {
      */
     @Test
     void testGetAvailableIcons(JenkinsRule r) throws Exception {
-        List<String> icons = CustomFolderIcon.getAvailableIcons();
+        Set<String> icons = CustomFolderIcon.getAvailableIcons();
 
         assertNotNull(icons);
         assertTrue(icons.isEmpty());
@@ -621,30 +623,33 @@ class CustomFolderIconTest {
         FilePath iconDir = userContent.child("customFolderIcons");
         iconDir.mkdirs();
 
-        String filename1 = System.nanoTime() + ".png";
+        long timestamp1 = System.nanoTime();
+        String filename1 =  timestamp1 + ".png";
         FilePath file1 = iconDir.child(filename1);
-        file1.touch(System.nanoTime());
+        file1.touch(timestamp1);
 
-        String filename2 = System.nanoTime() + ".png";
+        long timestamp2 = System.nanoTime();
+        String filename2 =  timestamp2 + ".png";
         FilePath file2 = iconDir.child(filename2);
-        file2.touch(System.nanoTime());
+        file2.touch(timestamp2);
 
-        String filename3 = System.nanoTime() + ".png";
+        long timestamp3 = System.nanoTime();
+        String filename3 =  timestamp3 + ".png";
         FilePath file3 = iconDir.child(filename3);
-        file3.touch(System.nanoTime());
+        file3.touch(timestamp3);
 
         icons = CustomFolderIcon.getAvailableIcons();
 
         assertNotNull(icons);
         assertEquals(3, icons.size());
 
-        List<String> expected = Arrays.asList(file1, file2, file3).stream().sorted((filePath1, filePath2) -> {
+        Set<String> expected = Arrays.asList(file1, file2, file3).stream().sorted(Comparator.comparingLong((FilePath file) -> {
             try {
-                return Long.compare(filePath2.lastModified(), filePath1.lastModified());
-            } catch (Exception ex) {
+                return file.lastModified();
+            } catch (IOException | InterruptedException ex) {
                 return 0;
             }
-        }).map(FilePath::getName).collect(Collectors.toList());
+        }).reversed()).map(FilePath::getName).collect(Collectors.toSet());
 
         assertEquals(expected, icons);
     }
@@ -656,7 +661,7 @@ class CustomFolderIconTest {
      */
     @Test
     void testGetAvailableIconsThrowingExceptions(JenkinsRule r) throws Exception {
-        List<String> icons = CustomFolderIcon.getAvailableIcons();
+        Set<String> icons = CustomFolderIcon.getAvailableIcons();
 
         assertNotNull(icons);
         assertTrue(icons.isEmpty());
@@ -665,13 +670,20 @@ class CustomFolderIconTest {
         FilePath iconDir = userContent.child("customFolderIcons");
         iconDir.mkdirs();
 
-        String filename1 = System.nanoTime() + ".png";
+        long timestamp1 = System.nanoTime();
+        String filename1 =  timestamp1 + ".png";
         FilePath file1 = iconDir.child(filename1);
-        file1.touch(System.nanoTime());
+        file1.touch(timestamp1);
 
-        String filename2 = System.nanoTime() + ".png";
+        long timestamp2 = System.nanoTime();
+        String filename2 =  timestamp2 + ".png";
         FilePath file2 = iconDir.child(filename2);
-        file2.touch(System.nanoTime());
+        file2.touch(timestamp2);
+
+        long timestamp3 = System.nanoTime();
+        String filename3 =  timestamp3 + ".png";
+        FilePath file3 = iconDir.child(filename3);
+        file3.touch(timestamp3);
 
         try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
             String call = invocation.toString();
@@ -694,7 +706,7 @@ class CustomFolderIconTest {
      */
     @Test
     void testGetAvailableIconsComparatorThrowingExceptions(JenkinsRule r) throws Exception {
-        List<String> icons = CustomFolderIcon.getAvailableIcons();
+        Set<String> icons = CustomFolderIcon.getAvailableIcons();
 
         assertNotNull(icons);
         assertTrue(icons.isEmpty());
@@ -703,17 +715,20 @@ class CustomFolderIconTest {
         FilePath iconDir = userContent.child("customFolderIcons");
         iconDir.mkdirs();
 
-        String filename1 = System.nanoTime() + ".png";
+        long timestamp1 = System.nanoTime();
+        String filename1 =  timestamp1 + ".png";
         FilePath file1 = iconDir.child(filename1);
-        file1.touch(System.nanoTime());
+        file1.touch(timestamp1);
 
-        String filename2 = System.nanoTime() + ".png";
+        long timestamp2 = System.nanoTime();
+        String filename2 =  timestamp2 + ".png";
         FilePath file2 = iconDir.child(filename2);
-        file2.touch(System.nanoTime());
+        file2.touch(timestamp2);
 
-        String filename3 = System.nanoTime() + ".png";
+        long timestamp3 = System.nanoTime();
+        String filename3 =  timestamp3 + ".png";
         FilePath file3 = iconDir.child(filename3);
-        file3.touch(System.nanoTime());
+        file3.touch(timestamp3);;
 
         final int[] counter = {0};
 
@@ -760,13 +775,13 @@ class CustomFolderIconTest {
             assertEquals(3, icons.size());
         }
 
-        List<String> expected = Arrays.asList(file1, file2, file3).stream().sorted((filePath1, filePath2) -> {
+        Set<String> expected = Arrays.asList(file1, file2, file3).stream().sorted((filePath1, filePath2) -> {
             try {
                 return Long.compare(filePath2.lastModified(), filePath1.lastModified());
             } catch (Exception ex) {
                 return 0;
             }
-        }).map(FilePath::getName).collect(Collectors.toList());
+        }).map(FilePath::getName).collect(Collectors.toSet());
 
         assertEquals(expected, icons);
     }
