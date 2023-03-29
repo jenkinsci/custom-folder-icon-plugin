@@ -57,6 +57,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -643,7 +644,7 @@ class CustomFolderIconTest {
         assertNotNull(icons);
         assertEquals(3, icons.size());
 
-        Set<String> expected = Arrays.asList(file1, file2, file3).stream().sorted(Comparator.comparingLong((FilePath file) -> {
+        Set<String> expected = Stream.of(file1, file2, file3).sorted(Comparator.comparingLong((FilePath file) -> {
             try {
                 return file.lastModified();
             } catch (IOException | InterruptedException ex) {
@@ -775,13 +776,13 @@ class CustomFolderIconTest {
             assertEquals(3, icons.size());
         }
 
-        Set<String> expected = Arrays.asList(file1, file2, file3).stream().sorted((filePath1, filePath2) -> {
+        Set<String> expected = Stream.of(file1, file2, file3).sorted(Comparator.comparingLong((FilePath file) -> {
             try {
-                return Long.compare(filePath2.lastModified(), filePath1.lastModified());
-            } catch (Exception ex) {
+                return file.lastModified();
+            } catch (IOException | InterruptedException ex) {
                 return 0;
             }
-        }).map(FilePath::getName).collect(Collectors.toSet());
+        }).reversed()).map(FilePath::getName).collect(Collectors.toSet());
 
         assertEquals(expected, icons);
     }
