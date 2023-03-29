@@ -52,7 +52,7 @@ class EmojiFolderIconTest {
     /**
      * Test behavior on a regular {@link Folder}.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testFolder(JenkinsRule r) throws Exception {
@@ -78,7 +78,7 @@ class EmojiFolderIconTest {
     /**
      * Test behavior on a {@link OrganizationFolder}.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testOrganizationFolder(JenkinsRule r) throws Exception {
@@ -105,7 +105,7 @@ class EmojiFolderIconTest {
      * Test behavior of {@link DescriptorImpl}.
      */
     @Test
-    void testDescriptor(JenkinsRule r) {
+    void testDescriptor(@SuppressWarnings("unused") JenkinsRule r) {
         EmojiFolderIcon customIcon = new EmojiFolderIcon(DUMMY_ICON);
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.EmojiFolderIcon_description(), descriptor.getDisplayName());

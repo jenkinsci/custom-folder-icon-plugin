@@ -53,7 +53,7 @@ class IoniconFolderIconTest {
     /**
      * Test behavior on a regular {@link Folder}.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testFolder(JenkinsRule r) throws Exception {
@@ -79,7 +79,7 @@ class IoniconFolderIconTest {
     /**
      * Test behavior on a {@link OrganizationFolder}.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testOrganizationFolder(JenkinsRule r) throws Exception {
@@ -106,7 +106,7 @@ class IoniconFolderIconTest {
      * Test behavior of {@link DescriptorImpl}.
      */
     @Test
-    void testDescriptor(JenkinsRule r) {
+    void testDescriptor(@SuppressWarnings("unused") JenkinsRule r) {
         IoniconFolderIcon customIcon = new IoniconFolderIcon(DUMMY_ICON);
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.IoniconFolderIcon_description(), descriptor.getDisplayName());

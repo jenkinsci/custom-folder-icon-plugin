@@ -56,6 +56,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -69,20 +70,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @WithJenkins
 class CustomFolderIconTest {
 
+    private static final Logger LOGGER = Logger.getLogger(CustomFolderIconTest.class.getName());
+
     private static final String DUMMY_PNG = "dummy.png";
 
-    private static final String FILE_NAME_PATTERN = "" +
-            "^[0-9a-fA-F]{8}" +
-            "\\b-[0-9a-fA-F]{4}" +
-            "\\b-[0-9a-fA-F]{4}" +
-            "\\b-[0-9a-fA-F]{4}" +
-            "\\b-[0-9a-fA-F]{12}" +
-            "\\.png$";
+    private static final String FILE_NAME_PATTERN =
+            "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\\.png$";
 
     /**
      * Test behavior on a regular {@link Folder}.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testFolder(JenkinsRule r) throws Exception {
@@ -103,7 +101,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior on a {@link OrganizationFolder}.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testOrganizationFolder(JenkinsRule r) throws Exception {
@@ -124,7 +122,7 @@ class CustomFolderIconTest {
     /**
      * Test the default path of the image.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testDefaultImagePath(JenkinsRule r) throws Exception {
@@ -144,7 +142,7 @@ class CustomFolderIconTest {
     /**
      * Test the context path of the image.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testImagePath(JenkinsRule r) throws Exception {
@@ -165,7 +163,7 @@ class CustomFolderIconTest {
      * Test behavior of {@link DescriptorImpl}.
      */
     @Test
-    void testDescriptor(JenkinsRule r) {
+    void testDescriptor(@SuppressWarnings("unused") JenkinsRule r) {
         CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.CustomFolderIcon_description(), descriptor.getDisplayName());
@@ -175,7 +173,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest, Item)}.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testDoUploadIcon(JenkinsRule r) throws Exception {
@@ -200,7 +198,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest, Item)} with an item.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testDoUploadWithItem(JenkinsRule r) throws Exception {
@@ -226,10 +224,10 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest, Item)} when there is no file in the request.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
-    void testDoUploadIconNoFile(JenkinsRule r) throws Exception {
+    void testDoUploadIconNoFile(@SuppressWarnings("unused") JenkinsRule r) throws Exception {
         MockMultiPartRequest mockRequest = new MockMultiPartRequest(null);
         DescriptorImpl descriptor = new DescriptorImpl();
         HttpResponse response = descriptor.doUploadIcon(mockRequest, null);
@@ -240,10 +238,10 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest, Item)} with a broken request.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
-    void testDoUploadBrokenRequest(JenkinsRule r) throws Exception {
+    void testDoUploadBrokenRequest(@SuppressWarnings("unused") JenkinsRule r) throws Exception {
         DescriptorImpl descriptor = new DescriptorImpl();
 
         try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
@@ -257,10 +255,10 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest, Item)} with a large file.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
-    void testDoUploadLargeFile(JenkinsRule r) throws Exception {
+    void testDoUploadLargeFile(@SuppressWarnings("unused") JenkinsRule r) throws Exception {
         File upload = File.createTempFile("large", ".png");
         upload.deleteOnExit();
         try (RandomAccessFile raf = new RandomAccessFile(upload, "rw")) {
@@ -278,10 +276,10 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest, Item)} with an empty file.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
-    void testDoUploadEmptyFile(JenkinsRule r) throws Exception {
+    void testDoUploadEmptyFile(@SuppressWarnings("unused") JenkinsRule r) throws Exception {
         File upload = File.createTempFile("empty", ".png");
         upload.deleteOnExit();
 
@@ -302,10 +300,10 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest, Item)} when there are exceptions thrown.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
-    void testDoUploadIconThrowingExceptions(JenkinsRule r) throws Exception {
+    void testDoUploadIconThrowingExceptions(@SuppressWarnings("unused") JenkinsRule r) throws Exception {
         List<String> exceptions = Arrays.asList("IOException", "InterruptedException", "ServletException");
         String exceptionMessage = "Oh no :(";
 
@@ -336,7 +334,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)}.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testDoCleanupNoItems(JenkinsRule r) throws Exception {
@@ -362,7 +360,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)}.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testDoCleanupMissingIcon(JenkinsRule r) throws Exception {
@@ -386,7 +384,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)}.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testDoCleanupOnlyUsedIcons(JenkinsRule r) throws Exception {
@@ -419,7 +417,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)}.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testDoCleanupUsedAndUnusedIcons(JenkinsRule r) throws Exception {
@@ -457,7 +455,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)} when root does not exist.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testDoCleanupNoRoot(JenkinsRule r) throws Exception {
@@ -479,7 +477,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)} if a file can not be deleted.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testDoCleanupFileNotDeleted(JenkinsRule r) throws Exception {
@@ -496,7 +494,7 @@ class CustomFolderIconTest {
             FilePath file = iconDir.child(filename);
             file.touch(System.currentTimeMillis());
 
-            try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
+            try (@SuppressWarnings("unused") MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
                 String call = invocation.toString();
                 if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
                     return userContent;
@@ -524,7 +522,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)} if a file can not be deleted due to an exception.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testDoCleanupFileNotDeletedWithException(JenkinsRule r) throws Exception {
@@ -545,7 +543,9 @@ class CustomFolderIconTest {
                 @Override
                 public void run() {
                     while (!this.isInterrupted()) {
-                        remoteFile.setReadOnly();
+                        if (!remoteFile.setReadOnly()) {
+                            LOGGER.warning("Unable to set file to read-only!");
+                        }
                     }
                 }
             };
@@ -567,7 +567,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)} if a file can not be deleted due to an exception.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      * @implNote Sometimes {@link CustomFolderIconTest#testDoCleanupFileNotDeletedWithException(JenkinsRule)} does not work.
      */
     @Test
@@ -585,7 +585,7 @@ class CustomFolderIconTest {
             FilePath file = iconDir.child(filename);
             file.touch(System.currentTimeMillis());
 
-            try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
+            try (@SuppressWarnings("unused") MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
                 String call = invocation.toString();
                 if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
                     return userContent;
@@ -611,7 +611,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link CustomFolderIcon#getAvailableIcons()}.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testGetAvailableIcons(JenkinsRule r) throws Exception {
@@ -625,17 +625,17 @@ class CustomFolderIconTest {
         iconDir.mkdirs();
 
         long timestamp1 = System.nanoTime();
-        String filename1 =  timestamp1 + ".png";
+        String filename1 = timestamp1 + ".png";
         FilePath file1 = iconDir.child(filename1);
         file1.touch(timestamp1);
 
         long timestamp2 = System.nanoTime();
-        String filename2 =  timestamp2 + ".png";
+        String filename2 = timestamp2 + ".png";
         FilePath file2 = iconDir.child(filename2);
         file2.touch(timestamp2);
 
         long timestamp3 = System.nanoTime();
-        String filename3 =  timestamp3 + ".png";
+        String filename3 = timestamp3 + ".png";
         FilePath file3 = iconDir.child(filename3);
         file3.touch(timestamp3);
 
@@ -658,7 +658,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link CustomFolderIcon#getAvailableIcons()} when an exception is thrown in the main logic.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testGetAvailableIconsThrowingExceptions(JenkinsRule r) throws Exception {
@@ -672,21 +672,21 @@ class CustomFolderIconTest {
         iconDir.mkdirs();
 
         long timestamp1 = System.nanoTime();
-        String filename1 =  timestamp1 + ".png";
+        String filename1 = timestamp1 + ".png";
         FilePath file1 = iconDir.child(filename1);
         file1.touch(timestamp1);
 
         long timestamp2 = System.nanoTime();
-        String filename2 =  timestamp2 + ".png";
+        String filename2 = timestamp2 + ".png";
         FilePath file2 = iconDir.child(filename2);
         file2.touch(timestamp2);
 
         long timestamp3 = System.nanoTime();
-        String filename3 =  timestamp3 + ".png";
+        String filename3 = timestamp3 + ".png";
         FilePath file3 = iconDir.child(filename3);
         file3.touch(timestamp3);
 
-        try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
+        try (@SuppressWarnings("unused") MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
             String call = invocation.toString();
             if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
                 throw new IOException("Mocked Exception!");
@@ -703,7 +703,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link CustomFolderIcon#getAvailableIcons()} when an exception is thrown in the comparator logic.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testGetAvailableIconsComparatorThrowingExceptions(JenkinsRule r) throws Exception {
@@ -717,23 +717,23 @@ class CustomFolderIconTest {
         iconDir.mkdirs();
 
         long timestamp1 = System.nanoTime();
-        String filename1 =  timestamp1 + ".png";
+        String filename1 = timestamp1 + ".png";
         FilePath file1 = iconDir.child(filename1);
         file1.touch(timestamp1);
 
         long timestamp2 = System.nanoTime();
-        String filename2 =  timestamp2 + ".png";
+        String filename2 = timestamp2 + ".png";
         FilePath file2 = iconDir.child(filename2);
         file2.touch(timestamp2);
 
         long timestamp3 = System.nanoTime();
-        String filename3 =  timestamp3 + ".png";
+        String filename3 = timestamp3 + ".png";
         FilePath file3 = iconDir.child(filename3);
-        file3.touch(timestamp3);;
+        file3.touch(timestamp3);
 
         final int[] counter = {0};
 
-        try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
+        try (@SuppressWarnings("unused") MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
             String call = invocation.toString();
 
             if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
@@ -747,10 +747,10 @@ class CustomFolderIconTest {
                 if (counter[0] == 0) {
                     counter[0] = 1;
                     return file3.lastModified();
-                } else if(counter[0] == 1) {
+                } else if (counter[0] == 1) {
                     counter[0] = 2;
                     return file2.lastModified();
-                } else if(counter[0] == 2) {
+                } else if (counter[0] == 2) {
                     counter[0] = 0;
                     throw new IOException("Mocked Exception!");
                 }
@@ -759,15 +759,15 @@ class CustomFolderIconTest {
                 if (counter[0] == 0) {
                     counter[0] = 1;
                     return filename3;
-                } else if(counter[0] == 1) {
+                } else if (counter[0] == 1) {
                     counter[0] = 2;
                     return filename2;
-                } else if(counter[0] == 2) {
+                } else if (counter[0] == 2) {
                     counter[0] = 0;
                     return filename1;
                 }
                 fail("Unexpected invocation '" + call + "' - Test is broken!");
-        }
+            }
             return fail("Unexpected invocation '" + call + "' - Test is broken!");
         })) {
             icons = CustomFolderIcon.getAvailableIcons();
@@ -790,7 +790,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testCleanupListener(JenkinsRule r) throws Exception {
@@ -815,7 +815,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testCleanupListenerOtherProjects(JenkinsRule r) throws Exception {
@@ -851,7 +851,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testCleanupListenerNoFile(JenkinsRule r) throws Exception {
@@ -875,7 +875,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the icon is used elsewhere.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testCleanupListenerIconUsed(JenkinsRule r) throws Exception {
@@ -905,7 +905,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the file is not deleted.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testCleanupListenerFileNotDeleted(JenkinsRule r) throws Exception {
@@ -922,7 +922,7 @@ class CustomFolderIconTest {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
 
-        try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
+        try (@SuppressWarnings("unused") MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
             String call = invocation.toString();
             if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
                 return userContent;
@@ -944,7 +944,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the file is not deleted due to an exception.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testCleanupListenerFileNotDeletedWithException(JenkinsRule r) throws Exception {
@@ -967,7 +967,9 @@ class CustomFolderIconTest {
             @Override
             public void run() {
                 while (!this.isInterrupted()) {
-                    remoteFile.setReadOnly();
+                    if (!remoteFile.setReadOnly()) {
+                        LOGGER.warning("Unable to set file to read-only!");
+                    }
                 }
             }
         };
@@ -985,7 +987,7 @@ class CustomFolderIconTest {
     /**
      * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the file is not deleted due to an exception.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      * @implNote Sometimes {@link CustomFolderIconTest#testCleanupListenerFileNotDeletedWithException(JenkinsRule)} does not work.
      */
     @Test
@@ -1003,7 +1005,7 @@ class CustomFolderIconTest {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
 
-        try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
+        try (@SuppressWarnings("unused") MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
             String call = invocation.toString();
             if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
                 return userContent;

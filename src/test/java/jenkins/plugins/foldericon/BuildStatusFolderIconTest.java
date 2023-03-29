@@ -58,7 +58,7 @@ class BuildStatusFolderIconTest {
     /**
      * Test behavior on a regular {@link Folder}.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testFolder(JenkinsRule r) throws Exception {
@@ -76,7 +76,7 @@ class BuildStatusFolderIconTest {
     /**
      * Test behavior on a {@link OrganizationFolder}.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testOrganizationFolder(JenkinsRule r) throws Exception {
@@ -95,7 +95,7 @@ class BuildStatusFolderIconTest {
      * Test behavior of {@link DescriptorImpl}.
      */
     @Test
-    void testDescriptor(JenkinsRule r) {
+    void testDescriptor(@SuppressWarnings("unused") JenkinsRule r) {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.BuildStatusFolderIcon_description(), descriptor.getDisplayName());
@@ -105,7 +105,7 @@ class BuildStatusFolderIconTest {
     /**
      * Test behavior of possible {@link Result}s on finished builds.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testFinishedBuildStatusIcon(JenkinsRule r) throws Exception {
@@ -162,7 +162,7 @@ class BuildStatusFolderIconTest {
     /**
      * Test behavior of possible {@link Result}s on running builds.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testRunningBuildStatusIcon(JenkinsRule r) throws Exception {
@@ -196,7 +196,7 @@ class BuildStatusFolderIconTest {
     /**
      * Test behavior of possible {@link Result}s on running builds.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testRunningNoPreviousBuildStatusIcon(JenkinsRule r) throws Exception {
@@ -224,7 +224,7 @@ class BuildStatusFolderIconTest {
     /**
      * Test behavior of possible {@link Result}s on disabled builds.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testDisabledBuildStatusIcon(JenkinsRule r) throws Exception {
@@ -251,7 +251,7 @@ class BuildStatusFolderIconTest {
     /**
      * Test behavior of possible {@link Result}s on no builds.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     void testNoBuildStatusIcon(JenkinsRule r) throws Exception {

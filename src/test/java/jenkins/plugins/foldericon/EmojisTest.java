@@ -50,7 +50,7 @@ class EmojisTest {
     /**
      * Test count of entries in 'emojis.list' vs. existing SVG files.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     @Order(0)
@@ -88,7 +88,7 @@ class EmojisTest {
     /**
      * Test missing 'emojis.list'.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     @Order(1)
@@ -108,7 +108,7 @@ class EmojisTest {
     /**
      * Test invalid 'emojis.list'.
      *
-     * @throws Exception
+     * @throws Exception in case anything goes wrong
      */
     @Test
     @Order(2)

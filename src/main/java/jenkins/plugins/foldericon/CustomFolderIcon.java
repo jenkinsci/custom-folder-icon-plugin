@@ -203,7 +203,7 @@ public class CustomFolderIcon extends FolderIcon {
          * @return OK
          */
         @RequirePOST
-        public HttpResponse doCleanup(StaplerRequest req) {
+        public HttpResponse doCleanup(@SuppressWarnings("unused") StaplerRequest req) {
             Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 
             FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
