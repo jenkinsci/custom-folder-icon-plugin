@@ -27,6 +27,7 @@ Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-pl
 
 This version requires Jenkins 2.357 and above in order to support the transition to https://www.jenkins.io/blog/2022/06/28/require-java-11/[Java 11].
 
+* Version 2.6 enables users to select and re-use a already existing `CustomFolderIcon`. Further an icon file will now be deleted automatically if the folder it used is being deleted - unless of course the file is still used by another folder.
 * Version 2.5 introduces a new type of icon.
 The `EmojiFolderIcon` provides https://unicode.org/emoji/charts/full-emoji-list.html[unicode emojis] as icon.
 * Version 2.3 introduces a new type of icon.
@@ -60,6 +61,10 @@ Select the Custom Folder Icon option and use "Browse..." to chose a file.
 You can crop the image to the desired result and upload it using the "Apply" button.
 
 The file name will be randomized during upload.
+
+You can also select an image from the list of the already available icons.
+
+The file will be deleted automatically if the folder it used is being deleted - unless of course the file is still used by another folder.
 
 image:images/custom-folder-icon-configuration.png[]
 

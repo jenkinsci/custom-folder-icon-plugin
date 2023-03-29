@@ -27,6 +27,7 @@ package jenkins.plugins.foldericon;
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import hudson.FilePath;
+import hudson.model.FreeStyleProject;
 import hudson.model.Item;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.CustomFolderIcon.DescriptorImpl;
@@ -53,6 +54,7 @@ import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -342,6 +344,7 @@ class CustomFolderIconTest {
 
             FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
             parent.mkdirs();
+
             FilePath file = parent.child(System.currentTimeMillis() + ".png");
             file.touch(System.currentTimeMillis());
             assertTrue(file.exists());
@@ -396,6 +399,7 @@ class CustomFolderIconTest {
 
         FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
         parent.mkdirs();
+
         FilePath dummy = parent.child(DUMMY_PNG);
         dummy.touch(System.currentTimeMillis());
         assertTrue(dummy.exists());
@@ -428,6 +432,7 @@ class CustomFolderIconTest {
 
         FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
         parent.mkdirs();
+
         FilePath dummy = parent.child(DUMMY_PNG);
         dummy.touch(System.currentTimeMillis());
         assertTrue(dummy.exists());
@@ -483,8 +488,9 @@ class CustomFolderIconTest {
             FilePath userContent = r.jenkins.getRootPath().child("userContent");
             FilePath iconDir = userContent.child("customFolderIcons");
             iconDir.mkdirs();
+
             String filename = System.currentTimeMillis() + ".png";
-            FilePath file = userContent.child(filename);
+            FilePath file = iconDir.child(filename);
             file.touch(System.currentTimeMillis());
 
             try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
@@ -495,12 +501,12 @@ class CustomFolderIconTest {
                     return true;
                 } else if (StringUtils.equals(call, "filePath.list();")) {
                     return List.of(file);
-                } else if (invocation.toString().equals("filePath.child(\"" + filename + "\");")) {
+                } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
                     FilePath mock = Mockito.mock(FilePath.class);
                     Mockito.when(mock.delete()).thenReturn(false);
                     return mock;
                 }
-                throw new IllegalStateException("Unexpected invocation '" + invocation + "' - Test is broken :(");
+                return fail("Unexpected invocation '" + call + "' - Test is broken!");
             })) {
                 HttpResponse response = descriptor.doCleanup(mockReq);
                 TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
@@ -526,6 +532,7 @@ class CustomFolderIconTest {
 
             FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
             parent.mkdirs();
+
             FilePath file = parent.child(System.currentTimeMillis() + ".png");
             file.touch(System.currentTimeMillis());
             File remoteFile = new File(file.getRemote());
@@ -570,8 +577,9 @@ class CustomFolderIconTest {
             FilePath userContent = r.jenkins.getRootPath().child("userContent");
             FilePath iconDir = userContent.child("customFolderIcons");
             iconDir.mkdirs();
+
             String filename = System.currentTimeMillis() + ".png";
-            FilePath file = userContent.child(filename);
+            FilePath file = iconDir.child(filename);
             file.touch(System.currentTimeMillis());
 
             try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
@@ -582,10 +590,10 @@ class CustomFolderIconTest {
                     return true;
                 } else if (StringUtils.equals(call, "filePath.list();")) {
                     return List.of(file);
-                } else if (invocation.toString().equals("filePath.child(\"" + filename + "\");")) {
+                } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
                     throw new IOException("Mocked Exception!");
                 }
-                throw new IllegalStateException("Unexpected invocation '" + invocation + "' - Test is broken :(");
+                return fail("Unexpected invocation '" + call + "' - Test is broken!");
             })) {
                 HttpResponse response = descriptor.doCleanup(mockReq);
                 TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
@@ -597,4 +605,402 @@ class CustomFolderIconTest {
         }
     }
 
+    /**
+     * Test behavior of {@link CustomFolderIcon#getAvailableIcons()}.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testGetAvailableIcons(JenkinsRule r) throws Exception {
+        List<String> icons = CustomFolderIcon.getAvailableIcons();
+
+        assertNotNull(icons);
+        assertTrue(icons.isEmpty());
+
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+
+        String filename1 = System.nanoTime() + ".png";
+        FilePath file1 = iconDir.child(filename1);
+        file1.touch(System.nanoTime());
+
+        String filename2 = System.nanoTime() + ".png";
+        FilePath file2 = iconDir.child(filename2);
+        file2.touch(System.nanoTime());
+
+        String filename3 = System.nanoTime() + ".png";
+        FilePath file3 = iconDir.child(filename3);
+        file3.touch(System.nanoTime());
+
+        icons = CustomFolderIcon.getAvailableIcons();
+
+        assertNotNull(icons);
+        assertEquals(3, icons.size());
+
+        List<String> expected = Arrays.asList(file1, file2, file3).stream().sorted((filePath1, filePath2) -> {
+            try {
+                return Long.compare(filePath2.lastModified(), filePath1.lastModified());
+            } catch (Exception ex) {
+                return 0;
+            }
+        }).map(FilePath::getName).collect(Collectors.toList());
+
+        assertEquals(expected, icons);
+    }
+
+    /**
+     * Test behavior of {@link CustomFolderIcon#getAvailableIcons()} when an exception is thrown in the main logic.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testGetAvailableIconsThrowingExceptions(JenkinsRule r) throws Exception {
+        List<String> icons = CustomFolderIcon.getAvailableIcons();
+
+        assertNotNull(icons);
+        assertTrue(icons.isEmpty());
+
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+
+        String filename1 = System.nanoTime() + ".png";
+        FilePath file1 = iconDir.child(filename1);
+        file1.touch(System.nanoTime());
+
+        String filename2 = System.nanoTime() + ".png";
+        FilePath file2 = iconDir.child(filename2);
+        file2.touch(System.nanoTime());
+
+        try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
+            String call = invocation.toString();
+            if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
+                throw new IOException("Mocked Exception!");
+            }
+            return fail("Unexpected invocation '" + call + "' - Test is broken!");
+        })) {
+            icons = CustomFolderIcon.getAvailableIcons();
+
+            assertNotNull(icons);
+            assertTrue(icons.isEmpty());
+        }
+    }
+
+    /**
+     * Test behavior of {@link CustomFolderIcon#getAvailableIcons()} when an exception is thrown in the comparator logic.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testGetAvailableIconsComparatorThrowingExceptions(JenkinsRule r) throws Exception {
+        List<String> icons = CustomFolderIcon.getAvailableIcons();
+
+        assertNotNull(icons);
+        assertTrue(icons.isEmpty());
+
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+
+        String filename1 = System.nanoTime() + ".png";
+        FilePath file1 = iconDir.child(filename1);
+        file1.touch(System.nanoTime());
+
+        String filename2 = System.nanoTime() + ".png";
+        FilePath file2 = iconDir.child(filename2);
+        file2.touch(System.nanoTime());
+
+        String filename3 = System.nanoTime() + ".png";
+        FilePath file3 = iconDir.child(filename3);
+        file3.touch(System.nanoTime());
+
+        final int[] counter = {0};
+
+        try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
+            String call = invocation.toString();
+
+            if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
+                return userContent;
+            } else if (StringUtils.equals(call, "filePath.exists();")) {
+                return true;
+            } else if (StringUtils.equals(call, "filePath.list();")) {
+                return iconDir.list();
+
+            } else if (StringUtils.equals(call, "filePath.lastModified();")) {
+                if (counter[0] == 0) {
+                    counter[0] = 1;
+                    return file3.lastModified();
+                } else if(counter[0] == 1) {
+                    counter[0] = 2;
+                    return file2.lastModified();
+                } else if(counter[0] == 2) {
+                    counter[0] = 0;
+                    throw new IOException("Mocked Exception!");
+                }
+                fail("Unexpected invocation '" + call + "' - Test is broken!");
+            } else if (StringUtils.equals(call, "filePath.getName();")) {
+                if (counter[0] == 0) {
+                    counter[0] = 1;
+                    return filename3;
+                } else if(counter[0] == 1) {
+                    counter[0] = 2;
+                    return filename2;
+                } else if(counter[0] == 2) {
+                    counter[0] = 0;
+                    return filename1;
+                }
+                fail("Unexpected invocation '" + call + "' - Test is broken!");
+        }
+            return fail("Unexpected invocation '" + call + "' - Test is broken!");
+        })) {
+            icons = CustomFolderIcon.getAvailableIcons();
+
+            assertNotNull(icons);
+            assertEquals(3, icons.size());
+        }
+
+        List<String> expected = Arrays.asList(file1, file2, file3).stream().sorted((filePath1, filePath2) -> {
+            try {
+                return Long.compare(filePath2.lastModified(), filePath1.lastModified());
+            } catch (Exception ex) {
+                return 0;
+            }
+        }).map(FilePath::getName).collect(Collectors.toList());
+
+        assertEquals(expected, icons);
+    }
+
+    /**
+     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testCleanupListener(JenkinsRule r) throws Exception {
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+
+        String filename = System.currentTimeMillis() + ".png";
+        FilePath file = iconDir.child(filename);
+        file.touch(System.currentTimeMillis());
+
+        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+
+        assertTrue(file.exists());
+        project.delete();
+        assertFalse(file.exists());
+    }
+
+    /**
+     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testCleanupListenerOtherProjects(JenkinsRule r) throws Exception {
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+
+        String filename = System.currentTimeMillis() + ".png";
+        FilePath file = iconDir.child(filename);
+        file.touch(System.currentTimeMillis());
+
+        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+
+        Folder project1 = r.jenkins.createProject(Folder.class, "folder-1");
+        project1.setIcon(customIcon);
+
+        Folder project2 = r.jenkins.createProject(Folder.class, "folder-2");
+        project2.setIcon(new CustomFolderIcon(DUMMY_PNG));
+
+        Folder project3 = r.jenkins.createProject(Folder.class, "folder-3");
+        FreeStyleProject project4 = r.jenkins.createProject(FreeStyleProject.class, "job-1");
+
+        assertTrue(file.exists());
+
+        project1.delete();
+        project2.delete();
+        project3.delete();
+        project4.delete();
+
+        assertFalse(file.exists());
+    }
+
+    /**
+     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testCleanupListenerNoFile(JenkinsRule r) throws Exception {
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+
+        String filename = System.currentTimeMillis() + ".png";
+        FilePath file = iconDir.child(filename);
+
+        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+
+        assertFalse(file.exists());
+        project.delete();
+        assertFalse(file.exists());
+    }
+
+    /**
+     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the icon is used elsewhere.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testCleanupListenerIconUsed(JenkinsRule r) throws Exception {
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+
+        String filename = System.currentTimeMillis() + ".png";
+        FilePath file = iconDir.child(filename);
+        file.touch(System.currentTimeMillis());
+
+        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+
+        Folder project1 = r.jenkins.createProject(Folder.class, "folder1");
+        project1.setIcon(customIcon);
+
+        Folder project2 = r.jenkins.createProject(Folder.class, "folder2");
+        project2.setIcon(customIcon);
+
+        assertTrue(file.exists());
+        project1.delete();
+        assertTrue(file.exists());
+        project2.delete();
+        assertFalse(file.exists());
+    }
+
+    /**
+     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the file is not deleted.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testCleanupListenerFileNotDeleted(JenkinsRule r) throws Exception {
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+
+        String filename = System.currentTimeMillis() + ".png";
+        FilePath file = iconDir.child(filename);
+        file.touch(System.currentTimeMillis());
+
+        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+
+        try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
+            String call = invocation.toString();
+            if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
+                return userContent;
+            } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
+                FilePath mock = Mockito.mock(FilePath.class);
+                Mockito.when(mock.delete()).thenReturn(false);
+                return mock;
+            }
+            return fail("Unexpected invocation '" + call + "' - Test is broken!");
+        })) {
+            project.delete();
+        }
+
+        assertTrue(file.exists());
+        file.delete();
+        assertFalse(file.exists());
+    }
+
+    /**
+     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the file is not deleted due to an exception.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testCleanupListenerFileNotDeletedWithException(JenkinsRule r) throws Exception {
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+
+        String filename = System.currentTimeMillis() + ".png";
+        FilePath file = iconDir.child(filename);
+        file.touch(System.currentTimeMillis());
+        File remoteFile = new File(file.getRemote());
+
+        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+
+        // jenkins is pretty brutal when deleting files...
+        Thread blocker = new Thread() {
+            @Override
+            public void run() {
+                while (!this.isInterrupted()) {
+                    remoteFile.setReadOnly();
+                }
+            }
+        };
+
+        blocker.start();
+        assertTrue(file.exists());
+
+        project.delete();
+        blocker.interrupt();
+
+        file.delete();
+        assertFalse(file.exists());
+    }
+
+    /**
+     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the file is not deleted due to an exception.
+     *
+     * @throws Exception
+     * @implNote Sometimes {@link CustomFolderIconTest#testCleanupListenerFileNotDeletedWithException(JenkinsRule)} does not work.
+     */
+    @Test
+    void testCleanupListenerFileNotDeletedWithMockedException(JenkinsRule r) throws Exception {
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+
+        String filename = System.currentTimeMillis() + ".png";
+        FilePath file = iconDir.child(filename);
+        file.touch(System.currentTimeMillis());
+
+        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+
+        try (MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
+            String call = invocation.toString();
+            if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
+                return userContent;
+            } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
+                throw new IOException("Mocked Exception!");
+            }
+            return fail("Unexpected invocation '" + call + "' - Test is broken!");
+        })) {
+            project.delete();
+        }
+
+        assertTrue(file.exists());
+        file.delete();
+        assertFalse(file.exists());
+    }
 }

@@ -31,6 +31,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Item;
+import hudson.model.listeners.ItemListener;
 import jenkins.model.Jenkins;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
@@ -71,6 +72,32 @@ public class CustomFolderIcon extends FolderIcon {
     @DataBoundConstructor
     public CustomFolderIcon(String foldericon) {
         this.foldericon = foldericon;
+    }
+
+    /**
+     * Get all icons that are currently available.
+     *
+     * @return all the icons that have been uploaded, sorted descending by {@link FilePath#lastModified()}.
+     */
+    public static List<String> getAvailableIcons() {
+        try {
+            FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
+
+            if (iconDir.exists()) {
+                return iconDir.list().stream().sorted((file1, file2) -> {
+                    try {
+                        return Long.compare(file2.lastModified(), file1.lastModified());
+                    } catch (Exception ex) {
+                        return 0;
+                    }
+                }).map(FilePath::getName).collect(Collectors.toList());
+            } else {
+                return List.of();
+            }
+        } catch (IOException | InterruptedException ex) {
+            LOGGER.log(Level.WARNING, ex, () -> "Unable to list available icons!");
+            return List.of();
+        }
     }
 
     @Override
@@ -173,36 +200,69 @@ public class CustomFolderIcon extends FolderIcon {
          *
          * @param req the request
          * @return OK
-         * @throws InterruptedException if there is a file handling error
-         * @throws IOException          if there is a file handling error
          */
         @RequirePOST
-        public HttpResponse doCleanup(StaplerRequest req) throws InterruptedException, IOException {
-            Jenkins jenkins = Jenkins.get();
-            jenkins.checkPermission(Jenkins.ADMINISTER);
+        public HttpResponse doCleanup(StaplerRequest req) {
+            Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 
-            FilePath iconDir = jenkins.getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
+            FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
 
-            if (iconDir.exists()) {
-                List<String> existingIcons = iconDir.list().stream().map(FilePath::getName).collect(Collectors.toList());
+            List<String> existingIcons = getAvailableIcons();
 
-                List<String> usedIcons = jenkins.getAllItems(AbstractFolder.class).stream()
-                        .filter(folder -> folder.getIcon() instanceof CustomFolderIcon)
-                        .map(folder -> ((CustomFolderIcon) folder.getIcon()).getFoldericon()).collect(Collectors.toList());
+            List<String> usedIcons = Jenkins.get().getAllItems(AbstractFolder.class).stream()
+                    .filter(folder -> folder.getIcon() instanceof CustomFolderIcon)
+                    .map(folder -> ((CustomFolderIcon) folder.getIcon()).getFoldericon())
+                    .collect(Collectors.toList());
 
-                if (usedIcons.isEmpty() || existingIcons.removeAll(usedIcons)) {
-                    for (String icon : existingIcons) {
-                        try {
-                            if (!iconDir.child(icon).delete()) {
-                                LOGGER.warning(() -> "Unable to delete unused Folder Icon '" + icon + "'!");
-                            }
-                        } catch (IOException ex) {
-                            LOGGER.log(Level.WARNING, ex, () -> "Unable to delete unused Folder Icon '" + icon + "'!");
+            if (usedIcons.isEmpty() || existingIcons.removeAll(usedIcons)) {
+                for (String icon : existingIcons) {
+                    try {
+                        if (!iconDir.child(icon).delete()) {
+                            LOGGER.warning(() -> "Unable to delete unused Folder Icon '" + icon + "'!");
                         }
+                    } catch (IOException | InterruptedException ex) {
+                        LOGGER.log(Level.WARNING, ex, () -> "Unable to delete unused Folder Icon '" + icon + "'!");
                     }
                 }
             }
             return HttpResponses.ok();
+        }
+    }
+
+    /**
+     * Item Listener to clean up unused icons when the folder is deleted.
+     *
+     * @author strangelookingnerd
+     */
+    @Extension
+    public static class CustomFolderIconCleanup extends ItemListener {
+
+        @Override
+        public void onDeleted(Item item) {
+            if (item instanceof AbstractFolder<?>) {
+                FolderIcon icon = ((AbstractFolder<?>) item).getIcon();
+                if (icon instanceof CustomFolderIcon) {
+                    String foldericon = ((CustomFolderIcon) icon).getFoldericon();
+
+                    // delete the icon only if there is no other usage
+                    boolean orphan = Jenkins.get().getAllItems(AbstractFolder.class).stream()
+                            .filter(folder -> folder.getIcon() instanceof CustomFolderIcon
+                                    && StringUtils.equals(foldericon, ((CustomFolderIcon) folder.getIcon()).getFoldericon()))
+                            .limit(2)
+                            .count() <= 1;
+
+                    if (orphan) {
+                        FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
+                        try {
+                            if (!iconDir.child(foldericon).delete()) {
+                                LOGGER.warning(() -> "Unable to delete Folder Icon '" + foldericon + "' for Folder '" + item.getFullName() + "'!");
+                            }
+                        } catch (IOException | InterruptedException ex) {
+                            LOGGER.log(Level.WARNING, ex, () -> "Unable to delete Folder Icon '" + foldericon + "' for Folder '" + item.getFullName() + "'!");
+                        }
+                    }
+                }
+            }
         }
     }
 }
