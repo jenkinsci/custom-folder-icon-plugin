@@ -5,5 +5,5 @@ buildPlugin(useContainerAgent: true, configurations: [
   [ platform: 'windows', jdk: '11', jenkins: null ],
 
   // Test latest Jenkins Version.
-  [ platform: 'linux', jdk: '17', jenkins: '2.396' ]
+  [ platform: 'linux', jdk: '17', jenkins: '2.397' ]
 ])
