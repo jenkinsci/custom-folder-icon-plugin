@@ -26,19 +26,20 @@ SOFTWARE.
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:f="/lib/form">
     <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/ionicon.css" type="text/css" />
     <script src="${rootURL}/plugin/custom-folder-icon/js/ionicon-config.js" type="text/javascript" />
-    <f:entry title="${%Choose}" field="ionicon">
-        <f:select id="ionicon-name" />
+    <j:invokeStatic var="ionicons" method="getAvailableIcons" className="io.jenkins.plugins.ionicons.Ionicons" />
+    <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('preview')}">
+        <l:icon id="ionicon-preview" src="${ionicons.get(instance.ionicon ?: 'jenkins')}" title="${icon.key}"
+                class="icon-xlg" />
     </f:entry>
     <f:advanced title="${%AvailableIcons}">
-        <j:invokeStatic var="icons" method="getAvailableIcons" className="io.jenkins.plugins.ionicons.Ionicons" />
-        <j:forEach var="icon" items="${icons}">
-            <a id="select-${icon.key}" class="icon-selection" onclick="setIcon('${icon.key}')">
-                <l:icon id="icon-${icon.key}" src="${icon.value}" tooltip="${icon.key}" class="icon-md" />
+        <j:forEach var="icon" items="${ionicons}">
+            <a id="select-ionicon-${icon.key}" class="ionicon-icon-selection" onclick="setIoniconIcon('${icon.key}')">
+                <l:icon id="ionicon-icon-${icon.key}" src="${icon.value}" title="${icon.key}" tooltip="${icon.key}"
+                        class="icon-md" />
             </a>
         </j:forEach>
     </f:advanced>
-    <script>
-        // init the preview
-        window.addEventListener("DOMContentLoaded", setIcon('${instance.ionicon}'));
-    </script>
+    <f:entry field="ionicon">
+        <f:textbox id="ionicon-icon-name" value="${instance.ionicon}" clazz="ionicon-icon-name" />
+    </f:entry>
 </j:jelly>

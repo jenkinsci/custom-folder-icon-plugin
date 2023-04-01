@@ -23,23 +23,26 @@
  */
 
 /**
- * Set the emoji value in the preview.
+ * Select the icon for preview.
  *
- * @param {string} key - The emoji key.
- * @param {string} emoji - The unicode emoji.
+ * @param {string} icon - The icon name.
+ *
  */
-function setEmoji(key, emoji) {
-    if (key == null || key == "") {
-        key = "sloth";
-        emoji = "🦥";
+function setEmojiIcon(icon) {
+    if (icon == null || icon == "") {
+        return;
     }
 
-    let emojiName = document.getElementById("emoji-name");
-    emojiName.setAttribute("value", key);
-    emojiName.dispatchEvent(new Event("change"));
+    let iconName = document.getElementById("emoji-icon-name");
+    iconName.setAttribute("value", icon);
+    iconName.dispatchEvent(new Event("change"));
 
-    let preview = document.getElementById("preview");
-    preview.setAttribute("value", emoji);
-    preview.setAttribute("title", key);
-    preview.setAttribute("tooltip", key);
+    let oldPreview = document.getElementById("emoji-preview");
+    let selectedIcon = document.getElementById("emoji-icon-" + icon);
+
+    let newPreview = selectedIcon.cloneNode(true);
+    newPreview.id = "emoji-preview";
+    newPreview.classList.replace("icon-md", "icon-xlg");
+
+    oldPreview.parentElement.replaceChild(newPreview, oldPreview);
 }

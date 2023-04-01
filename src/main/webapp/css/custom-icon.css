@@ -22,11 +22,11 @@
  * THE SOFTWARE.
  */
 
-.jenkins-file-upload {
+.custom-icon.jenkins-file-upload {
     width: 90%;
 }
 
-.file-name {
+.custom-icon-name {
     display: none;
 }
 

@@ -28,8 +28,8 @@ let croppie
  * Initialization of preview image.
  *
  */
-function init() {
-    let preview = document.getElementById("file-name").getAttribute("value");
+function initCustomIcon() {
+    let preview = document.getElementById("custom-icon-name").getAttribute("value");
     let url;
     if (preview == null || preview == "") {
         url = rootURL + "/plugin/custom-folder-icon/icons/default.png";
@@ -38,7 +38,7 @@ function init() {
     }
 
     // init croppie
-    croppie = new Croppie(document.getElementById("file-cropper"), {
+    croppie = new Croppie(document.getElementById("custom-icon-cropper"), {
         viewport: {width: 128, height: 128},
         boundary: {width: 200, height: 200},
         enforceBoundary: false,
@@ -60,7 +60,7 @@ function init() {
  *
  * @param {string} url The icon url.
  */
-function setIcon(url) {
+function setCustomIcon(url) {
     // load icon image
     croppie.bind({
         url: url,
@@ -68,11 +68,15 @@ function setIcon(url) {
     });
 
     // reset the name in the upload input element
-    document.getElementById("file-upload").value = "";
+    document.getElementById("custom-icon-upload").value = "";
+
     // set the file name - in case you don't crop / upload the image again it will simply be re-used that way
     let paths = url.split("/");
     let icon = paths[paths.length - 1];
-    document.getElementById("file-name").setAttribute("value", icon);
+
+    let fileName = document.getElementById("custom-icon-name")
+    fileName.setAttribute("value", icon);
+    fileName.dispatchEvent(new Event("change"));
 }
 
 
@@ -81,7 +85,7 @@ function setIcon(url) {
  *
  * @param {Blob} file The file input.
  */
-function setFile(file) {
+function setCustomIconFile(file) {
     // read file input
     let reader = new FileReader();
     reader.onload = function (ev) {
@@ -99,12 +103,12 @@ function setFile(file) {
  * @param {string} successMessage - The success message.
  * @param {string} errorMessage - The error message.
  */
-function doUploadIcon(successMessage, errorMessage) {
+function doUploadCustomIcon(successMessage, errorMessage) {
     let request = new XMLHttpRequest();
     request.onreadystatechange = function () {
         if (this.readyState == 4) {
             if (this.status == 200) {
-                document.getElementById("file-name").setAttribute("value", this.responseText);
+                document.getElementById("custom-icon-name").setAttribute("value", this.responseText);
                 alert(successMessage + " " + this.responseText);
             } else {
                 let error = this.responseText.substring(this.responseText.lastIndexOf("<title>") + 7,

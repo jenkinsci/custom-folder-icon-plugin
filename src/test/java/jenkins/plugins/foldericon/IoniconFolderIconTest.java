@@ -111,9 +111,6 @@ class IoniconFolderIconTest {
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.IoniconFolderIcon_description(), descriptor.getDisplayName());
         assertTrue(descriptor.isApplicable(null));
-
-        assertNotNull(descriptor.doFillIoniconItems());
-
-        assertFalse(descriptor.doFillIoniconItems().isEmpty());
     }
+
 }

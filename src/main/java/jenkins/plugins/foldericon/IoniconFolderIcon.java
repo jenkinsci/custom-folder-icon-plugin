@@ -29,7 +29,6 @@ import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import com.cloudbees.hudson.plugins.folder.FolderIconDescriptor;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
-import hudson.util.ListBoxModel;
 import io.jenkins.plugins.ionicons.Ionicons;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
@@ -102,17 +101,6 @@ public class IoniconFolderIcon extends FolderIcon {
     @Extension
     public static class DescriptorImpl extends FolderIconDescriptor {
 
-        private final ListBoxModel listbox = new ListBoxModel();
-
-        /**
-         * Ctor.
-         * <p>
-         * Populates the list of available icons.
-         */
-        public DescriptorImpl() {
-            Ionicons.getAvailableIcons().keySet().forEach(listbox::add);
-        }
-
         @Override
         @NonNull
         public String getDisplayName() {
@@ -124,13 +112,6 @@ public class IoniconFolderIcon extends FolderIcon {
             return true;
         }
 
-        /**
-         * Get a drop-down list with all available icons.
-         *
-         * @return the list of available icons.
-         */
-        public ListBoxModel doFillIoniconItems() {
-            return this.listbox;
-        }
     }
+
 }
