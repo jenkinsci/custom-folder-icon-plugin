@@ -23,24 +23,26 @@
  */
 
 /**
- * Set the icon value in the dropdown.
+ * Select the icon for preview.
  *
- * @param {string} icon - The value.
+ * @param {string} icon - The icon name.
+ *
  */
-function setIcon(icon) {
-    let dropdown = document.getElementById("ionicon-name");
-
+function setIoniconIcon(icon) {
     if (icon == null || icon == "") {
-        icon = "jenkins";
-        dropdown.setAttribute("value", icon);
-        dropdown.setAttribute("selected", icon);
-    } else {
-        for (let option of dropdown.options) {
-            if (option.value == icon) {
-                option.selected = true;
-                break;
-            }
-        }
+        return;
     }
-    dropdown.dispatchEvent(new Event("change"));
+
+    let iconName = document.getElementById("ionicon-icon-name");
+    iconName.setAttribute("value", icon);
+    iconName.dispatchEvent(new Event("change"));
+
+    let oldPreview = document.getElementById("ionicon-preview");
+    let selectedIcon = document.getElementById("ionicon-icon-" + icon);
+
+    let newPreview = selectedIcon.cloneNode(true);
+    newPreview.id = "ionicon-preview";
+    newPreview.classList.replace("icon-md", "icon-xlg");
+
+    oldPreview.parentElement.replaceChild(newPreview, oldPreview);
 }

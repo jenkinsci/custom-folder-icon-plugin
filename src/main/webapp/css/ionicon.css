@@ -22,7 +22,11 @@
  * THE SOFTWARE.
  */
 
-.icon-selection {
+.ionicon-icon-name {
+    display: none;
+}
+
+.ionicon-icon-selection {
     color: unset;
     cursor: pointer;
     text-decoration: none !important;

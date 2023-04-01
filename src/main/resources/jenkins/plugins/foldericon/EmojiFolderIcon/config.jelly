@@ -23,27 +23,23 @@ SOFTWARE.
 -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:f="/lib/form">
     <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/emoji.css" type="text/css" />
     <script src="${rootURL}/plugin/custom-folder-icon/js/emoji-config.js" type="text/javascript" />
-    <j:invokeStatic var="emojis" method="getAvailableEmojis" className="jenkins.plugins.foldericon.Emojis" />
+    <j:invokeStatic var="emojis" method="getAvailableIcons" className="jenkins.plugins.foldericon.Emojis" />
     <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('preview')}">
-        <f:readOnlyTextbox id="preview" value="${emojis.get(instance.emoji)}" clazz="emoji-preview" />
+        <l:icon id="emoji-preview" src="${emojis.get(instance.emoji ?: 'sloth')}" title="${icon.key}"
+                class="emoji-icon icon-xlg" />
     </f:entry>
-    <f:advanced title="${%AvailableEmojis}">
-        <j:forEach var="emoji" items="${emojis}">
-            <a id="select-${emoji.key}" class="emoji-selection" tooltip="${emoji.key}"
-               onclick="setEmoji('${emoji.key}', '${emoji.value}')">
-                ${emoji.value}
-                <st:nbsp />
+    <f:advanced title="${%AvailableIcons}">
+        <j:forEach var="icon" items="${emojis}">
+            <a id="select-emoji-${icon.key}" class="emoji-icon-selection" onclick="setEmojiIcon('${icon.key}')">
+                <l:icon id="emoji-icon-${icon.key}" src="${icon.value}" title="${icon.key}" tooltip="${icon.key}"
+                        class="emoji-icon icon-md" />
             </a>
         </j:forEach>
     </f:advanced>
     <f:entry field="emoji">
-        <f:textbox id="emoji-name" value="${instance.emoji}" clazz="emoji-name" />
+        <f:textbox id="emoji-icon-name" value="${instance.emoji}" clazz="emoji-icon-name" />
     </f:entry>
-    <script>
-        // init the preview
-        window.addEventListener("DOMContentLoaded", setEmoji('${instance.emoji}', '${emojis.get(instance.emoji)}'));
-    </script>
 </j:jelly>

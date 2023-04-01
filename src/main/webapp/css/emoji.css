@@ -22,22 +22,20 @@
  * THE SOFTWARE.
  */
 
-.emoji-preview {
-    font-size: 48px;
-    width: 86px;
-    height: 86px;
-    text-align: center;
-    cursor: default;
-    padding-bottom: 15px;
-    padding-left: 8px;
-}
-
-.emoji-name {
+.emoji-icon-name {
     display: none;
 }
 
-.emoji-selection {
-    font-size: 1rem;
+.emoji-icon-selection {
+    color: unset;
     cursor: pointer;
     text-decoration: none !important;
+}
+
+.emoji-icon.icon-xlg {
+    user-select: none;
+}
+
+.emoji-icon.icon-md {
+    user-select: none;
 }
