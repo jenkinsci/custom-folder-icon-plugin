@@ -244,22 +244,23 @@ public class CustomFolderIcon extends FolderIcon {
                 FolderIcon icon = ((AbstractFolder<?>) item).getIcon();
                 if (icon instanceof CustomFolderIcon) {
                     String foldericon = ((CustomFolderIcon) icon).getFoldericon();
+                    if(StringUtils.isNotEmpty(foldericon)) {
+                        // delete the icon only if there is no other usage
+                        boolean orphan = Jenkins.get().getAllItems(AbstractFolder.class).stream()
+                                .filter(folder -> folder.getIcon() instanceof CustomFolderIcon
+                                        && StringUtils.equals(foldericon, ((CustomFolderIcon) folder.getIcon()).getFoldericon()))
+                                .limit(2)
+                                .count() <= 1;
 
-                    // delete the icon only if there is no other usage
-                    boolean orphan = Jenkins.get().getAllItems(AbstractFolder.class).stream()
-                            .filter(folder -> folder.getIcon() instanceof CustomFolderIcon
-                                    && StringUtils.equals(foldericon, ((CustomFolderIcon) folder.getIcon()).getFoldericon()))
-                            .limit(2)
-                            .count() <= 1;
-
-                    if (orphan) {
-                        FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
-                        try {
-                            if (!iconDir.child(foldericon).delete()) {
-                                LOGGER.warning(() -> "Unable to delete Folder Icon '" + foldericon + "' for Folder '" + item.getFullName() + "'!");
+                        if (orphan) {
+                            FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
+                            try {
+                                if (!iconDir.child(foldericon).delete()) {
+                                    LOGGER.warning(() -> "Unable to delete Folder Icon '" + foldericon + "' for Folder '" + item.getFullName() + "'!");
+                                }
+                            } catch (IOException | InterruptedException ex) {
+                                LOGGER.log(Level.WARNING, ex, () -> "Unable to delete Folder Icon '" + foldericon + "' for Folder '" + item.getFullName() + "'!");
                             }
-                        } catch (IOException | InterruptedException ex) {
-                            LOGGER.log(Level.WARNING, ex, () -> "Unable to delete Folder Icon '" + foldericon + "' for Folder '" + item.getFullName() + "'!");
                         }
                     }
                 }

@@ -873,6 +873,27 @@ class CustomFolderIconTest {
     }
 
     /**
+     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
+     *
+     * @throws Exception in case anything goes wrong
+     */
+    @Test
+    void testCleanupListenerDefaultIcon(JenkinsRule r) throws Exception {
+        FilePath userContent = r.jenkins.getRootPath().child("userContent");
+        FilePath iconDir = userContent.child("customFolderIcons");
+        iconDir.mkdirs();
+
+        CustomFolderIcon customIcon = new CustomFolderIcon(null);
+
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+
+        project.delete();
+
+        assertTrue(iconDir.exists());
+    }
+
+    /**
      * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the icon is used elsewhere.
      *
      * @throws Exception in case anything goes wrong
