@@ -25,8 +25,8 @@ $EmojiList = $PSScriptRoot + "\src\main\resources\jenkins\plugins\foldericon\Emo
 $SVG = ".svg"
 $EmojiPrefix = "emoji_"
 $Placeholder = "PLACEHOLDER"
-$SVGTemplate = "<svg xmlns=`"http://www.w3.org/2000/svg`" class=`"emoji`" viewBox=`"0 -50 100 100`" preserveAspectRatio=`"xMidYMid meet`">"`
-               + "<text transform=`"scale(2, 2)`" font-size=`"40`" dy=`".25em`" dx=`"-.05em`">" + $Placeholder + "</text></svg>"
+$SVGTemplate = "<svg xmlns=`"http://www.w3.org/2000/svg`" class=`"emoji`" viewBox=`"0 0 100 100`">"`
+               + "<text font-size=`"80`" dominant-baseline=`"middle`" text-anchor=`"middle`" x=`"50%`" y=`"50%`" dy=`"0.1em`">" + $Placeholder + "</text></svg>"
 
 
 "Creating SVGs from " + $EmojiList | Out-Host
