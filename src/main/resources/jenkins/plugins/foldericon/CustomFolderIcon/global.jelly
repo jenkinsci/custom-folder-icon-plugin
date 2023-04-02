@@ -27,7 +27,7 @@ SOFTWARE.
     <script src="${rootURL}/plugin/custom-folder-icon/js/custom-icon-global.js" type="text/javascript" />
     <f:section title="${%CustomFolderIcons}">
         <f:entry title="${%CleanupIcons}" help="${descriptor.getHelpFile('global-cleanup')}">
-            <input type="button" value="${%Cleanup}" onclick="doCleanup('${%CleanupSuccess}', '${%CleanupFailed}')" />
+            <input type="button" value="${%Cleanup}" onclick="doCustomIconCleanup('${%CleanupSuccess}', '${%CleanupFailed}')" />
         </f:entry>
     </f:section>
 </j:jelly>

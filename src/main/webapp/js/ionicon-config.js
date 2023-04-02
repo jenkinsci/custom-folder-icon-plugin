@@ -29,13 +29,13 @@
  *
  */
 function setIoniconIcon(icon) {
-    if (icon == null || icon == "") {
+    if (icon == null || icon === "") {
         return;
     }
 
     let iconName = document.getElementById("ionicon-icon-name");
     iconName.setAttribute("value", icon);
-    iconName.dispatchEvent(new Event("change"));
+    iconName.dispatchEvent(new Event("input"));
 
     let oldPreview = document.getElementById("ionicon-preview");
     let selectedIcon = document.getElementById("ionicon-icon-" + icon);

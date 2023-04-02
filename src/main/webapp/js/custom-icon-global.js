@@ -28,7 +28,7 @@
  * @param {string} successMessage - The success message.
  * @param {string} errorMessage - The error message.
  */
-function doCleanup(successMessage, errorMessage) {
+function doCustomIconCleanup(successMessage, errorMessage) {
     new Ajax.Request(rootURL + "/descriptor/jenkins.plugins.foldericon.CustomFolderIcon/cleanup", {
         onSuccess: function (rsp) {
             alert(successMessage);

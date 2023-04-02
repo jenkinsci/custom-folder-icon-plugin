@@ -31,7 +31,7 @@ let croppie
 function initCustomIcon() {
     let preview = document.getElementById("custom-icon-name").getAttribute("value");
     let url;
-    if (preview == null || preview == "") {
+    if (preview == null || preview === "") {
         url = rootURL + "/plugin/custom-folder-icon/icons/default.png";
     } else {
         url = rootURL + "/userContent/customFolderIcons/" + preview;
@@ -74,9 +74,9 @@ function setCustomIcon(url) {
     let paths = url.split("/");
     let icon = paths[paths.length - 1];
 
-    let fileName = document.getElementById("custom-icon-name")
-    fileName.setAttribute("value", icon);
-    fileName.dispatchEvent(new Event("change"));
+    let iconName = document.getElementById("custom-icon-name")
+    iconName.setAttribute("value", icon);
+    iconName.dispatchEvent(new Event("input"));
 }
 
 
@@ -106,9 +106,11 @@ function setCustomIconFile(file) {
 function doUploadCustomIcon(successMessage, errorMessage) {
     let request = new XMLHttpRequest();
     request.onreadystatechange = function () {
-        if (this.readyState == 4) {
-            if (this.status == 200) {
-                document.getElementById("custom-icon-name").setAttribute("value", this.responseText);
+        if (this.readyState === 4) {
+            if (this.status === 200) {
+                let iconName = document.getElementById("custom-icon-name")
+                iconName.setAttribute("value", this.responseText);
+                iconName.dispatchEvent(new Event("input"));
                 alert(successMessage + " " + this.responseText);
             } else {
                 let error = this.responseText.substring(this.responseText.lastIndexOf("<title>") + 7,

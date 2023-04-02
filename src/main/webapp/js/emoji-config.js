@@ -29,13 +29,13 @@
  *
  */
 function setEmojiIcon(icon) {
-    if (icon == null || icon == "") {
+    if (icon == null || icon === "") {
         return;
     }
 
     let iconName = document.getElementById("emoji-icon-name");
     iconName.setAttribute("value", icon);
-    iconName.dispatchEvent(new Event("change"));
+    iconName.dispatchEvent(new Event("input"));
 
     let oldPreview = document.getElementById("emoji-preview");
     let selectedIcon = document.getElementById("emoji-icon-" + icon);
