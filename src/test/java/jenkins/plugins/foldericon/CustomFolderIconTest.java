@@ -319,7 +319,7 @@ class CustomFolderIconTest {
                         case "ServletException":
                             throw new ServletException(exceptionMessage);
                         default:
-                            return null;
+                            return fail("Unexpected exception '" + exception + "' - Test is broken!");
                     }
                 }
             };
@@ -742,7 +742,6 @@ class CustomFolderIconTest {
                 return true;
             } else if (StringUtils.equals(call, "filePath.list();")) {
                 return iconDir.list();
-
             } else if (StringUtils.equals(call, "filePath.lastModified();")) {
                 if (counter[0] == 0) {
                     counter[0] = 1;
@@ -754,7 +753,6 @@ class CustomFolderIconTest {
                     counter[0] = 0;
                     throw new IOException("Mocked Exception!");
                 }
-                fail("Unexpected invocation '" + call + "' - Test is broken!");
             } else if (StringUtils.equals(call, "filePath.getName();")) {
                 if (counter[0] == 0) {
                     counter[0] = 1;
@@ -766,7 +764,6 @@ class CustomFolderIconTest {
                     counter[0] = 0;
                     return filename1;
                 }
-                fail("Unexpected invocation '" + call + "' - Test is broken!");
             }
             return fail("Unexpected invocation '" + call + "' - Test is broken!");
         })) {

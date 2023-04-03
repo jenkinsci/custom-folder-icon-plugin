@@ -32,6 +32,7 @@ import org.kohsuke.stapler.*;
 import org.kohsuke.stapler.bind.BoundObjectTable;
 import org.kohsuke.stapler.lang.Klass;
 
+import javax.annotation.Nonnull;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
@@ -78,12 +79,12 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public int read(byte[] b) throws IOException {
+                public int read(@Nonnull byte[] b) throws IOException {
                     return stream.read(b);
                 }
 
                 @Override
-                public int read(byte[] b, int off, int len) {
+                public int read(@Nonnull byte[] b, int off, int len) {
                     return stream.read(b, off, len);
                 }
 
@@ -244,6 +245,7 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
+    @Deprecated
     public boolean isRequestedSessionIdFromUrl() {
         return false;
     }
@@ -344,6 +346,7 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
+    @Deprecated
     public String getRealPath(String path) {
         return "";
     }
@@ -554,21 +557,25 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
+    @Deprecated
     public void bindParameters(Object bean, String prefix) {
         // NOP
     }
 
     @Override
+    @Deprecated
     public <T> List<T> bindParametersToList(Class<T> type, String prefix) {
         return null;
     }
 
     @Override
+    @Deprecated
     public <T> T bindParameters(Class<T> type, String prefix) {
         return null;
     }
 
     @Override
+    @Deprecated
     public <T> T bindParameters(Class<T> type, String prefix, int index) {
         return null;
     }
@@ -599,11 +606,13 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
+    @Deprecated
     public BindInterceptor setBindListener(BindInterceptor bindListener) {
         return null;
     }
 
     @Override
+    @Deprecated
     public BindInterceptor setBindInterceptpr(BindInterceptor bindListener) {
         return null;
     }
