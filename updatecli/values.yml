@@ -5,4 +5,4 @@ github:
   token: "UPDATECLI_GITHUB_TOKEN"
   owner: "jenkinsci"
   repository: "custom-folder-icon-plugin"
-  branch: "master"
+  branch: "main"

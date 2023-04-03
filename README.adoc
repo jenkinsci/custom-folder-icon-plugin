@@ -4,8 +4,8 @@
 :toclevels: 3
 :toc-title:
 
-image:https://ci.jenkins.io/job/Plugins/job/custom-folder-icon-plugin/job/master/badge/icon[link="https://ci.jenkins.io/job/Plugins/job/custom-folder-icon-plugin/job/master/"]
-image:https://codecov.io/gh/jenkinsci/custom-folder-icon-plugin/branch/master/graph/badge.svg[link="https://codecov.io/gh/jenkinsci/custom-folder-icon-plugin"]
+image:https://ci.jenkins.io/job/Plugins/job/custom-folder-icon-plugin/job/main/badge/icon[link="https://ci.jenkins.io/job/Plugins/job/custom-folder-icon-plugin/job/main/"]
+image:https://codecov.io/gh/jenkinsci/custom-folder-icon-plugin/branch/main/graph/badge.svg[link="https://codecov.io/gh/jenkinsci/custom-folder-icon-plugin"]
 image:https://github.com/jenkinsci/custom-folder-icon-plugin/actions/workflows/jenkins-security-scan.yml/badge.svg[link="https://github.com/jenkinsci/custom-folder-icon-plugin/actions/workflows/jenkins-security-scan.yml"]
 
 image:https://img.shields.io/jenkins/plugin/i/custom-folder-icon.svg?color=blue&label=installations[link="https://stats.jenkins.io/pluginversions/custom-folder-icon.html"]
