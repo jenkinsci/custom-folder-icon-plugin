@@ -122,22 +122,26 @@ function doUploadCustomIcon(successMessage, errorMessage) {
 
     request.open("POST", rootURL + "/descriptor/jenkins.plugins.foldericon.CustomFolderIcon/uploadIcon");
 
-    // get a crumb
-    new Ajax.Request(rootURL + "/crumbIssuer/api/json", {
-        method: "GET",
-        onSuccess: function (req) {
-            let jsonResponse = JSON.parse(req.transport.response);
-            let header = jsonResponse.crumbRequestField;
-            let value = jsonResponse.crumb;
-            request.setRequestHeader(header, value);
-        },
-        onComplete: function () {
-            // upload the file
-            let formData = new FormData();
-            croppie.result("blob").then(function (blob) {
-                formData.append("file", blob);
-                request.send(formData);
-            });
-        }
-    });
+    try {
+        // get a crumb
+        new Ajax.Request(rootURL + "/crumbIssuer/api/json", {
+            method: "GET",
+            onSuccess: function (req) {
+                let jsonResponse = JSON.parse(req.transport.response);
+                let header = jsonResponse.crumbRequestField;
+                let value = jsonResponse.crumb;
+                request.setRequestHeader(header, value);
+            },
+            onComplete: function () {
+                // upload the file
+                let formData = new FormData();
+                croppie.result("blob").then(function (blob) {
+                    formData.append("file", blob);
+                    request.send(formData);
+                });
+            }
+        });
+    } catch (e) {
+        console.error(e)
+    }
 }

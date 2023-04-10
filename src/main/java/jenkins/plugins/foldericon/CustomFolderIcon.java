@@ -244,7 +244,7 @@ public class CustomFolderIcon extends FolderIcon {
                 FolderIcon icon = ((AbstractFolder<?>) item).getIcon();
                 if (icon instanceof CustomFolderIcon) {
                     String foldericon = ((CustomFolderIcon) icon).getFoldericon();
-                    if(StringUtils.isNotEmpty(foldericon)) {
+                    if (StringUtils.isNotEmpty(foldericon)) {
                         // delete the icon only if there is no other usage
                         boolean orphan = Jenkins.get().getAllItems(AbstractFolder.class).stream()
                                 .filter(folder -> folder.getIcon() instanceof CustomFolderIcon
