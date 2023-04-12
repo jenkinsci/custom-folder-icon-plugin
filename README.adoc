@@ -56,9 +56,9 @@ Use your custom icon for a folder.
 
 image:images/custom-folder-icon.png[]
 
-Select the Custom Folder Icon option and use "Browse..." to chose a file.
+Select the _Custom Folder Icon_ option and use `Browse...` to choose a file.
 
-You can crop the image to the desired result and upload it using the "Apply" button.
+You can crop the image to the desired result and upload it using the `Apply` button.
 
 The file name will be randomized during upload.
 
@@ -72,9 +72,8 @@ image:images/custom-folder-icon-configuration.png[]
 
 Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
 
-[source]
+[source, groovy]
 ----
-
 userContent('customFolderIcons/custom.png', streamFileFromWorkspace('custom.png'))
 
 folder('custom') {
@@ -84,7 +83,6 @@ folder('custom') {
     }
   }
 }
-
 ----
 
 ==== Build Status Folder Icon
@@ -93,7 +91,7 @@ See the combined build status of the jobs within a folder.
 
 image:images/build-status-folder-icon.png[]
 
-Select the Build Status Folder Icon option to use the combined build status of the jobs within a folder as icon.
+Select the _Build Status Folder Icon_ option to use the combined build status of the jobs within a folder as icon.
 
 image:images/build-status-folder-icon-configuration.png[]
 
@@ -101,7 +99,7 @@ image:images/build-status-folder-icon-configuration.png[]
 
 Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
 
-[source]
+[source, groovy]
 ----
 folder('build-status') {
   icon {
@@ -116,7 +114,7 @@ Use https://unicode.org/emoji/charts/full-emoji-list.html[unicode emojis] as ico
 
 image:images/emoji-folder-icon.png[]
 
-Select the Emoji Folder Icon option and select any of the available emojis.
+Select the _Emoji Folder Icon_ option and select any of the available emojis.
 
 image:images/emoji-folder-icon-configuration.png[]
 
@@ -124,7 +122,7 @@ image:images/emoji-folder-icon-configuration.png[]
 
 Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
 
-[source]
+[source, groovy]
 ----
 folder('emoji') {
   icon {
@@ -141,7 +139,7 @@ Use https://ionic.io/ionicons[Ionicons] provided by https://github.com/jenkinsci
 
 image:images/ionicon-folder-icon.png[]
 
-Select the Ionicon Folder Icon option and select any of the available icons.
+Select the _Ionicon Folder Icon_ option and select any of the available icons.
 
 image:images/ionicon-folder-icon-configuration.png[]
 
@@ -149,7 +147,7 @@ image:images/ionicon-folder-icon-configuration.png[]
 
 Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
 
-[source]
+[source, groovy]
 ----
 folder('ionicon') {
   icon {
