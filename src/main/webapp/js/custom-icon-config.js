@@ -117,14 +117,15 @@ function doUploadCustomIcon(successMessage, errorMessage) {
                 body: formData
             }).then(rsp => {
                 rsp.text().then(text => {
+                    let cropper = document.getElementById("custom-icon-cropper")
                     if (rsp.ok) {
                         let iconName = document.getElementById("custom-icon-name")
                         iconName.setAttribute("value", text);
                         iconName.dispatchEvent(new Event("input"));
-                        alert(successMessage + " " + text);
+                        hoverNotification(successMessage + " " + text, cropper);
                     } else {
                         let error = text.substring(text.lastIndexOf("<title>") + 7, text.lastIndexOf("</title>"))
-                        alert(errorMessage + " " + error);
+                        hoverNotification(errorMessage + " " + error, cropper);
                     }
                 });
             });

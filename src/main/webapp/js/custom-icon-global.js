@@ -33,10 +33,11 @@ function doCustomIconCleanup(successMessage, errorMessage) {
         method: "post",
         headers: crumb.wrap({}),
     }).then(rsp => {
+        let button = document.getElementById("custom-icon-cleanup")
         if (rsp.ok) {
-            alert(successMessage);
+            hoverNotification(successMessage, button.parentNode);
         } else {
-            alert(errorMessage + " " + rsp.status + " - " + rsp.statusText);
+            hoverNotification(errorMessage + " " + rsp.status + " - " + rsp.statusText, button.parentNode);
         }
     }).catch(error => {
         console.error(error);
