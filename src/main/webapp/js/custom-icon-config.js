@@ -104,44 +104,32 @@ function setCustomIconFile(file) {
  * @param {string} errorMessage - The error message.
  */
 function doUploadCustomIcon(successMessage, errorMessage) {
-    let request = new XMLHttpRequest();
-    request.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) {
-                let iconName = document.getElementById("custom-icon-name")
-                iconName.setAttribute("value", this.responseText);
-                iconName.dispatchEvent(new Event("input"));
-                alert(successMessage + " " + this.responseText);
-            } else {
-                let error = this.responseText.substring(this.responseText.lastIndexOf("<title>") + 7,
-                    this.responseText.lastIndexOf("</title>"));
-                alert(errorMessage + " " + error);
-            }
-        }
-    };
-
-    request.open("POST", rootURL + "/descriptor/jenkins.plugins.foldericon.CustomFolderIcon/uploadIcon");
-
-    try {
-        // get a crumb
-        new Ajax.Request(rootURL + "/crumbIssuer/api/json", {
-            method: "GET",
-            onSuccess: function (req) {
-                let jsonResponse = JSON.parse(req.transport.response);
-                let header = jsonResponse.crumbRequestField;
-                let value = jsonResponse.crumb;
-                request.setRequestHeader(header, value);
-            },
-            onComplete: function () {
-                // upload the file
-                let formData = new FormData();
-                croppie.result("blob").then(function (blob) {
-                    formData.append("file", blob);
-                    request.send(formData);
+    // get the icon blob
+    croppie.result("blob").then(blob => {
+        let formData = new FormData();
+        formData.append("file", blob);
+        return formData;
+    }).then(formData => {
+            // upload the icon
+            fetch(rootURL + "/descriptor/jenkins.plugins.foldericon.CustomFolderIcon/uploadIcon", {
+                method: "post",
+                headers: crumb.wrap({}),
+                body: formData
+            }).then(rsp => {
+                rsp.text().then(text => {
+                    if (rsp.ok) {
+                        let iconName = document.getElementById("custom-icon-name")
+                        iconName.setAttribute("value", text);
+                        iconName.dispatchEvent(new Event("input"));
+                        alert(successMessage + " " + text);
+                    } else {
+                        let error = text.substring(text.lastIndexOf("<title>") + 7, text.lastIndexOf("</title>"))
+                        alert(errorMessage + " " + error);
+                    }
                 });
-            }
-        });
-    } catch (e) {
-        console.error(e)
-    }
+            });
+        }
+    ).catch(error => {
+        console.error(error);
+    });
 }

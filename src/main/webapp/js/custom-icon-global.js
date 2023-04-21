@@ -29,16 +29,16 @@
  * @param {string} errorMessage - The error message.
  */
 function doCustomIconCleanup(successMessage, errorMessage) {
-    try {
-        new Ajax.Request(rootURL + "/descriptor/jenkins.plugins.foldericon.CustomFolderIcon/cleanup", {
-            onSuccess: function (rsp) {
-                alert(successMessage);
-            },
-            onFailure: function (rsp) {
-                alert(errorMessage + " " + rsp.message);
-            }
-        });
-    } catch (e) {
-        console.error(e)
-    }
+    fetch(rootURL + "/descriptor/jenkins.plugins.foldericon.CustomFolderIcon/cleanup", {
+        method: "post",
+        headers: crumb.wrap({}),
+    }).then(rsp => {
+        if (rsp.ok) {
+            alert(successMessage);
+        } else {
+            alert(errorMessage + " " + rsp.status + " - " + rsp.statusText);
+        }
+    }).catch(error => {
+        console.error(error);
+    });
 }
