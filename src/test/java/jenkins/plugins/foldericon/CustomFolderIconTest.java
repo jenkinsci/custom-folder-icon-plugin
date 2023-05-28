@@ -624,17 +624,17 @@ class CustomFolderIconTest {
         FilePath iconDir = userContent.child("customFolderIcons");
         iconDir.mkdirs();
 
-        long timestamp1 = System.nanoTime();
+        long timestamp1 = System.currentTimeMillis();
         String filename1 = timestamp1 + ".png";
         FilePath file1 = iconDir.child(filename1);
         file1.touch(timestamp1);
 
-        long timestamp2 = System.nanoTime();
+        long timestamp2 = timestamp1 + 10;
         String filename2 = timestamp2 + ".png";
         FilePath file2 = iconDir.child(filename2);
         file2.touch(timestamp2);
 
-        long timestamp3 = System.nanoTime();
+        long timestamp3 = timestamp2 + 10;
         String filename3 = timestamp3 + ".png";
         FilePath file3 = iconDir.child(filename3);
         file3.touch(timestamp3);
@@ -671,17 +671,17 @@ class CustomFolderIconTest {
         FilePath iconDir = userContent.child("customFolderIcons");
         iconDir.mkdirs();
 
-        long timestamp1 = System.nanoTime();
+        long timestamp1 = System.currentTimeMillis();
         String filename1 = timestamp1 + ".png";
         FilePath file1 = iconDir.child(filename1);
         file1.touch(timestamp1);
 
-        long timestamp2 = System.nanoTime();
+        long timestamp2 = timestamp1 + 10;
         String filename2 = timestamp2 + ".png";
         FilePath file2 = iconDir.child(filename2);
         file2.touch(timestamp2);
 
-        long timestamp3 = System.nanoTime();
+        long timestamp3 = timestamp2 + 10;
         String filename3 = timestamp3 + ".png";
         FilePath file3 = iconDir.child(filename3);
         file3.touch(timestamp3);
@@ -716,17 +716,17 @@ class CustomFolderIconTest {
         FilePath iconDir = userContent.child("customFolderIcons");
         iconDir.mkdirs();
 
-        long timestamp1 = System.nanoTime();
+        long timestamp1 = System.currentTimeMillis();
         String filename1 = timestamp1 + ".png";
         FilePath file1 = iconDir.child(filename1);
         file1.touch(timestamp1);
 
-        long timestamp2 = System.nanoTime();
+        long timestamp2 = timestamp1 + 10;
         String filename2 = timestamp2 + ".png";
         FilePath file2 = iconDir.child(filename2);
         file2.touch(timestamp2);
 
-        long timestamp3 = System.nanoTime();
+        long timestamp3 = timestamp2 + 10;
         String filename3 = timestamp3 + ".png";
         FilePath file3 = iconDir.child(filename3);
         file3.touch(timestamp3);
