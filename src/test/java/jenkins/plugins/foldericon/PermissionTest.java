@@ -56,11 +56,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @WithJenkins
 class PermissionTest {
 
-    private static final String ADMIN_USER = "sloth";
+    private static final String ADMIN_USER = "administering_sloth";
 
-    private static final String CONFIGURE_USER = "red_panda";
+    private static final String CONFIGURE_USER = "configuring_red_panda";
 
-    private static final String READ_USER = "duck";
+    private static final String READ_USER = "reading_duck";
 
     private static final String FILE_NAME_PATTERN =
             "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\\.png$";
@@ -89,11 +89,17 @@ class PermissionTest {
         strategy.grant(Item.READ).onItems(project).to(READ_USER);
         r.jenkins.setAuthorizationStrategy(strategy);
 
+        // unauthenticated
+        assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, null));
+        assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, project));
+
+        // Item.READ
         try (ACLContext ignored = ACL.as(User.get(READ_USER, true, Collections.emptyMap()))) {
             assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, null));
             assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, project));
         }
 
+        // Item.CONFIGURE
         try (ACLContext ignored = ACL.as(User.get(CONFIGURE_USER, true, Collections.emptyMap()))) {
             assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, null));
 
@@ -101,6 +107,7 @@ class PermissionTest {
             TestUtils.validateResponse(response, 0, FILE_NAME_PATTERN, null);
         }
 
+        // Jenkins.ADMINISTER
         try (ACLContext ignored = ACL.as(User.get(ADMIN_USER, true, Collections.emptyMap()))) {
             assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, null));
 
@@ -112,7 +119,6 @@ class PermissionTest {
             TestUtils.validateResponse(response, 0, FILE_NAME_PATTERN, null);
         }
     }
-
 
     /**
      * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)}.
@@ -138,16 +144,23 @@ class PermissionTest {
         strategy.grant(Jenkins.READ).onRoot().to(READ_USER);
         r.jenkins.setAuthorizationStrategy(strategy);
 
+        // unauthenticated
+        assertThrows(AccessDeniedException.class, () -> descriptor.doCleanup(null));
+        assertTrue(file.exists());
+
+        // Jenkins.READ
         try (ACLContext ignored = ACL.as(User.get(READ_USER, true, Collections.emptyMap()))) {
             assertThrows(AccessDeniedException.class, () -> descriptor.doCleanup(null));
             assertTrue(file.exists());
         }
 
+        // Jenkins.MANAGE
         try (ACLContext ignored = ACL.as(User.get(CONFIGURE_USER, true, Collections.emptyMap()))) {
             assertThrows(AccessDeniedException.class, () -> descriptor.doCleanup(null));
             assertTrue(file.exists());
         }
 
+        // Jenkins.ADMINISTER
         try (ACLContext ignored = ACL.as(User.get(ADMIN_USER, true, Collections.emptyMap()))) {
             HttpResponse response = descriptor.doCleanup(null);
             TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
