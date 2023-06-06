@@ -100,10 +100,11 @@ function setCustomIconFile(file) {
 /**
  * Upload the cropped icon.
  *
+ * @param {string} jobURL - The current job url.
  * @param {string} successMessage - The success message.
  * @param {string} errorMessage - The error message.
  */
-function doUploadCustomIcon(successMessage, errorMessage) {
+function doUploadCustomIcon(jobURL, successMessage, errorMessage) {
     // get the icon blob
     croppie.result("blob").then(blob => {
         let formData = new FormData();
@@ -111,7 +112,7 @@ function doUploadCustomIcon(successMessage, errorMessage) {
         return formData;
     }).then(formData => {
             // upload the icon
-            fetch(rootURL + "/descriptor/jenkins.plugins.foldericon.CustomFolderIcon/uploadIcon", {
+            fetch(rootURL + "/" + jobURL + "descriptorByName/jenkins.plugins.foldericon.CustomFolderIcon/uploadIcon", {
                 method: "post",
                 headers: crumb.wrap({}),
                 body: formData
@@ -127,7 +128,11 @@ function doUploadCustomIcon(successMessage, errorMessage) {
                         let error = text.substring(text.lastIndexOf("<title>") + 7, text.lastIndexOf("</title>"))
                         hoverNotification(errorMessage + " " + error, cropper);
                     }
+                }).catch(error => {
+                    console.error(error);
                 });
+            }).catch(error => {
+                console.error(error);
             });
         }
     ).catch(error => {

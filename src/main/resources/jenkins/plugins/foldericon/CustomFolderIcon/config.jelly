@@ -33,10 +33,11 @@ SOFTWARE.
     <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('upload')}">
         <div>
             <div id="custom-icon-cropper"><!-- set in initCustomIcon() --></div>
-            <f:file id="custom-icon-upload" accept="image/*" onchange="setCustomIconFile(this.files[0])" clazz="custom-icon jenkins-file-upload"/>
+            <f:file id="custom-icon-upload" accept="image/*" onchange="setCustomIconFile(this.files[0])"
+                    clazz="custom-icon jenkins-file-upload" />
             <st:nbsp />
             <input type="button" value="${%Apply}"
-                   onclick="doUploadCustomIcon('${%UploadSuccess}', '${%UploadFailed}')" />
+                   onclick="doUploadCustomIcon('${it.getUrl()}', '${%UploadSuccess}', '${%UploadFailed}')" />
         </div>
     </f:entry>
     <j:if test="${not empty customicons}">
