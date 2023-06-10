@@ -41,7 +41,7 @@
 
     <properties>
         <gitHubRepo>jenkinsci/custom-folder-icon-plugin</gitHubRepo>
-        <jenkins.version>2.387.1</jenkins.version>
+        <jenkins.version>2.387.3</jenkins.version>
         <revision>2.9</revision>
         <changelist>-SNAPSHOT</changelist>
     </properties>
@@ -51,7 +51,7 @@
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-weekly</artifactId>
-                <version>2143.ve4c3c9ec790a</version>
+                <version>2163.v2d916d90c305</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
