@@ -26,10 +26,7 @@ package jenkins.plugins.foldericon;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
-import hudson.model.BallColor;
-import hudson.model.FreeStyleBuild;
-import hudson.model.FreeStyleProject;
-import hudson.model.Result;
+import hudson.model.*;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.BuildStatusFolderIcon.DescriptorImpl;
 import jenkins.plugins.foldericon.utils.DelayBuilder;
@@ -125,7 +122,7 @@ class BuildStatusFolderIconTest {
             // Success
             FreeStyleProject success = project.createProject(FreeStyleProject.class, "Success");
             FreeStyleBuild successBuild = success.scheduleBuild2(0).get();
-            r.assertBuildStatus(Result.SUCCESS, successBuild);
+            r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(successBuild));
 
             TestUtils.validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
             // Unstable
@@ -179,17 +176,19 @@ class BuildStatusFolderIconTest {
             // Previous Success
             FreeStyleProject success = project.createProject(FreeStyleProject.class, "Success");
             FreeStyleBuild successBuild = success.scheduleBuild2(0).get();
-            r.assertBuildStatus(Result.SUCCESS, successBuild);
+            r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(successBuild));
 
             TestUtils.validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
 
             // Running Build
             DelayBuilder builder = new DelayBuilder();
             success.getBuildersList().replaceBy(Collections.singleton(builder));
-            success.scheduleBuild2(0).getStartCondition().get();
+            FreeStyleBuild runningBuild = success.scheduleBuild2(0).getStartCondition().get();
 
             TestUtils.validateIcon(icon, BallColor.BLUE_ANIME.getImage(), BallColor.BLUE_ANIME.getIconClassName());
             builder.release();
+
+            r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(runningBuild));
         }
     }
 
@@ -214,10 +213,12 @@ class BuildStatusFolderIconTest {
             FreeStyleProject running = project.createProject(FreeStyleProject.class, "Running");
             DelayBuilder builder = new DelayBuilder();
             running.getBuildersList().replaceBy(Collections.singleton(builder));
-            running.scheduleBuild2(0).getStartCondition().get();
+            FreeStyleBuild runningBuild = running.scheduleBuild2(0).getStartCondition().get();
 
             TestUtils.validateIcon(icon, BallColor.NOTBUILT_ANIME.getImage(), BallColor.NOTBUILT_ANIME.getIconClassName());
             builder.release();
+
+            r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(runningBuild));
         }
     }
 
