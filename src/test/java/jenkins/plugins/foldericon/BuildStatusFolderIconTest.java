@@ -32,7 +32,7 @@ import jenkins.plugins.foldericon.BuildStatusFolderIcon.DescriptorImpl;
 import jenkins.plugins.foldericon.utils.DelayBuilder;
 import jenkins.plugins.foldericon.utils.ResultPublisher;
 import jenkins.plugins.foldericon.utils.TestUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;

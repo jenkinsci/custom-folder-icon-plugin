@@ -28,7 +28,7 @@ import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.EmojiFolderIcon.DescriptorImpl;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
