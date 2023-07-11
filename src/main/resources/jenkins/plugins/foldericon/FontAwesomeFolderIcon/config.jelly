@@ -1,0 +1,62 @@
+<!--
+The MIT License
+
+Copyright (c) 2023 strangelookingnerd
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
+    <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/fontawesome.css" type="text/css" />
+    <script src="${rootURL}/plugin/custom-folder-icon/js/fontawesome-config.js" type="text/javascript" />
+    <j:invokeStatic var="fontawesomes" method="getAvailableIcons"
+                    className="io.jenkins.plugins.fontawesome.FontAwesomeIcons" />
+    <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('preview')}">
+        <l:icon id="fontawesome-preview" src="${fontawesomes.get(instance.fontAwesome ?: 'brands/jenkins')}"
+                title="${icon.key}"
+                class="icon-xlg" />
+    </f:entry>
+    <f:advanced title="${%AvailableIcons}">
+        <j:invokeStatic var="styles" method="values"
+                        className="io.jenkins.plugins.fontawesome.SvgTag$FontAwesomeStyle" />
+        <j:forEach var="style" items="${styles}">
+            <j:invokeStatic var="filtered" method="getAvailableIcons"
+                            className="io.jenkins.plugins.fontawesome.FontAwesomeIcons">
+                <j:arg value="${style}" />
+            </j:invokeStatic>
+            <b>${style.name().substring(0, 1)}${style.name().substring(1).toLowerCase()} Icons</b>
+            <br />
+            <j:forEach var="icon" items="${filtered}">
+                <a id="select-fontawesome-${icon.key}" class="fontawesome-icon-selection"
+                   onclick="setFontAwesomeIcon('${icon.key}')">
+                    <l:icon id="fontawesome-icon-${icon.key}" src="${icon.value}" title="${icon.key}"
+                            tooltip="${icon.key}"
+                            class="icon-md" />
+                </a>
+                <st:nbsp />
+            </j:forEach>
+            <br />
+            <br />
+        </j:forEach>
+    </f:advanced>
+    <f:entry field="fontAwesome">
+        <f:textbox id="fontawesome-icon-name" value="${instance.fontAwesome}" clazz="fontawesome-icon-name" />
+    </f:entry>
+</j:jelly>

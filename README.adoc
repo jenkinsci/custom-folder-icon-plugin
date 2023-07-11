@@ -27,7 +27,9 @@ Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-pl
 
 This version requires Jenkins 2.357 and above in order to support the transition to https://www.jenkins.io/blog/2022/06/28/require-java-11/[Java 11].
 
-* Version 2.6 enables users to select and re-use a already existing `CustomFolderIcon`. Further an icon file will now be deleted automatically if the folder it used is being deleted - unless of course the file is still used by another folder.
+* Version 2.9 introduces a new type of icon.
+The `FontAwesomeFolderIcon` provides https://fontawesome.com[Font Awesome] icons.
+* Version 2.6 enables users to select and re-use an already existing `CustomFolderIcon`. Further an icon file will now be deleted automatically if the folder it used is being deleted - unless of course the file is still used by another folder.
 * Version 2.5 introduces a new type of icon.
 The `EmojiFolderIcon` provides https://unicode.org/emoji/charts/full-emoji-list.html[unicode emojis] as icon.
 * Version 2.3 introduces a new type of icon.
@@ -128,6 +130,31 @@ folder('emoji') {
   icon {
     emojiFolderIcon {
       emoji('sloth')
+    }
+  }
+}
+----
+
+==== FontAwesome Folder Icon
+
+Use https://fontawesome.com[Font Awesome Icons] provided by https://github.com/jenkinsci/font-awesome-api-plugin[font-awesome-api-plugin] as icon.
+
+image:images/fontawesome-folder-icon.png[]
+
+Select the _FontAwesome Folder Icon_ option and select any of the available icons.
+
+image:images/fontawesome-folder-icon-configuration.png[]
+
+===== Job DSL
+
+Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
+
+[source, groovy]
+----
+folder('fontawesome') {
+  icon {
+    fontAwesomeFolderIcon {
+      fontAwesome('brands/jenkins')
     }
   }
 }
