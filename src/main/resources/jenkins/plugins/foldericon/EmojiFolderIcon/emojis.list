@@ -47,6 +47,7 @@ face_with_rolling_eyes:🙄
 grimacing_face:😬
 face_exhaling:😮‍💨
 lying_face:🤥
+shaking_face:🫨
 relieved_face:😌
 pensive_face:😔
 sleepy_face:😪
@@ -138,13 +139,16 @@ broken_heart:💔
 heart_on_fire:❤️‍🔥
 mending_heart:❤️‍🩹
 red_heart:❤
+pink_heart:🩷
 orange_heart:🧡
 yellow_heart:💛
 green_heart:💚
 blue_heart:💙
+light_blue_heart:🩵
 purple_heart:💜
 brown_heart:🤎
 black_heart:🖤
+grey_heart:🩶
 white_heart:🤍
 kiss_mark:💋
 hundred_points:💯
@@ -169,6 +173,8 @@ rightwards_hand:🫱
 leftwards_hand:🫲
 palm_down_hand:🫳
 palm_up_hand:🫴
+leftwards_pushing_hand:🫷
+rightwards_pushing_hand:🫸
 ok_hand:👌
 pinched_fingers:🤌
 pinching_hand:🤏
@@ -545,6 +551,8 @@ tiger_face:🐯
 tiger:🐅
 leopard:🐆
 horse_face:🐴
+moose:🫎
+donkey:🫏
 horse:🐎
 unicorn:🦄
 zebra:🦓
@@ -607,6 +615,9 @@ feather:🪶
 flamingo:🦩
 peacock:🦚
 parrot:🦜
+wing:🪽
+black_bird:🐦‍⬛
+goose:🪿
 frog:🐸
 crocodile:🐊
 turtle:🐢
@@ -627,6 +638,7 @@ shark:🦈
 octopus:🐙
 spiral_shell:🐚
 coral:🪸
+jellyfish:🪼
 snail:🐌
 butterfly:🦋
 bug:🐛
@@ -654,6 +666,7 @@ hibiscus:🌺
 sunflower:🌻
 blossom:🌼
 tulip:🌷
+hyacinth:🪻
 seedling:🌱
 potted_plant:🪴
 evergreen_tree:🌲
@@ -704,6 +717,8 @@ onion:🧅
 peanuts:🥜
 beans:🫘
 chestnut:🌰
+ginger_root:🫚
+pea_pod:🫛
 bread:🍞
 croissant:🥐
 baguette_bread:🥖
@@ -1124,6 +1139,7 @@ briefs:🩲
 shorts:🩳
 bikini:👙
 woman_s_clothes:👚
+folding_hand_fan:🪭
 purse:👛
 handbag:👜
 clutch_bag:👝
@@ -1138,6 +1154,7 @@ high_heeled_shoe:👠
 woman_s_sandal:👡
 ballet_shoes:🩰
 woman_s_boot:👢
+hair_pick:🪮
 crown:👑
 woman_s_hat:👒
 top_hat:🎩
@@ -1176,6 +1193,8 @@ violin:🎻
 banjo:🪕
 drum:🥁
 long_drum:🪘
+maracas:🪇
+flute:🪈
 mobile_phone:📱
 mobile_phone_with_arrow:📲
 telephone:☎
@@ -1420,6 +1439,7 @@ star_and_crescent:☪
 peace_symbol:☮
 menorah:🕎
 dotted_six_pointed_star:🔯
+khanda:🪯
 aries:♈
 taurus:♉
 gemini:♊
@@ -1455,6 +1475,7 @@ cinema:🎦
 dim_button:🔅
 bright_button:🔆
 antenna_bars:📶
+wireless:🛜
 vibration_mode:📳
 mobile_phone_off:📴
 female_sign:♀
