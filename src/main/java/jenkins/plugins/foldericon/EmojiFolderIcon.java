@@ -107,10 +107,5 @@ public class EmojiFolderIcon extends FolderIcon {
             return Messages.EmojiFolderIcon_description();
         }
 
-        @Override
-        public boolean isApplicable(Class<? extends AbstractFolder> folderType) {
-            return true;
-        }
-
     }
 }

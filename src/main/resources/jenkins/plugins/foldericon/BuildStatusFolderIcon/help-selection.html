@@ -22,12 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
 
-<?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-    <f:entry title="${%Details}" field="jobs" help="${descriptor.getHelpFile('selection')}">
-        <j:forEach items="${instance.getAvailableJobs()}" var="job">
-            <f:checkbox json="${job}" checked="${instance.jobs.contains(job)}" title="${job}" />
-            <br />
-        </j:forEach>
-    </f:entry>
-</j:jelly>
+<div>
+    You can select the jobs to be considered for the combined build status.</br>If you select none then all jobs are considered.
+</div>

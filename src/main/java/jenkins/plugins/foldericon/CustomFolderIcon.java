@@ -107,7 +107,7 @@ public class CustomFolderIcon extends FolderIcon {
     }
 
     /**
-     * @return the foldericon
+     * @return the foldericon.
      */
     public String getFoldericon() {
         return foldericon;
@@ -152,11 +152,6 @@ public class CustomFolderIcon extends FolderIcon {
         @NonNull
         public String getDisplayName() {
             return Messages.CustomFolderIcon_description();
-        }
-
-        @Override
-        public boolean isApplicable(Class<? extends AbstractFolder> folderType) {
-            return true;
         }
 
         /**
