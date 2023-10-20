@@ -27,6 +27,7 @@ Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-pl
 
 This version requires Jenkins 2.357 and above in order to support the transition to https://www.jenkins.io/blog/2022/06/28/require-java-11/[Java 11].
 
+* Version 2.10 enables users to select the jobs to be considered for the combined build status in `BuildStatusFolderIcon`.
 * Version 2.9 introduces a new type of icon.
 The `FontAwesomeFolderIcon` provides https://fontawesome.com[Font Awesome] icons.
 * Version 2.6 enables users to select and re-use an already existing `CustomFolderIcon`. Further an icon file will now be deleted automatically if the folder it used is being deleted - unless of course the file is still used by another folder.
@@ -95,6 +96,10 @@ image:images/build-status-folder-icon.png[]
 
 Select the _Build Status Folder Icon_ option to use the combined build status of the jobs within a folder as icon.
 
+You can select which jobs should be considered when the combined build status is determined.
+
+When no jobs are selected every job within the folder is considered for the combined build status.
+
 image:images/build-status-folder-icon-configuration.png[]
 
 ===== Job DSL
@@ -105,7 +110,9 @@ Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
 ----
 folder('build-status') {
   icon {
-      buildStatusFolderIcon()
+    buildStatusFolderIcon {
+      jobs('main', 'dev')
+    }
   }
 }
 ----

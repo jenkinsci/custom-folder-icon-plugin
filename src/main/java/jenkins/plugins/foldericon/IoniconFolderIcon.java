@@ -107,11 +107,5 @@ public class IoniconFolderIcon extends FolderIcon {
             return Messages.IoniconFolderIcon_description();
         }
 
-        @Override
-        public boolean isApplicable(Class<? extends AbstractFolder> folderType) {
-            return true;
-        }
-
     }
-
 }

@@ -44,6 +44,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.Collections;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,13 +57,93 @@ import static org.junit.jupiter.api.Assertions.*;
 class BuildStatusFolderIconTest {
 
     /**
+     * Test behavior of {@link BuildStatusFolderIcon#getAvailableJobs()}.
+     *
+     * @throws Exception in case anything goes wrong
+     */
+    @Test
+    void testGetAvailableJobs(JenkinsRule r) throws Exception {
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+
+        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
+        project.setIcon(customIcon);
+
+        assertTrue(customIcon.getAvailableJobs().isEmpty());
+
+        project.createProject(FreeStyleProject.class, "Success");
+        project.createProject(FreeStyleProject.class, "Aborted");
+
+        assertEquals(2, customIcon.getAvailableJobs().size());
+        assertEquals(Set.of("Aborted", "Success"), customIcon.getAvailableJobs());
+    }
+
+    /**
+     * Test behavior when there is a configuration for jobs to consider.
+     *
+     * @throws Exception in case anything goes wrong
+     */
+    @Test
+    void testWithConfiguredJobs(JenkinsRule r) throws Exception {
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+
+        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
+            TestUtils.mockStaplerRequest(stapler);
+
+            // Setup
+            FreeStyleProject success = project.createProject(FreeStyleProject.class, "Success");
+            FreeStyleBuild successBuild = success.scheduleBuild2(0).get();
+            r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(successBuild));
+
+            FreeStyleProject aborted = project.createProject(FreeStyleProject.class, "Aborted");
+            aborted.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.ABORTED)));
+            r.buildAndAssertStatus(Result.ABORTED, aborted);
+
+            Folder subfolder = project.createProject(Folder.class, "subfolder");
+            FreeStyleProject nested = subfolder.createProject(FreeStyleProject.class, "Nested");
+            nested.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.NOT_BUILT)));
+            r.buildAndAssertStatus(Result.NOT_BUILT, nested);
+
+            // Validate
+            BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(Set.of());
+            project.setIcon(customIcon);
+            FolderIcon icon = project.getIcon();
+            TestUtils.validateIcon(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconClassName());
+
+            customIcon = new BuildStatusFolderIcon(Set.of("Success"));
+            project.setIcon(customIcon);
+            icon = project.getIcon();
+            TestUtils.validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
+
+            customIcon = new BuildStatusFolderIcon(Set.of("Success", "Aborted"));
+            project.setIcon(customIcon);
+            icon = project.getIcon();
+            TestUtils.validateIcon(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconClassName());
+
+            customIcon = new BuildStatusFolderIcon(Set.of("subfolder » Nested"));
+            project.setIcon(customIcon);
+            icon = project.getIcon();
+            TestUtils.validateIcon(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconClassName());
+
+            customIcon = new BuildStatusFolderIcon(Set.of("doesnotexist"));
+            project.setIcon(customIcon);
+            icon = project.getIcon();
+            TestUtils.validateIcon(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconClassName());
+
+            customIcon = new BuildStatusFolderIcon(Set.of("Success", "doesnotexist"));
+            project.setIcon(customIcon);
+            icon = project.getIcon();
+            TestUtils.validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
+        }
+    }
+
+    /**
      * Test behavior on a regular {@link Folder}.
      *
      * @throws Exception in case anything goes wrong
      */
     @Test
     void testFolder(JenkinsRule r) throws Exception {
-        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
+        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         assertTrue(StringUtils.startsWith(customIcon.getDescription(), Messages.Folder_description()));
 
         Folder project = r.jenkins.createProject(Folder.class, "folder");
@@ -80,7 +161,7 @@ class BuildStatusFolderIconTest {
      */
     @Test
     void testOrganizationFolder(JenkinsRule r) throws Exception {
-        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
+        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         assertTrue(StringUtils.startsWith(customIcon.getDescription(), Messages.Folder_description()));
 
         OrganizationFolder project = r.jenkins.createProject(OrganizationFolder.class, "org");
@@ -96,7 +177,7 @@ class BuildStatusFolderIconTest {
      */
     @Test
     void testDescriptor(@SuppressWarnings("unused") JenkinsRule r) {
-        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
+        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.BuildStatusFolderIcon_description(), descriptor.getDisplayName());
         assertTrue(descriptor.isApplicable(null));
@@ -109,7 +190,7 @@ class BuildStatusFolderIconTest {
      */
     @Test
     void testFinishedBuildStatusIcon(JenkinsRule r) throws Exception {
-        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
+        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
@@ -166,7 +247,7 @@ class BuildStatusFolderIconTest {
      */
     @Test
     void testRunningBuildStatusIcon(JenkinsRule r) throws Exception {
-        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
+        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
@@ -202,7 +283,7 @@ class BuildStatusFolderIconTest {
      */
     @Test
     void testRunningNoPreviousBuildStatusIcon(JenkinsRule r) throws Exception {
-        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
+        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
@@ -232,7 +313,7 @@ class BuildStatusFolderIconTest {
      */
     @Test
     void testDisabledBuildStatusIcon(JenkinsRule r) throws Exception {
-        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
+        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
@@ -259,7 +340,7 @@ class BuildStatusFolderIconTest {
      */
     @Test
     void testNoBuildStatusIcon(JenkinsRule r) throws Exception {
-        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon();
+        BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();

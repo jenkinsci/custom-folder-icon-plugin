@@ -107,11 +107,5 @@ public class FontAwesomeFolderIcon extends FolderIcon {
             return Messages.FontAwesomeFolderIcon_description();
         }
 
-        @Override
-        public boolean isApplicable(Class<? extends AbstractFolder> folderType) {
-            return true;
-        }
-
     }
-
 }
