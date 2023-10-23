@@ -28,9 +28,14 @@ Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-pl
 This version requires Jenkins 2.357 and above in order to support the transition to https://www.jenkins.io/blog/2022/06/28/require-java-11/[Java 11].
 
 * Version 2.10 enables users to select the jobs to be considered for the combined build status in `BuildStatusFolderIcon`.
+
+.Changes in previous versions ...
+[%collapsible]
+====
 * Version 2.9 introduces a new type of icon.
 The `FontAwesomeFolderIcon` provides https://fontawesome.com[Font Awesome] icons.
-* Version 2.6 enables users to select and re-use an already existing `CustomFolderIcon`. Further an icon file will now be deleted automatically if the folder it used is being deleted - unless of course the file is still used by another folder.
+* Version 2.6 enables users to select and re-use an already existing `CustomFolderIcon`.
+Further an icon file will now be deleted automatically if the folder it used is being deleted - unless of course the file is still used by another folder.
 * Version 2.5 introduces a new type of icon.
 The `EmojiFolderIcon` provides https://unicode.org/emoji/charts/full-emoji-list.html[unicode emojis] as icon.
 * Version 2.3 introduces a new type of icon.
@@ -38,6 +43,7 @@ The `IoniconFolderIcon` provides icons from https://github.com/jenkinsci/ionicon
 * Version 2.0 introduces a new type of icon.
 The `BuildStatusFolderIcon` displays the combined build status of the jobs within a folder.
 * Since https://github.com/jenkinsci/job-dsl-plugin/releases/tag/job-dsl-1.83[1.83] of the https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin] the Custom Folder Icons Plugin can be used in Job DSL configurations.
+====
 
 === Version 1.x
 
@@ -75,7 +81,7 @@ image:images/custom-folder-icon-configuration.png[]
 
 Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
 
-[source, groovy]
+[source,groovy]
 ----
 userContent('customFolderIcons/custom.png', streamFileFromWorkspace('custom.png'))
 
@@ -106,7 +112,7 @@ image:images/build-status-folder-icon-configuration.png[]
 
 Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
 
-[source, groovy]
+[source,groovy]
 ----
 folder('build-status') {
   icon {
@@ -131,7 +137,7 @@ image:images/emoji-folder-icon-configuration.png[]
 
 Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
 
-[source, groovy]
+[source,groovy]
 ----
 folder('emoji') {
   icon {
@@ -156,7 +162,7 @@ image:images/fontawesome-folder-icon-configuration.png[]
 
 Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
 
-[source, groovy]
+[source,groovy]
 ----
 folder('fontawesome') {
   icon {
@@ -181,7 +187,7 @@ image:images/ionicon-folder-icon-configuration.png[]
 
 Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
 
-[source, groovy]
+[source,groovy]
 ----
 folder('ionicon') {
   icon {
