@@ -25,7 +25,6 @@
 package jenkins.plugins.foldericon.utils;
 
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
-import jenkins.plugins.foldericon.Emojis;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.core5.http.ContentType;
@@ -38,9 +37,7 @@ import org.mockito.Mockito;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.matchesPattern;
@@ -141,33 +138,6 @@ public final class TestUtils {
             buffer = os.toByteArray();
         }
         return buffer;
-    }
-
-    /**
-     * Create a new instance of {@link Emojis} and validate it to be "empty".
-     *
-     * @throws Exception in case anything goes wrong
-     */
-    public static void validateEmojisInstance() throws Exception {
-        Constructor<Emojis> ctor = Emojis.class.getDeclaredConstructor();
-        ctor.setAccessible(true);
-        Emojis emojis = ctor.newInstance();
-
-        Field availableIconsField = emojis.getClass().getDeclaredField("availableIcons");
-        availableIconsField.setAccessible(true);
-        @SuppressWarnings("unchecked")
-        Map<String, String> availableIcons = (Map<String, String>) availableIconsField.get(emojis);
-
-        assertNotNull(availableIcons);
-        assertTrue(availableIcons.isEmpty());
-
-        Field availableEmojisField = emojis.getClass().getDeclaredField("availableEmojis");
-        availableEmojisField.setAccessible(true);
-        @SuppressWarnings("unchecked")
-        Map<String, String> availableEmojis = (Map<String, String>) availableEmojisField.get(emojis);
-
-        assertNotNull(availableEmojis);
-        assertTrue(availableEmojis.isEmpty());
     }
 
 }

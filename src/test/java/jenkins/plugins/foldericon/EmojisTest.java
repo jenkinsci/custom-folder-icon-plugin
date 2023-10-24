@@ -24,17 +24,19 @@
 
 package jenkins.plugins.foldericon;
 
-import jenkins.plugins.foldericon.utils.TestUtils;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -99,7 +101,7 @@ class EmojisTest {
         try {
             assertTrue(emojiList.renameTo(backup));
 
-            TestUtils.validateEmojisInstance();
+            validateEmojisInstance();
         } finally {
             assertTrue(backup.renameTo(emojiList));
         }
@@ -121,11 +123,32 @@ class EmojisTest {
             assertTrue(emojiList.createNewFile());
             Files.writeString(emojiList.toPath(), "invalid", StandardCharsets.UTF_8);
 
-            TestUtils.validateEmojisInstance();
+            validateEmojisInstance();
         } finally {
             assertTrue(emojiList.delete());
             assertTrue(backup.renameTo(emojiList));
         }
     }
 
+    private static void validateEmojisInstance() throws Exception {
+        Constructor<Emojis> ctor = Emojis.class.getDeclaredConstructor();
+        ctor.setAccessible(true);
+        Emojis emojis = ctor.newInstance();
+
+        Field availableIconsField = emojis.getClass().getDeclaredField("availableIcons");
+        availableIconsField.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        Map<String, String> availableIcons = (Map<String, String>) availableIconsField.get(emojis);
+
+        assertNotNull(availableIcons);
+        assertTrue(availableIcons.isEmpty());
+
+        Field availableEmojisField = emojis.getClass().getDeclaredField("availableEmojis");
+        availableEmojisField.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        Map<String, String> availableEmojis = (Map<String, String>) availableEmojisField.get(emojis);
+
+        assertNotNull(availableEmojis);
+        assertTrue(availableEmojis.isEmpty());
+    }
 }

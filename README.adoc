@@ -83,15 +83,7 @@ Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
 
 [source,groovy]
 ----
-userContent('customFolderIcons/custom.png', streamFileFromWorkspace('custom.png'))
-
-folder('custom') {
-  icon {
-    customFolderIcon {
-      foldericon('custom.png')
-    }
-  }
-}
+include::src/test/resources/custom-icon.groovy[]
 ----
 
 ==== Build Status Folder Icon
@@ -114,13 +106,7 @@ Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
 
 [source,groovy]
 ----
-folder('build-status') {
-  icon {
-    buildStatusFolderIcon {
-      jobs('main', 'dev')
-    }
-  }
-}
+include::src/test/resources/build-status.groovy[]
 ----
 
 ==== Emoji Folder Icon
@@ -139,13 +125,7 @@ Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
 
 [source,groovy]
 ----
-folder('emoji') {
-  icon {
-    emojiFolderIcon {
-      emoji('sloth')
-    }
-  }
-}
+include::src/test/resources/emoji-icon.groovy[]
 ----
 
 ==== FontAwesome Folder Icon
@@ -164,13 +144,7 @@ Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
 
 [source,groovy]
 ----
-folder('fontawesome') {
-  icon {
-    fontAwesomeFolderIcon {
-      fontAwesome('brands/jenkins')
-    }
-  }
-}
+include::src/test/resources/emoji-icon.groovy[]
 ----
 
 ==== Ionicon Folder Icon
@@ -189,13 +163,7 @@ Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
 
 [source,groovy]
 ----
-folder('ionicon') {
-  icon {
-    ioniconFolderIcon {
-      ionicon('jenkins')
-    }
-  }
-}
+include::src/test/resources/ionicon-icon.groovy[]
 ----
 
 === Global Configuration
