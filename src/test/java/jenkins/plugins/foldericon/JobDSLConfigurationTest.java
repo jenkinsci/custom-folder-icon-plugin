@@ -62,6 +62,7 @@ class JobDSLConfigurationTest {
     void testCustomIconFolderIcon(JenkinsRule r) throws Exception {
         CustomFolderIcon customIcon = createFolder(r, "custom-icon.groovy", CustomFolderIcon.class);
         assertEquals("custom.png", customIcon.getFoldericon());
+        assertEquals(Set.of("custom.png"), CustomFolderIcon.getAvailableIcons());
     }
 
     @Test
