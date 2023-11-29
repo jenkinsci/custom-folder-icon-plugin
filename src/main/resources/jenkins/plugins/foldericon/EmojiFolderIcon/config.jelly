@@ -29,13 +29,13 @@ SOFTWARE.
     <j:invokeStatic var="emojis" method="getAvailableIcons" className="jenkins.plugins.foldericon.Emojis" />
     <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('preview')}">
         <l:icon id="emoji-preview" src="${emojis.get(instance.emoji ?: 'sloth')}" title="${icon.key}"
-                class="emoji-icon icon-xlg" />
+                class="icon-xlg" />
     </f:entry>
     <f:advanced title="${%AvailableIcons}">
         <j:forEach var="icon" items="${emojis}">
             <a id="select-emoji-${icon.key}" class="emoji-icon-selection" onclick="setEmojiIcon('${icon.key}')">
                 <l:icon id="emoji-icon-${icon.key}" src="${icon.value}" title="${icon.key}" tooltip="${icon.key}"
-                        class="emoji-icon icon-md" />
+                        class="icon-md" />
             </a>
         </j:forEach>
     </f:advanced>
