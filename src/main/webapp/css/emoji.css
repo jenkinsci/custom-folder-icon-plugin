@@ -31,11 +31,3 @@
     cursor: pointer;
     text-decoration: none !important;
 }
-
-.emoji-icon.icon-xlg {
-    user-select: none;
-}
-
-.emoji-icon.icon-md {
-    user-select: none;
-}

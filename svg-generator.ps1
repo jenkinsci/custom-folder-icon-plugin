@@ -26,7 +26,17 @@ $SVG = ".svg"
 $EmojiPrefix = "emoji_"
 $Placeholder = "PLACEHOLDER"
 $SVGTemplate = "<svg xmlns=`"http://www.w3.org/2000/svg`" class=`"emoji`" viewBox=`"0 0 100 100`">"`
-               + "<text font-size=`"80`" dominant-baseline=`"middle`" text-anchor=`"middle`" x=`"50%`" y=`"50%`" dy=`"0.1em`">" + $Placeholder + "</text></svg>"
+             +      "<text "`
+             +          "font-size=`"80`" "`
+             +          "dominant-baseline=`"middle`" "`
+             +          "text-anchor=`"middle`" "`
+             +          "x=`"50%`" "`
+             +          "y=`"50%`" "`
+             +          "dy=`"0.1em`" "`
+             +          "style=`"user-select: none;`">"`
+             +          $Placeholder`
+             +      "</text>"`
+             + "</svg>"
 
 
 "Creating SVGs from " + $EmojiList | Out-Host
