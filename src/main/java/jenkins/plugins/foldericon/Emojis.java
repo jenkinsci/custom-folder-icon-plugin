@@ -62,7 +62,9 @@ public final class Emojis {
                         availableEmojis.put(entry, emoji);
                         availableIcons.put(entry, getIconClassName(entry));
                     }
-                }
+                }catch (Exception ex) {
+            		LOGGER.log(Level.WARNING, "Unable to read available emojis: Resource unavailable.", ex);
+        	}
             } else {
                 LOGGER.warning("Unable to read available emojis: Resource unavailable.");
             }
