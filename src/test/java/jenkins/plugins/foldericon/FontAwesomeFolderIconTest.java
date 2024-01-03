@@ -72,7 +72,7 @@ class FontAwesomeFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertTrue(icon instanceof FontAwesomeFolderIcon);
+        assertInstanceOf(FontAwesomeFolderIcon.class, icon);
         assertTrue(StringUtils.startsWith(icon.getDescription(), project.getPronoun()));
     }
 
@@ -98,7 +98,7 @@ class FontAwesomeFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertTrue(icon instanceof FontAwesomeFolderIcon);
+        assertInstanceOf(FontAwesomeFolderIcon.class, icon);
         assertTrue(StringUtils.startsWith(icon.getDescription(), project.getPronoun()));
     }
 

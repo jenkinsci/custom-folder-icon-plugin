@@ -23,12 +23,29 @@ SOFTWARE.
 -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
     <script src="${rootURL}/plugin/custom-folder-icon/js/custom-icon-global.js" type="text/javascript" />
+    <j:invokeStatic var="customicons" method="getAvailableIcons"
+                    className="jenkins.plugins.foldericon.CustomFolderIcon" />
     <f:section title="${%CustomFolderIcons}">
-        <f:entry title="${%CleanupIcons}" help="${descriptor.getHelpFile('global-cleanup')}">
-            <input id="custom-icon-cleanup" type="button" value="${%Cleanup}"
-                   onclick="doCustomIconCleanup('${%CleanupSuccess}', '${%CleanupFailed}')" />
+        <f:entry>
+            ${%DiskUsage}
+            <st:nbsp />
+            ${instance.getDiskUsage()}
         </f:entry>
+        <j:if test="${not empty customicons}">
+            <f:advanced title="${%AvailableIcons}${not empty customicons ? ' (' + customicons.size() + ')' : ''}">
+                <j:forEach var="icon" items="${customicons}">
+                    <l:icon src="${rootURL}/userContent/customFolderIcons/${icon}" title="${icon}"
+                            tooltip="${icon}"
+                            class="icon-md" />
+                    <st:nbsp />
+                </j:forEach>
+            </f:advanced>
+            <f:entry help="${descriptor.getHelpFile('cleanup')}">
+                <input id="custom-icon-cleanup" type="button" value="${%CleanupIcons}"
+                       onclick="doCustomIconCleanup('${%CleanupSuccess}', '${%CleanupFailed}')" />
+            </f:entry>
+        </j:if>
     </f:section>
 </j:jelly>

@@ -41,7 +41,7 @@ SOFTWARE.
         </div>
     </f:entry>
     <j:if test="${not empty customicons}">
-        <f:advanced title="${%AvailableIcons}">
+        <f:advanced title="${%AvailableIcons}${not empty customicons ? ' (' + customicons.size() + ')' : ''}">
             <j:forEach var="icon" items="${customicons}">
                 <a tooltip="${icon}">
                     <img class="custom-icon-selection" src="${rootURL}/userContent/customFolderIcons/${icon}"

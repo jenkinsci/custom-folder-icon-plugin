@@ -33,7 +33,7 @@ SOFTWARE.
                 title="${icon.key}"
                 class="icon-xlg" />
     </f:entry>
-    <f:advanced title="${%AvailableIcons}">
+    <f:advanced title="${%AvailableIcons}${not empty fontawesomes ? ' (' + fontawesomes.size() + ')' : ''}">
         <j:invokeStatic var="styles" method="values"
                         className="io.jenkins.plugins.fontawesome.SvgTag$FontAwesomeStyle" />
         <j:forEach var="style" items="${styles}">

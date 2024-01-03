@@ -150,7 +150,7 @@ class BuildStatusFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertTrue(icon instanceof BuildStatusFolderIcon);
+        assertInstanceOf(BuildStatusFolderIcon.class, icon);
         assertTrue(StringUtils.startsWith(icon.getDescription(), project.getPronoun()));
     }
 
@@ -168,7 +168,7 @@ class BuildStatusFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertTrue(icon instanceof BuildStatusFolderIcon);
+        assertInstanceOf(BuildStatusFolderIcon.class, icon);
         assertTrue(StringUtils.startsWith(icon.getDescription(), project.getPronoun()));
     }
 
@@ -195,7 +195,7 @@ class BuildStatusFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertTrue(icon instanceof BuildStatusFolderIcon);
+        assertInstanceOf(BuildStatusFolderIcon.class, icon);
 
         try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
             TestUtils.mockStaplerRequest(stapler);
@@ -252,7 +252,7 @@ class BuildStatusFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertTrue(icon instanceof BuildStatusFolderIcon);
+        assertInstanceOf(BuildStatusFolderIcon.class, icon);
 
         try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
             TestUtils.mockStaplerRequest(stapler);
@@ -288,7 +288,7 @@ class BuildStatusFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertTrue(icon instanceof BuildStatusFolderIcon);
+        assertInstanceOf(BuildStatusFolderIcon.class, icon);
 
         try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
             TestUtils.mockStaplerRequest(stapler);
@@ -318,7 +318,7 @@ class BuildStatusFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertTrue(icon instanceof BuildStatusFolderIcon);
+        assertInstanceOf(BuildStatusFolderIcon.class, icon);
 
         try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
             TestUtils.mockStaplerRequest(stapler);
@@ -345,7 +345,7 @@ class BuildStatusFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertTrue(icon instanceof BuildStatusFolderIcon);
+        assertInstanceOf(BuildStatusFolderIcon.class, icon);
 
         try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
             TestUtils.mockStaplerRequest(stapler);

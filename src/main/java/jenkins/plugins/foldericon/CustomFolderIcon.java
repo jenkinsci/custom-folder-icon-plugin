@@ -48,6 +48,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static jenkins.plugins.foldericon.CustomFolderIconConfiguration.PLUGIN_PATH;
+import static jenkins.plugins.foldericon.CustomFolderIconConfiguration.USER_CONTENT_PATH;
+
 /**
  * A Custom Folder Icon.
  *
@@ -57,8 +60,6 @@ public class CustomFolderIcon extends FolderIcon {
 
     private static final Logger LOGGER = Logger.getLogger(CustomFolderIcon.class.getName());
 
-    private static final String PLUGIN_PATH = "customFolderIcons";
-    private static final String USER_CONTENT_PATH = "userContent";
     private static final String DEFAULT_ICON_PATH = "plugin/custom-folder-icon/icons/default.png";
 
     private final String foldericon;
@@ -80,6 +81,7 @@ public class CustomFolderIcon extends FolderIcon {
      *
      * @return all the icons that have been uploaded, sorted descending by {@link FilePath#lastModified()}.
      */
+    @NonNull
     public static Set<String> getAvailableIcons() {
         try {
             FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
@@ -189,39 +191,6 @@ public class CustomFolderIcon extends FolderIcon {
                 LOGGER.log(Level.WARNING, "Error during Folder Icon upload!", ex);
                 return HttpResponses.errorWithoutStack(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
             }
-        }
-
-        /**
-         * Cleanup unused icons.
-         *
-         * @param req the request
-         * @return OK
-         */
-        @RequirePOST
-        public HttpResponse doCleanup(@SuppressWarnings("unused") StaplerRequest req) {
-            Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-
-            FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
-
-            Set<String> existingIcons = getAvailableIcons();
-
-            Set<String> usedIcons = Jenkins.get().getAllItems(AbstractFolder.class).stream()
-                    .filter(folder -> folder.getIcon() instanceof CustomFolderIcon)
-                    .map(folder -> ((CustomFolderIcon) folder.getIcon()).getFoldericon())
-                    .collect(Collectors.toSet());
-
-            if (usedIcons.isEmpty() || existingIcons.removeAll(usedIcons)) {
-                for (String icon : existingIcons) {
-                    try {
-                        if (!iconDir.child(icon).delete()) {
-                            LOGGER.warning(() -> "Unable to delete unused Folder Icon '" + icon + "'!");
-                        }
-                    } catch (IOException | InterruptedException ex) {
-                        LOGGER.log(Level.WARNING, ex, () -> "Unable to delete unused Folder Icon '" + icon + "'!");
-                    }
-                }
-            }
-            return HttpResponses.ok();
         }
     }
 
