@@ -72,7 +72,7 @@ class IoniconFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertTrue(icon instanceof IoniconFolderIcon);
+        assertInstanceOf(IoniconFolderIcon.class, icon);
         assertTrue(StringUtils.startsWith(icon.getDescription(), project.getPronoun()));
     }
 
@@ -98,7 +98,7 @@ class IoniconFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertTrue(icon instanceof IoniconFolderIcon);
+        assertInstanceOf(IoniconFolderIcon.class, icon);
         assertTrue(StringUtils.startsWith(icon.getDescription(), project.getPronoun()));
     }
 

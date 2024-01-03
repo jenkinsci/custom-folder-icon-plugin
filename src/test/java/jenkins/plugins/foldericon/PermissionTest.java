@@ -121,20 +121,20 @@ class PermissionTest {
     }
 
     /**
-     * Test behavior of {@link DescriptorImpl#doCleanup(StaplerRequest)}.
+     * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest)}.
      *
      * @throws Exception in case anything goes wrong
      */
     @Test
     void testDoCleanup(JenkinsRule r) throws Exception {
-        FilePath parent = r.jenkins.getRootPath().child("userContent").child("customFolderIcons");
+        FilePath parent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH).child(CustomFolderIconConfiguration.PLUGIN_PATH);
         parent.mkdirs();
 
         FilePath file = parent.child(System.currentTimeMillis() + ".png");
         file.touch(System.currentTimeMillis());
         assertTrue(file.exists());
 
-        DescriptorImpl descriptor = new DescriptorImpl();
+        CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         r.jenkins.setSecurityRealm(r.createDummySecurityRealm());
 

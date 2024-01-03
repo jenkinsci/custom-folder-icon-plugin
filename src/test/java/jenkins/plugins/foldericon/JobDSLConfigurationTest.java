@@ -114,7 +114,7 @@ class JobDSLConfigurationTest {
         Item item = r.getInstance().getItem(StringUtils.substringBefore(scriptName, '.'));
         assertNotNull(item);
 
-        assertTrue(item instanceof Folder);
+        assertInstanceOf(Folder.class, item);
         Folder folder = (Folder) item;
 
         FolderIcon icon = folder.getIcon();

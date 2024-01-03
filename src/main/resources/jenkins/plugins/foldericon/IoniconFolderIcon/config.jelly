@@ -31,7 +31,7 @@ SOFTWARE.
         <l:icon id="ionicon-preview" src="${ionicons.get(instance.ionicon ?: 'jenkins')}" title="${icon.key}"
                 class="icon-xlg" />
     </f:entry>
-    <f:advanced title="${%AvailableIcons}">
+    <f:advanced title="${%AvailableIcons}${not empty ionicons ? ' (' + ionicons.size() + ')' : ''}">
         <j:forEach var="icon" items="${ionicons}">
             <a id="select-ionicon-${icon.key}" class="ionicon-icon-selection" onclick="setIoniconIcon('${icon.key}')">
                 <l:icon id="ionicon-icon-${icon.key}" src="${icon.value}" title="${icon.key}" tooltip="${icon.key}"

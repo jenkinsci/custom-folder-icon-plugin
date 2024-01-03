@@ -71,7 +71,7 @@ class EmojiFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertTrue(icon instanceof EmojiFolderIcon);
+        assertInstanceOf(EmojiFolderIcon.class, icon);
         assertTrue(StringUtils.startsWith(icon.getDescription(), project.getPronoun()));
     }
 
@@ -97,7 +97,7 @@ class EmojiFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertTrue(icon instanceof EmojiFolderIcon);
+        assertInstanceOf(EmojiFolderIcon.class, icon);
         assertTrue(StringUtils.startsWith(icon.getDescription(), project.getPronoun()));
     }
 
