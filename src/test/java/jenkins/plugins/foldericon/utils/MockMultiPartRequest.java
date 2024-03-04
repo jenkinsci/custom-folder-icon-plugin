@@ -735,4 +735,10 @@ public class MockMultiPartRequest implements StaplerRequest {
     public String createJavaScriptProxy(Object toBeExported) {
         return null;
     }
+
+    @Override
+    public RenderOnDemandParameters createJavaScriptProxyParameters(Object toBeExported) {
+        return null;
+    }
+
 }
