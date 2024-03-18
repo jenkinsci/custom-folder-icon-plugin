@@ -106,6 +106,5 @@ public class IoniconFolderIcon extends FolderIcon {
         public String getDisplayName() {
             return Messages.IoniconFolderIcon_description();
         }
-
     }
 }

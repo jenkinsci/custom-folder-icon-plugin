@@ -33,7 +33,6 @@ import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-
 /**
  * An Emoji Folder Icon.
  *
@@ -106,6 +105,5 @@ public class EmojiFolderIcon extends FolderIcon {
         public String getDisplayName() {
             return Messages.EmojiFolderIcon_description();
         }
-
     }
 }

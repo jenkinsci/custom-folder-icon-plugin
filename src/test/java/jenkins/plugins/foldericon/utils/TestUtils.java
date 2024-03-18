@@ -24,7 +24,16 @@
 
 package jenkins.plugins.foldericon.utils;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.matchesPattern;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.lang.reflect.Field;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.core5.http.ContentType;
@@ -33,15 +42,6 @@ import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.lang.reflect.Field;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.matchesPattern;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Common utils for tests.
@@ -63,9 +63,9 @@ public final class TestUtils {
      * @return the mocked request
      */
     public static StaplerRequest mockStaplerRequest(MockedStatic<Stapler> stapler) {
-        StaplerRequest mockReq = Mockito.mock(StaplerRequest.class);
+        StaplerRequest mockReq = mock(StaplerRequest.class);
         stapler.when(Stapler::getCurrentRequest).thenReturn(mockReq);
-        Mockito.when(mockReq.getContextPath()).thenReturn(JENKINS_CONTEXT_PATH);
+        when(mockReq.getContextPath()).thenReturn(JENKINS_CONTEXT_PATH);
         return mockReq;
     }
 
@@ -99,7 +99,9 @@ public final class TestUtils {
      * @param expectedErrorMessage the expected ERROR_MESSAGE
      * @throws Exception in case anything goes wrong
      */
-    public static void validateResponse(HttpResponse response, int expectedCode, String expectedTextPattern, String expectedErrorMessage) throws Exception {
+    public static void validateResponse(
+            HttpResponse response, int expectedCode, String expectedTextPattern, String expectedErrorMessage)
+            throws Exception {
         if (expectedCode != 0) {
             Field code = response.getClass().getDeclaredField("val$code");
             code.setAccessible(true);
@@ -132,12 +134,12 @@ public final class TestUtils {
         builder.addBinaryBody(file.getName(), file, ContentType.DEFAULT_BINARY, file.getName());
 
         byte[] buffer;
-        try (HttpEntity entity = builder.build(); ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+        try (HttpEntity entity = builder.build();
+                ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             entity.writeTo(os);
             os.flush();
             buffer = os.toByteArray();
         }
         return buffer;
     }
-
 }

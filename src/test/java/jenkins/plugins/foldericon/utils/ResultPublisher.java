@@ -57,7 +57,6 @@ public class ResultPublisher extends Publisher {
 
     @Override
     public Descriptor<Publisher> getDescriptor() {
-        return new Descriptor<>(ResultPublisher.class) {
-        };
+        return new Descriptor<>(ResultPublisher.class) {};
     }
 }

@@ -24,6 +24,9 @@
 
 package jenkins.plugins.foldericon;
 
+import static jenkins.plugins.foldericon.CustomFolderIconConfiguration.PLUGIN_PATH;
+import static jenkins.plugins.foldericon.CustomFolderIconConfiguration.USER_CONTENT_PATH;
+
 import com.cloudbees.hudson.plugins.folder.AbstractFolder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import com.cloudbees.hudson.plugins.folder.FolderIconDescriptor;
@@ -32,14 +35,6 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Item;
 import hudson.model.listeners.ItemListener;
-import jenkins.model.Jenkins;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
-import org.kohsuke.stapler.*;
-import org.kohsuke.stapler.interceptor.RequirePOST;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.Set;
@@ -47,9 +42,13 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import static jenkins.plugins.foldericon.CustomFolderIconConfiguration.PLUGIN_PATH;
-import static jenkins.plugins.foldericon.CustomFolderIconConfiguration.USER_CONTENT_PATH;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+import jenkins.model.Jenkins;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
+import org.kohsuke.stapler.*;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 
 /**
  * A Custom Folder Icon.
@@ -84,16 +83,21 @@ public class CustomFolderIcon extends FolderIcon {
     @NonNull
     public static Set<String> getAvailableIcons() {
         try {
-            FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
+            FilePath iconDir =
+                    Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
 
             if (iconDir.exists()) {
-                return iconDir.list().stream().sorted(Comparator.comparingLong((FilePath file) -> {
-                    try {
-                        return file.lastModified();
-                    } catch (IOException | InterruptedException ex) {
-                        return 0;
-                    }
-                }).reversed()).map(FilePath::getName).collect(Collectors.toSet());
+                return iconDir.list().stream()
+                        .sorted(Comparator.comparingLong((FilePath file) -> {
+                                    try {
+                                        return file.lastModified();
+                                    } catch (IOException | InterruptedException ex) {
+                                        return 0;
+                                    }
+                                })
+                                .reversed())
+                        .map(FilePath::getName)
+                        .collect(Collectors.toSet());
             } else {
                 return Set.of();
             }
@@ -118,8 +122,8 @@ public class CustomFolderIcon extends FolderIcon {
     @Override
     public String getImageOf(String size) {
         if (StringUtils.isNotEmpty(getFoldericon())) {
-            return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH + "/" + USER_CONTENT_PATH + "/" + PLUGIN_PATH + "/"
-                    + getFoldericon();
+            return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH + "/" + USER_CONTENT_PATH + "/"
+                    + PLUGIN_PATH + "/" + getFoldericon();
         } else {
             return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH + "/" + DEFAULT_ICON_PATH;
         }
@@ -174,13 +178,17 @@ public class CustomFolderIcon extends FolderIcon {
             try {
                 FileItem file = req.getFileItem("file");
                 if (file == null || file.getSize() == 0) {
-                    return HttpResponses.errorWithoutStack(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Messages.Upload_invalidFile());
+                    return HttpResponses.errorWithoutStack(
+                            HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Messages.Upload_invalidFile());
                 } else if (file.getSize() > FILE_SIZE_MAX) {
-                    return HttpResponses.errorWithoutStack(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Messages.Upload_exceedsFileSize(file.getSize(), FILE_SIZE_MAX));
+                    return HttpResponses.errorWithoutStack(
+                            HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                            Messages.Upload_exceedsFileSize(file.getSize(), FILE_SIZE_MAX));
                 }
 
                 String filename = UUID.randomUUID() + ".png";
-                FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
+                FilePath iconDir =
+                        Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
                 iconDir.mkdirs();
                 FilePath icon = iconDir.child(filename);
                 icon.copyFrom(file.getInputStream());
@@ -211,19 +219,30 @@ public class CustomFolderIcon extends FolderIcon {
                     if (StringUtils.isNotEmpty(foldericon)) {
                         // delete the icon only if there is no other usage
                         boolean orphan = Jenkins.get().getAllItems(AbstractFolder.class).stream()
-                                .filter(folder -> folder.getIcon() instanceof CustomFolderIcon
-                                        && StringUtils.equals(foldericon, ((CustomFolderIcon) folder.getIcon()).getFoldericon()))
-                                .limit(2)
-                                .count() <= 1;
+                                        .filter(folder -> folder.getIcon() instanceof CustomFolderIcon
+                                                && StringUtils.equals(
+                                                        foldericon,
+                                                        ((CustomFolderIcon) folder.getIcon()).getFoldericon()))
+                                        .limit(2)
+                                        .count()
+                                <= 1;
 
                         if (orphan) {
-                            FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
+                            FilePath iconDir = Jenkins.get()
+                                    .getRootPath()
+                                    .child(USER_CONTENT_PATH)
+                                    .child(PLUGIN_PATH);
                             try {
                                 if (!iconDir.child(foldericon).delete()) {
-                                    LOGGER.warning(() -> "Unable to delete Folder Icon '" + foldericon + "' for Folder '" + item.getFullName() + "'!");
+                                    LOGGER.warning(() -> "Unable to delete Folder Icon '" + foldericon
+                                            + "' for Folder '" + item.getFullName() + "'!");
                                 }
                             } catch (IOException | InterruptedException ex) {
-                                LOGGER.log(Level.WARNING, ex, () -> "Unable to delete Folder Icon '" + foldericon + "' for Folder '" + item.getFullName() + "'!");
+                                LOGGER.log(
+                                        Level.WARNING,
+                                        ex,
+                                        () -> "Unable to delete Folder Icon '" + foldericon + "' for Folder '"
+                                                + item.getFullName() + "'!");
                             }
                         }
                     }

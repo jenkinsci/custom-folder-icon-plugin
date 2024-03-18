@@ -24,24 +24,23 @@
 
 package jenkins.plugins.foldericon;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import hudson.FilePath;
 import hudson.model.*;
-import javaposse.jobdsl.plugin.ExecuteDslScripts;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
-import org.jvnet.hudson.test.JenkinsRule;
-import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
-
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
+import javaposse.jobdsl.plugin.ExecuteDslScripts;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 /**
  * Test to configure folders via Job DSL plugin.
@@ -84,7 +83,8 @@ class JobDSLConfigurationTest {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends FolderIcon> T createFolder(JenkinsRule r, String scriptName, Class<T> clazz) throws Exception {
+    private static <T extends FolderIcon> T createFolder(JenkinsRule r, String scriptName, Class<T> clazz)
+            throws Exception {
         // setup
         FreeStyleProject job = r.jenkins.createProject(FreeStyleProject.class, "Job DSL Configuration");
 

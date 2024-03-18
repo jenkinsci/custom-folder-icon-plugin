@@ -24,16 +24,22 @@
 
 package jenkins.plugins.foldericon;
 
+import static jenkins.plugins.foldericon.utils.TestUtils.createMultipartEntityBuffer;
+import static jenkins.plugins.foldericon.utils.TestUtils.validateResponse;
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.cloudbees.hudson.plugins.folder.Folder;
 import hudson.FilePath;
 import hudson.model.Item;
 import hudson.model.User;
 import hudson.security.ACL;
 import hudson.security.ACLContext;
+import java.io.File;
+import java.util.Collections;
+import javax.servlet.http.HttpServletResponse;
 import jenkins.model.Jenkins;
 import jenkins.plugins.foldericon.CustomFolderIcon.DescriptorImpl;
 import jenkins.plugins.foldericon.utils.MockMultiPartRequest;
-import jenkins.plugins.foldericon.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.MockAuthorizationStrategy;
@@ -41,12 +47,6 @@ import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.StaplerRequest;
 import org.springframework.security.access.AccessDeniedException;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.util.Collections;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test various permission checks
@@ -65,7 +65,6 @@ class PermissionTest {
     private static final String FILE_NAME_PATTERN =
             "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\\.png$";
 
-
     /**
      * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest, Item)}.
      *
@@ -77,7 +76,7 @@ class PermissionTest {
 
         File upload = new File("./src/main/webapp/icons/default.png");
 
-        byte[] buffer = TestUtils.createMultipartEntityBuffer(upload);
+        byte[] buffer = createMultipartEntityBuffer(upload);
         MockMultiPartRequest mockRequest = new MockMultiPartRequest(buffer);
         DescriptorImpl descriptor = new DescriptorImpl();
 
@@ -104,7 +103,7 @@ class PermissionTest {
             assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, null));
 
             HttpResponse response = descriptor.doUploadIcon(mockRequest, project);
-            TestUtils.validateResponse(response, 0, FILE_NAME_PATTERN, null);
+            validateResponse(response, 0, FILE_NAME_PATTERN, null);
         }
 
         // Jenkins.ADMINISTER
@@ -112,11 +111,11 @@ class PermissionTest {
             assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, null));
 
             HttpResponse response = descriptor.doUploadIcon(mockRequest, project);
-            TestUtils.validateResponse(response, 0, FILE_NAME_PATTERN, null);
+            validateResponse(response, 0, FILE_NAME_PATTERN, null);
 
             strategy.grant(Jenkins.ADMINISTER).onRoot().to(ADMIN_USER);
             response = descriptor.doUploadIcon(mockRequest, project);
-            TestUtils.validateResponse(response, 0, FILE_NAME_PATTERN, null);
+            validateResponse(response, 0, FILE_NAME_PATTERN, null);
         }
     }
 
@@ -127,7 +126,10 @@ class PermissionTest {
      */
     @Test
     void testDoCleanup(JenkinsRule r) throws Exception {
-        FilePath parent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH).child(CustomFolderIconConfiguration.PLUGIN_PATH);
+        FilePath parent = r.jenkins
+                .getRootPath()
+                .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
+                .child(CustomFolderIconConfiguration.PLUGIN_PATH);
         parent.mkdirs();
 
         FilePath file = parent.child(System.currentTimeMillis() + ".png");
@@ -163,7 +165,7 @@ class PermissionTest {
         // Jenkins.ADMINISTER
         try (ACLContext ignored = ACL.as(User.get(ADMIN_USER, true, Collections.emptyMap()))) {
             HttpResponse response = descriptor.doCleanup(null);
-            TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
+            validateResponse(response, HttpServletResponse.SC_OK, null, null);
             assertFalse(file.exists());
         }
     }

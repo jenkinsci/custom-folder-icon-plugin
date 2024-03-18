@@ -106,6 +106,5 @@ public class FontAwesomeFolderIcon extends FolderIcon {
         public String getDisplayName() {
             return Messages.FontAwesomeFolderIcon_description();
         }
-
     }
 }

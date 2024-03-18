@@ -53,7 +53,8 @@ public final class Emojis {
     private Emojis() {
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream(EMOJIS_LIST_RESOURCE_PATH)) {
             if (stream != null) {
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+                try (BufferedReader reader =
+                        new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
                     String line;
                     while ((line = reader.readLine()) != null) {
                         String[] splitLine = line.split(":");
@@ -98,5 +99,4 @@ public final class Emojis {
     public static Map<String, String> getAvailableEmojis() {
         return INSTANCE.availableEmojis;
     }
-
 }

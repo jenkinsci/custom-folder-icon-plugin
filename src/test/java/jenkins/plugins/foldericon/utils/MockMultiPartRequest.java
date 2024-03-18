@@ -24,6 +24,13 @@
 
 package jenkins.plugins.foldericon.utils;
 
+import java.io.*;
+import java.lang.reflect.Type;
+import java.security.Principal;
+import java.util.*;
+import javax.annotation.Nonnull;
+import javax.servlet.*;
+import javax.servlet.http.*;
 import net.sf.json.JSONObject;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemHeaders;
@@ -31,14 +38,6 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.*;
 import org.kohsuke.stapler.bind.BoundObjectTable;
 import org.kohsuke.stapler.lang.Klass;
-
-import javax.annotation.Nonnull;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.io.*;
-import java.lang.reflect.Type;
-import java.security.Principal;
-import java.util.*;
 
 /**
  * Mock request for multi-part uploads.
@@ -102,7 +101,6 @@ public class MockMultiPartRequest implements StaplerRequest {
                 public void setReadListener(ReadListener readListener) {
                     // NOP
                 }
-
             };
         } else {
             return null;
@@ -387,7 +385,8 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
-    public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) throws IllegalStateException {
+    public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse)
+            throws IllegalStateException {
         return null;
     }
 
@@ -672,14 +671,10 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public void write(File file) {
-
-                }
+                public void write(File file) {}
 
                 @Override
-                public void delete() {
-
-                }
+                public void delete() {}
 
                 @Override
                 public String getFieldName() {
@@ -687,9 +682,7 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public void setFieldName(String name) {
-
-                }
+                public void setFieldName(String name) {}
 
                 @Override
                 public boolean isFormField() {
@@ -697,9 +690,7 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public void setFormField(boolean state) {
-
-                }
+                public void setFormField(boolean state) {}
 
                 @Override
                 public OutputStream getOutputStream() {
@@ -712,9 +703,7 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public void setHeaders(FileItemHeaders headers) {
-
-                }
+                public void setHeaders(FileItemHeaders headers) {}
             };
         } else {
             return null;
@@ -740,5 +729,4 @@ public class MockMultiPartRequest implements StaplerRequest {
     public RenderOnDemandParameters createJavaScriptProxyParameters(Object toBeExported) {
         return null;
     }
-
 }

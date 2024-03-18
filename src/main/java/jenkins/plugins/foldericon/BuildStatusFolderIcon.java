@@ -33,15 +33,14 @@ import hudson.model.BallColor;
 import hudson.model.Job;
 import hudson.model.Result;
 import hudson.model.Run;
-import jenkins.model.Jenkins;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.Stapler;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import jenkins.model.Jenkins;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.Stapler;
 
 /**
  * A Build Status Folder Icon.
@@ -80,8 +79,7 @@ public class BuildStatusFolderIcon extends FolderIcon {
      * @return all available jobs in the current folder.
      */
     public Set<String> getAvailableJobs() {
-        return getAllJobs()
-                .stream()
+        return getAllJobs().stream()
                 .map(job -> job.getRelativeDisplayNameFrom(owner))
                 .collect(Collectors.toCollection(TreeSet::new));
     }
@@ -183,6 +181,5 @@ public class BuildStatusFolderIcon extends FolderIcon {
         public String getDisplayName() {
             return Messages.BuildStatusFolderIcon_description();
         }
-
     }
 }

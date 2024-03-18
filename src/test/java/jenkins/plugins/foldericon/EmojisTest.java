@@ -24,10 +24,7 @@
 
 package jenkins.plugins.foldericon;
 
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -38,8 +35,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 /**
  * Emojis Tests
@@ -76,7 +75,9 @@ class EmojisTest {
             assertNotNull(iconClassName);
             assertEquals(iconClassName, Emojis.getIconClassName(content[0]));
 
-            List<String> files = Arrays.stream(folderContents).filter(file -> file.equals("emoji_" + content[0] + ".svg")).collect(Collectors.toList());
+            List<String> files = Arrays.stream(folderContents)
+                    .filter(file -> file.equals("emoji_" + content[0] + ".svg"))
+                    .collect(Collectors.toList());
             assertEquals(1, files.size());
 
             String emoji = Emojis.getAvailableEmojis().get(content[0]);

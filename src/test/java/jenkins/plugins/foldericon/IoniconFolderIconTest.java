@@ -24,6 +24,8 @@
 
 package jenkins.plugins.foldericon;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import io.jenkins.plugins.ionicons.Ionicons;
@@ -33,8 +35,6 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Ionicon Folder Icon Tests
@@ -112,5 +112,4 @@ class IoniconFolderIconTest {
         assertEquals(Messages.IoniconFolderIcon_description(), descriptor.getDisplayName());
         assertTrue(descriptor.isApplicable(null));
     }
-
 }

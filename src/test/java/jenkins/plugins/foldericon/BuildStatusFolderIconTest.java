@@ -24,29 +24,29 @@
 
 package jenkins.plugins.foldericon;
 
+import static jenkins.plugins.foldericon.utils.TestUtils.mockStaplerRequest;
+import static jenkins.plugins.foldericon.utils.TestUtils.validateIcon;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mockStatic;
+
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import hudson.model.BallColor;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+import java.util.Collections;
+import java.util.Set;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.BuildStatusFolderIcon.DescriptorImpl;
 import jenkins.plugins.foldericon.utils.DelayBuilder;
 import jenkins.plugins.foldericon.utils.ResultPublisher;
-import jenkins.plugins.foldericon.utils.TestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.kohsuke.stapler.Stapler;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-
-import java.util.Collections;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Build Status Folder Icon Tests
@@ -86,8 +86,8 @@ class BuildStatusFolderIconTest {
     void testWithConfiguredJobs(JenkinsRule r) throws Exception {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
 
-        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-            TestUtils.mockStaplerRequest(stapler);
+        try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
+            mockStaplerRequest(stapler);
 
             // Setup
             FreeStyleProject success = project.createProject(FreeStyleProject.class, "Success");
@@ -107,32 +107,32 @@ class BuildStatusFolderIconTest {
             BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(Set.of());
             project.setIcon(customIcon);
             FolderIcon icon = project.getIcon();
-            TestUtils.validateIcon(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconClassName());
+            validateIcon(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconClassName());
 
             customIcon = new BuildStatusFolderIcon(Set.of("Success"));
             project.setIcon(customIcon);
             icon = project.getIcon();
-            TestUtils.validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
+            validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
 
             customIcon = new BuildStatusFolderIcon(Set.of("Success", "Aborted"));
             project.setIcon(customIcon);
             icon = project.getIcon();
-            TestUtils.validateIcon(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconClassName());
+            validateIcon(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconClassName());
 
             customIcon = new BuildStatusFolderIcon(Set.of("subfolder » Nested"));
             project.setIcon(customIcon);
             icon = project.getIcon();
-            TestUtils.validateIcon(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconClassName());
+            validateIcon(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconClassName());
 
             customIcon = new BuildStatusFolderIcon(Set.of("doesnotexist"));
             project.setIcon(customIcon);
             icon = project.getIcon();
-            TestUtils.validateIcon(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconClassName());
+            validateIcon(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconClassName());
 
             customIcon = new BuildStatusFolderIcon(Set.of("Success", "doesnotexist"));
             project.setIcon(customIcon);
             icon = project.getIcon();
-            TestUtils.validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
+            validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
         }
     }
 
@@ -197,47 +197,46 @@ class BuildStatusFolderIconTest {
 
         assertInstanceOf(BuildStatusFolderIcon.class, icon);
 
-        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-            TestUtils.mockStaplerRequest(stapler);
+        try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
+            mockStaplerRequest(stapler);
 
             // default
-            TestUtils.validateIcon(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconClassName());
+            validateIcon(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconClassName());
 
             // Success
             FreeStyleProject success = project.createProject(FreeStyleProject.class, "Success");
             FreeStyleBuild successBuild = success.scheduleBuild2(0).get();
             r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(successBuild));
 
-            TestUtils.validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
+            validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
             // Unstable
             FreeStyleProject unstable = project.createProject(FreeStyleProject.class, "Unstable");
             unstable.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.UNSTABLE)));
             r.buildAndAssertStatus(Result.UNSTABLE, unstable);
 
-            TestUtils.validateIcon(icon, BallColor.YELLOW.getImage(), BallColor.YELLOW.getIconClassName());
+            validateIcon(icon, BallColor.YELLOW.getImage(), BallColor.YELLOW.getIconClassName());
 
             // Failure
             FreeStyleProject failure = project.createProject(FreeStyleProject.class, "Failure");
             failure.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.FAILURE)));
             r.buildAndAssertStatus(Result.FAILURE, failure);
 
-            TestUtils.validateIcon(icon, BallColor.RED.getImage(), BallColor.RED.getIconClassName());
+            validateIcon(icon, BallColor.RED.getImage(), BallColor.RED.getIconClassName());
 
             // Not build
             FreeStyleProject notBuilt = project.createProject(FreeStyleProject.class, "Not Built");
             notBuilt.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.NOT_BUILT)));
             r.buildAndAssertStatus(Result.NOT_BUILT, notBuilt);
 
-            TestUtils.validateIcon(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconClassName());
+            validateIcon(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconClassName());
 
             // Aborted
             FreeStyleProject aborted = project.createProject(FreeStyleProject.class, "Aborted");
             aborted.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.ABORTED)));
             r.buildAndAssertStatus(Result.ABORTED, aborted);
 
-            TestUtils.validateIcon(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconClassName());
+            validateIcon(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconClassName());
         }
-
     }
 
     /**
@@ -254,22 +253,23 @@ class BuildStatusFolderIconTest {
 
         assertInstanceOf(BuildStatusFolderIcon.class, icon);
 
-        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-            TestUtils.mockStaplerRequest(stapler);
+        try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
+            mockStaplerRequest(stapler);
 
             // Previous Success
             FreeStyleProject success = project.createProject(FreeStyleProject.class, "Success");
             FreeStyleBuild successBuild = success.scheduleBuild2(0).get();
             r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(successBuild));
 
-            TestUtils.validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
+            validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
 
             // Running Build
             DelayBuilder builder = new DelayBuilder();
             success.getBuildersList().replaceBy(Collections.singleton(builder));
-            FreeStyleBuild runningBuild = success.scheduleBuild2(0).getStartCondition().get();
+            FreeStyleBuild runningBuild =
+                    success.scheduleBuild2(0).getStartCondition().get();
 
-            TestUtils.validateIcon(icon, BallColor.BLUE_ANIME.getImage(), BallColor.BLUE_ANIME.getIconClassName());
+            validateIcon(icon, BallColor.BLUE_ANIME.getImage(), BallColor.BLUE_ANIME.getIconClassName());
             builder.release();
 
             r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(runningBuild));
@@ -290,16 +290,17 @@ class BuildStatusFolderIconTest {
 
         assertInstanceOf(BuildStatusFolderIcon.class, icon);
 
-        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-            TestUtils.mockStaplerRequest(stapler);
+        try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
+            mockStaplerRequest(stapler);
 
             // Running Build
             FreeStyleProject running = project.createProject(FreeStyleProject.class, "Running");
             DelayBuilder builder = new DelayBuilder();
             running.getBuildersList().replaceBy(Collections.singleton(builder));
-            FreeStyleBuild runningBuild = running.scheduleBuild2(0).getStartCondition().get();
+            FreeStyleBuild runningBuild =
+                    running.scheduleBuild2(0).getStartCondition().get();
 
-            TestUtils.validateIcon(icon, BallColor.NOTBUILT_ANIME.getImage(), BallColor.NOTBUILT_ANIME.getIconClassName());
+            validateIcon(icon, BallColor.NOTBUILT_ANIME.getImage(), BallColor.NOTBUILT_ANIME.getIconClassName());
             builder.release();
 
             r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(runningBuild));
@@ -320,8 +321,8 @@ class BuildStatusFolderIconTest {
 
         assertInstanceOf(BuildStatusFolderIcon.class, icon);
 
-        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-            TestUtils.mockStaplerRequest(stapler);
+        try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
+            mockStaplerRequest(stapler);
 
             // Disabled Build
             FreeStyleProject disabled = project.createProject(FreeStyleProject.class, "Disabled");
@@ -329,7 +330,7 @@ class BuildStatusFolderIconTest {
 
             assertFalse(disabled.isBuildable());
             assertTrue(disabled.isDisabled());
-            TestUtils.validateIcon(icon, BallColor.DISABLED.getImage(), BallColor.DISABLED.getIconClassName());
+            validateIcon(icon, BallColor.DISABLED.getImage(), BallColor.DISABLED.getIconClassName());
         }
     }
 
@@ -347,13 +348,13 @@ class BuildStatusFolderIconTest {
 
         assertInstanceOf(BuildStatusFolderIcon.class, icon);
 
-        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-            TestUtils.mockStaplerRequest(stapler);
+        try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
+            mockStaplerRequest(stapler);
 
             // No Build
             project.createProject(FreeStyleProject.class, "No Build");
 
-            TestUtils.validateIcon(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconClassName());
+            validateIcon(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconClassName());
         }
     }
 }

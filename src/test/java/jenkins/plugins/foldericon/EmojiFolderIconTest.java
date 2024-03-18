@@ -24,6 +24,8 @@
 
 package jenkins.plugins.foldericon;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import jenkins.branch.OrganizationFolder;
@@ -32,8 +34,6 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Emoji Folder Icon Tests
@@ -111,5 +111,4 @@ class EmojiFolderIconTest {
         assertEquals(Messages.EmojiFolderIcon_description(), descriptor.getDisplayName());
         assertTrue(descriptor.isApplicable(null));
     }
-
 }

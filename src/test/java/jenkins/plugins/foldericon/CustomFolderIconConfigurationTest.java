@@ -24,12 +24,21 @@
 
 package jenkins.plugins.foldericon;
 
+import static jenkins.plugins.foldericon.utils.TestUtils.mockStaplerRequest;
+import static jenkins.plugins.foldericon.utils.TestUtils.validateResponse;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import com.cloudbees.hudson.plugins.folder.Folder;
 import hudson.FilePath;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Logger;
+import javax.servlet.http.HttpServletResponse;
 import jenkins.appearance.AppearanceCategory;
 import jenkins.branch.OrganizationFolder;
 import jenkins.model.GlobalConfigurationCategory;
-import jenkins.plugins.foldericon.utils.TestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -40,15 +49,6 @@ import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.logging.Logger;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Custom Folder Icon Configuration Tests
@@ -80,7 +80,10 @@ class CustomFolderIconConfigurationTest {
     void testGetDiskUsage(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
-        FilePath parent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH).child(CustomFolderIconConfiguration.PLUGIN_PATH);
+        FilePath parent = r.jenkins
+                .getRootPath()
+                .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
+                .child(CustomFolderIconConfiguration.PLUGIN_PATH);
         parent.mkdirs();
 
         FilePath file = parent.child(System.currentTimeMillis() + ".png");
@@ -100,7 +103,10 @@ class CustomFolderIconConfigurationTest {
     void testGetDiskUsageNoIcons(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
-        FilePath parent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH).child(CustomFolderIconConfiguration.PLUGIN_PATH);
+        FilePath parent = r.jenkins
+                .getRootPath()
+                .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
+                .child(CustomFolderIconConfiguration.PLUGIN_PATH);
         parent.mkdirs();
 
         String usage = descriptor.getDiskUsage();
@@ -133,19 +139,20 @@ class CustomFolderIconConfigurationTest {
         FilePath file = iconDir.child(filename);
         file.touch(System.currentTimeMillis());
 
-        try (@SuppressWarnings("unused") MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
-            String call = invocation.toString();
-            if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
-                return userContent;
-            } else if (StringUtils.equals(call, "filePath.exists();")) {
-                return true;
-            } else if (StringUtils.equals(call, "filePath.list();")) {
-                return List.of(file);
-            } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
-                throw new IOException("Mocked Exception!");
-            }
-            return fail("Unexpected invocation '" + call + "' - Test is broken!");
-        })) {
+        try (@SuppressWarnings("unused")
+                MockedConstruction<FilePath> mocked = mockConstructionWithAnswer(FilePath.class, invocation -> {
+                    String call = invocation.toString();
+                    if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
+                        return userContent;
+                    } else if (StringUtils.equals(call, "filePath.exists();")) {
+                        return true;
+                    } else if (StringUtils.equals(call, "filePath.list();")) {
+                        return List.of(file);
+                    } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
+                        throw new IOException("Mocked Exception!");
+                    }
+                    return fail("Unexpected invocation '" + call + "' - Test is broken!");
+                })) {
             String usage = descriptor.getDiskUsage();
             assertEquals(FileUtils.byteCountToDisplaySize(0L), usage);
         }
@@ -160,10 +167,13 @@ class CustomFolderIconConfigurationTest {
     void testDoCleanupNoItems(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
-        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
+        try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
+            StaplerRequest mockReq = mockStaplerRequest(stapler);
 
-            FilePath parent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH).child(CustomFolderIconConfiguration.PLUGIN_PATH);
+            FilePath parent = r.jenkins
+                    .getRootPath()
+                    .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
+                    .child(CustomFolderIconConfiguration.PLUGIN_PATH);
             parent.mkdirs();
 
             FilePath file = parent.child(System.currentTimeMillis() + ".png");
@@ -171,7 +181,7 @@ class CustomFolderIconConfigurationTest {
             assertTrue(file.exists());
             HttpResponse response = descriptor.doCleanup(mockReq);
 
-            TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
+            validateResponse(response, HttpServletResponse.SC_OK, null, null);
             assertFalse(file.exists());
         }
     }
@@ -189,15 +199,18 @@ class CustomFolderIconConfigurationTest {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
 
-        FilePath parent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH).child(CustomFolderIconConfiguration.PLUGIN_PATH);
+        FilePath parent = r.jenkins
+                .getRootPath()
+                .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
+                .child(CustomFolderIconConfiguration.PLUGIN_PATH);
         parent.mkdirs();
         assertTrue(parent.exists());
 
-        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
+        try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
+            StaplerRequest mockReq = mockStaplerRequest(stapler);
             HttpResponse response = descriptor.doCleanup(mockReq);
 
-            TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
+            validateResponse(response, HttpServletResponse.SC_OK, null, null);
         }
     }
 
@@ -217,18 +230,21 @@ class CustomFolderIconConfigurationTest {
         project1.setIcon(customIcon);
         project2.setIcon(customIcon);
 
-        FilePath parent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH).child(CustomFolderIconConfiguration.PLUGIN_PATH);
+        FilePath parent = r.jenkins
+                .getRootPath()
+                .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
+                .child(CustomFolderIconConfiguration.PLUGIN_PATH);
         parent.mkdirs();
 
         FilePath dummy = parent.child(DUMMY_PNG);
         dummy.touch(System.currentTimeMillis());
         assertTrue(dummy.exists());
 
-        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
+        try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
+            StaplerRequest mockReq = mockStaplerRequest(stapler);
             HttpResponse response = descriptor.doCleanup(mockReq);
 
-            TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
+            validateResponse(response, HttpServletResponse.SC_OK, null, null);
             assertTrue(dummy.exists());
         }
     }
@@ -249,7 +265,10 @@ class CustomFolderIconConfigurationTest {
         project1.setIcon(customIcon);
         project2.setIcon(customIcon);
 
-        FilePath parent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH).child(CustomFolderIconConfiguration.PLUGIN_PATH);
+        FilePath parent = r.jenkins
+                .getRootPath()
+                .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
+                .child(CustomFolderIconConfiguration.PLUGIN_PATH);
         parent.mkdirs();
 
         FilePath dummy = parent.child(DUMMY_PNG);
@@ -260,11 +279,11 @@ class CustomFolderIconConfigurationTest {
         unused.touch(System.currentTimeMillis());
         assertTrue(unused.exists());
 
-        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
+        try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
+            StaplerRequest mockReq = mockStaplerRequest(stapler);
             HttpResponse response = descriptor.doCleanup(mockReq);
 
-            TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
+            validateResponse(response, HttpServletResponse.SC_OK, null, null);
             assertTrue(dummy.exists());
             assertFalse(unused.exists());
         }
@@ -279,15 +298,18 @@ class CustomFolderIconConfigurationTest {
     void testDoCleanupNoRoot(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
-        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
+        try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
+            StaplerRequest mockReq = mockStaplerRequest(stapler);
 
-            FilePath parent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH).child(CustomFolderIconConfiguration.PLUGIN_PATH);
+            FilePath parent = r.jenkins
+                    .getRootPath()
+                    .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
+                    .child(CustomFolderIconConfiguration.PLUGIN_PATH);
             assertTrue(parent.delete());
 
             HttpResponse response = descriptor.doCleanup(mockReq);
 
-            TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
+            validateResponse(response, HttpServletResponse.SC_OK, null, null);
             assertFalse(parent.exists());
         }
     }
@@ -301,8 +323,8 @@ class CustomFolderIconConfigurationTest {
     void testDoCleanupFileNotDeleted(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
-        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
+        try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
+            StaplerRequest mockReq = mockStaplerRequest(stapler);
 
             FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
             FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
@@ -312,23 +334,24 @@ class CustomFolderIconConfigurationTest {
             FilePath file = iconDir.child(filename);
             file.touch(System.currentTimeMillis());
 
-            try (@SuppressWarnings("unused") MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
-                String call = invocation.toString();
-                if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
-                    return userContent;
-                } else if (StringUtils.equals(call, "filePath.exists();")) {
-                    return true;
-                } else if (StringUtils.equals(call, "filePath.list();")) {
-                    return List.of(file);
-                } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
-                    FilePath mock = Mockito.mock(FilePath.class);
-                    Mockito.when(mock.delete()).thenReturn(false);
-                    return mock;
-                }
-                return fail("Unexpected invocation '" + call + "' - Test is broken!");
-            })) {
+            try (@SuppressWarnings("unused")
+                    MockedConstruction<FilePath> mocked = mockConstructionWithAnswer(FilePath.class, invocation -> {
+                        String call = invocation.toString();
+                        if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
+                            return userContent;
+                        } else if (StringUtils.equals(call, "filePath.exists();")) {
+                            return true;
+                        } else if (StringUtils.equals(call, "filePath.list();")) {
+                            return List.of(file);
+                        } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
+                            FilePath mock = mock(FilePath.class);
+                            when(mock.delete()).thenReturn(false);
+                            return mock;
+                        }
+                        return fail("Unexpected invocation '" + call + "' - Test is broken!");
+                    })) {
                 HttpResponse response = descriptor.doCleanup(mockReq);
-                TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
+                validateResponse(response, HttpServletResponse.SC_OK, null, null);
             }
 
             assertTrue(file.exists());
@@ -346,10 +369,13 @@ class CustomFolderIconConfigurationTest {
     void testDoCleanupFileNotDeletedWithException(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
-        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
+        try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
+            StaplerRequest mockReq = mockStaplerRequest(stapler);
 
-            FilePath parent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH).child(CustomFolderIconConfiguration.PLUGIN_PATH);
+            FilePath parent = r.jenkins
+                    .getRootPath()
+                    .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
+                    .child(CustomFolderIconConfiguration.PLUGIN_PATH);
             parent.mkdirs();
 
             FilePath file = parent.child(System.currentTimeMillis() + ".png");
@@ -372,12 +398,12 @@ class CustomFolderIconConfigurationTest {
             assertTrue(file.exists());
 
             HttpResponse response = descriptor.doCleanup(mockReq);
-            TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
+            validateResponse(response, HttpServletResponse.SC_OK, null, null);
 
             blocker.interrupt();
             response = descriptor.doCleanup(mockReq);
 
-            TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
+            validateResponse(response, HttpServletResponse.SC_OK, null, null);
             assertFalse(file.exists());
         }
     }
@@ -392,8 +418,8 @@ class CustomFolderIconConfigurationTest {
     void testDoCleanupFileNotDeletedWithMockedException(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
-        try (MockedStatic<Stapler> stapler = Mockito.mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = TestUtils.mockStaplerRequest(stapler);
+        try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
+            StaplerRequest mockReq = mockStaplerRequest(stapler);
 
             FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
             FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
@@ -403,21 +429,22 @@ class CustomFolderIconConfigurationTest {
             FilePath file = iconDir.child(filename);
             file.touch(System.currentTimeMillis());
 
-            try (@SuppressWarnings("unused") MockedConstruction<FilePath> mocked = Mockito.mockConstructionWithAnswer(FilePath.class, invocation -> {
-                String call = invocation.toString();
-                if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
-                    return userContent;
-                } else if (StringUtils.equals(call, "filePath.exists();")) {
-                    return true;
-                } else if (StringUtils.equals(call, "filePath.list();")) {
-                    return List.of(file);
-                } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
-                    throw new IOException("Mocked Exception!");
-                }
-                return fail("Unexpected invocation '" + call + "' - Test is broken!");
-            })) {
+            try (@SuppressWarnings("unused")
+                    MockedConstruction<FilePath> mocked = mockConstructionWithAnswer(FilePath.class, invocation -> {
+                        String call = invocation.toString();
+                        if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
+                            return userContent;
+                        } else if (StringUtils.equals(call, "filePath.exists();")) {
+                            return true;
+                        } else if (StringUtils.equals(call, "filePath.list();")) {
+                            return List.of(file);
+                        } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
+                            throw new IOException("Mocked Exception!");
+                        }
+                        return fail("Unexpected invocation '" + call + "' - Test is broken!");
+                    })) {
                 HttpResponse response = descriptor.doCleanup(mockReq);
-                TestUtils.validateResponse(response, HttpServletResponse.SC_OK, null, null);
+                validateResponse(response, HttpServletResponse.SC_OK, null, null);
             }
 
             assertTrue(file.exists());
