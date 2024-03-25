@@ -412,7 +412,7 @@ class CustomFolderIconConfigurationTest {
      * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest)} if a file can not be deleted due to an exception.
      *
      * @throws Exception in case anything goes wrong
-     * @implNote Sometimes {@link CustomFolderIconConfigurationTest#testDoCleanupFileNotDeletedWithException(JenkinsRule)} does not work.
+     * @implNote Sometimes {@link #testDoCleanupFileNotDeletedWithException(JenkinsRule)} does not work.
      */
     @Test
     void testDoCleanupFileNotDeletedWithMockedException(JenkinsRule r) throws Exception {

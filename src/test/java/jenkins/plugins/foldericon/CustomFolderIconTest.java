@@ -528,7 +528,7 @@ class CustomFolderIconTest {
     }
 
     /**
-     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
+     * Test behavior of {@link CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
      *
      * @throws Exception in case anything goes wrong
      */
@@ -553,7 +553,7 @@ class CustomFolderIconTest {
     }
 
     /**
-     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
+     * Test behavior of {@link CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
      *
      * @throws Exception in case anything goes wrong
      */
@@ -589,7 +589,7 @@ class CustomFolderIconTest {
     }
 
     /**
-     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
+     * Test behavior of {@link CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
      *
      * @throws Exception in case anything goes wrong
      */
@@ -613,7 +613,7 @@ class CustomFolderIconTest {
     }
 
     /**
-     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
+     * Test behavior of {@link CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
      *
      * @throws Exception in case anything goes wrong
      */
@@ -634,7 +634,7 @@ class CustomFolderIconTest {
     }
 
     /**
-     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the icon is used elsewhere.
+     * Test behavior of {@link CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the icon is used elsewhere.
      *
      * @throws Exception in case anything goes wrong
      */
@@ -664,7 +664,7 @@ class CustomFolderIconTest {
     }
 
     /**
-     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the file is not deleted.
+     * Test behavior of {@link CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the file is not deleted.
      *
      * @throws Exception in case anything goes wrong
      */
@@ -704,7 +704,7 @@ class CustomFolderIconTest {
     }
 
     /**
-     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the file is not deleted due to an exception.
+     * Test behavior of {@link CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the file is not deleted due to an exception.
      *
      * @throws Exception in case anything goes wrong
      */
@@ -747,10 +747,10 @@ class CustomFolderIconTest {
     }
 
     /**
-     * Test behavior of {@link jenkins.plugins.foldericon.CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the file is not deleted due to an exception.
+     * Test behavior of {@link CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the file is not deleted due to an exception.
      *
      * @throws Exception in case anything goes wrong
-     * @implNote Sometimes {@link CustomFolderIconTest#testCleanupListenerFileNotDeletedWithException(JenkinsRule)} does not work.
+     * @implNote Sometimes {@link #testCleanupListenerFileNotDeletedWithException(JenkinsRule)} does not work.
      */
     @Test
     void testCleanupListenerFileNotDeletedWithMockedException(JenkinsRule r) throws Exception {
