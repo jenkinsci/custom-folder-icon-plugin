@@ -32,14 +32,12 @@
       ],
       "depNameTemplate": "org.jenkins-ci.main:jenkins-war",
       "datasourceTemplate": "maven"
-    },
+    }
+  ],
+  "packageRules": [
     {
-      "packageRules": [
-        {
-          "matchDatasources": ["maven"],
-          "registryUrls": ["//https://repo.jenkins-ci.org/releases"]
-        }
-      ]
+      "matchDatasources": ["maven"],
+      "registryUrls": ["https://repo.jenkins-ci.org/releases"]
     }
   ]
 }
