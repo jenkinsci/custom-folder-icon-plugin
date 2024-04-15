@@ -31,10 +31,7 @@
         "jenkins: '(?<currentValue>.*?)'"
       ],
       "depNameTemplate": "org.jenkins-ci.main:jenkins-war",
-      "datasourceTemplate": {
-        "type": "maven",
-        "repositoryUrl": "https://repo.jenkins-ci.org/releases/"
-      }
+      "datasourceTemplate": "maven:https://repo.jenkins-ci.org/releases"
     }
   ]
 }
