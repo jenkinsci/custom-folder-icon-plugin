@@ -22,6 +22,16 @@
       ],
       "depNameTemplate": "io.jenkins.tools.incrementals:git-changelist-maven-extension",
       "datasourceTemplate": "maven"
+    },
+    {
+      "fileMatch": [
+        "Jenkinsfile"
+      ],
+      "matchStrings": [
+        "jenkins: '(?<currentValue>.*?)'"
+      ],
+      "depNameTemplate": "org.jenkins-ci.main:jenkins-war",
+      "datasourceTemplate": "maven"
     }
   ]
 }
