@@ -30,8 +30,16 @@
       "matchStrings": [
         "jenkins: '(?<currentValue>.*?)'"
       ],
-      "depNameTemplate": "core",
-      "datasourceTemplate": "jenkins-plugins"
+      "depNameTemplate": "org.jenkins-ci.main:jenkins-war",
+      "datasourceTemplate": "maven"
+    },
+    {
+      "packageRules": [
+        {
+          "matchDatasources": ["maven"],
+          "registryUrls": ["//https://repo.jenkins-ci.org/releases"]
+        }
+      ]
     }
   ]
 }
