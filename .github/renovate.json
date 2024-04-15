@@ -30,8 +30,8 @@
       "matchStrings": [
         "jenkins: '(?<currentValue>.*?)'"
       ],
-      "depNameTemplate": "org.jenkins-ci.main:jenkins-war",
-      "datasourceTemplate": "maven:https://repo.jenkins-ci.org/releases"
+      "depNameTemplate": "core",
+      "datasourceTemplate": "jenkins-plugins"
     }
   ]
 }
