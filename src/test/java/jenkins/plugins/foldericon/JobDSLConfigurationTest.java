@@ -50,6 +50,11 @@ import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 @WithJenkins
 class JobDSLConfigurationTest {
 
+    /**
+     * Test behavior for build-status.groovy.
+     *
+     * @throws Exception in case anything goes wrong
+     */
     @Test
     void testBuildStatusFolderIcon(JenkinsRule r) throws Exception {
         BuildStatusFolderIcon customIcon = createFolder(r, "build-status.groovy", BuildStatusFolderIcon.class);
@@ -57,6 +62,11 @@ class JobDSLConfigurationTest {
         assertEquals(BallColor.NOTBUILT.getIconClassName(), customIcon.getIconClassName());
     }
 
+    /**
+     * Test behavior for build-status.groovy.
+     *
+     * @throws Exception in case anything goes wrong
+     */
     @Test
     void testCustomIconFolderIcon(JenkinsRule r) throws Exception {
         CustomFolderIcon customIcon = createFolder(r, "custom-icon.groovy", CustomFolderIcon.class);
@@ -64,18 +74,33 @@ class JobDSLConfigurationTest {
         assertEquals(Set.of("custom.png"), CustomFolderIcon.getAvailableIcons());
     }
 
+    /**
+     * Test behavior for emoji-icon.groovy.
+     *
+     * @throws Exception in case anything goes wrong
+     */
     @Test
     void testEmojiFolderIcon(JenkinsRule r) throws Exception {
         EmojiFolderIcon customIcon = createFolder(r, "emoji-icon.groovy", EmojiFolderIcon.class);
         assertEquals("sloth", customIcon.getEmoji());
     }
 
+    /**
+     * Test behavior for fontawesome-icon.groovy.
+     *
+     * @throws Exception in case anything goes wrong
+     */
     @Test
     void testFontAwesomeFolderIcon(JenkinsRule r) throws Exception {
         FontAwesomeFolderIcon customIcon = createFolder(r, "fontawesome-icon.groovy", FontAwesomeFolderIcon.class);
         assertEquals("brands/jenkins", customIcon.getFontAwesome());
     }
 
+    /**
+     * Test behavior for ionicon-icon.groovy.
+     *
+     * @throws Exception in case anything goes wrong
+     */
     @Test
     void testIoniconFolderIcon(JenkinsRule r) throws Exception {
         IoniconFolderIcon customIcon = createFolder(r, "ionicon-icon.groovy", IoniconFolderIcon.class);

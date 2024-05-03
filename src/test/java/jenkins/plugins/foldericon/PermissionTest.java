@@ -188,8 +188,7 @@ class PermissionTest {
     }
 
     /**
-     * Test behavior of {@link CustomFolderIconConfiguration#getDiskUsage()} (StaplerRequest)}.
-     *
+     * Test behavior of {@link CustomFolderIconConfiguration#getDiskUsage()}.
      */
     @Test
     void testGetDiskUsage(JenkinsRule r) {
