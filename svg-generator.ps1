@@ -43,7 +43,7 @@ $SVGTemplate = "<svg xmlns=`"http://www.w3.org/2000/svg`" class=`"emoji`" viewBo
 
 $counter = 0
 
-$performance = Measure-Command {
+$runtime = Measure-Command {
     foreach ($line in Get-Content -Encoding UTF8 $EmojiList)
     {
         $splitLine = $line.Split(":")
@@ -60,4 +60,4 @@ $performance = Measure-Command {
     }
 }
 
-"Done. Created " + $counter + " SVGs in " + $performance.Milliseconds + " ms" | Out-Host
+"Done. Created " + $counter + " SVGs in " + $runtime.Milliseconds + " ms" | Out-Host

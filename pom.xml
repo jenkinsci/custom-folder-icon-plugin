@@ -45,6 +45,8 @@
     <revision>2.13</revision>
     <changelist>-SNAPSHOT</changelist>
     <spotless.check.skip>false</spotless.check.skip>
+    <!-- needed for Jenkins.MANAGE support -->
+    <useBeta>true</useBeta>
   </properties>
 
   <dependencyManagement>

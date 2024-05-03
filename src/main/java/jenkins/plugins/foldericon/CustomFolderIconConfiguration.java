@@ -29,6 +29,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.PageDecorator;
+import hudson.security.Permission;
 import java.io.IOException;
 import java.util.Set;
 import java.util.logging.Level;
@@ -63,15 +64,20 @@ public class CustomFolderIconConfiguration extends PageDecorator {
         return GlobalConfigurationCategory.get(AppearanceCategory.class);
     }
 
+    @NonNull
+    @Override
+    public Permission getRequiredGlobalConfigPagePermission() {
+        return Jenkins.MANAGE;
+    }
+
     /**
      * Get human-readable disk-usage of all icons.
      *
-     * @return OK
+     * @return human-readable disk-usage
      */
-    @SuppressWarnings("unused")
     @NonNull
     public String getDiskUsage() {
-        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+        Jenkins.get().checkPermission(Jenkins.MANAGE);
 
         FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
 
@@ -97,7 +103,7 @@ public class CustomFolderIconConfiguration extends PageDecorator {
      */
     @RequirePOST
     public HttpResponse doCleanup(@SuppressWarnings("unused") StaplerRequest req) {
-        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+        Jenkins.get().checkPermission(Jenkins.MANAGE);
 
         FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
 
