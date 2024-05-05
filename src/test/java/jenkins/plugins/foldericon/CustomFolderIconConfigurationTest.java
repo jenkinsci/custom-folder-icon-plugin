@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import jenkins.appearance.AppearanceCategory;
 import jenkins.branch.OrganizationFolder;
 import jenkins.model.GlobalConfigurationCategory;
+import jenkins.model.Jenkins;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -69,6 +70,15 @@ class CustomFolderIconConfigurationTest {
     void testGetCategory(@SuppressWarnings("unused") JenkinsRule r) {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
         assertEquals(descriptor.getCategory(), GlobalConfigurationCategory.get(AppearanceCategory.class));
+    }
+
+    /**
+     * Test behavior of {@link CustomFolderIconConfiguration#getRequiredGlobalConfigPagePermission()}.
+     */
+    @Test
+    void testGetRequiredGlobalConfigPagePermission(@SuppressWarnings("unused") JenkinsRule r) {
+        CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
+        assertEquals(Jenkins.MANAGE, descriptor.getRequiredGlobalConfigPagePermission());
     }
 
     /**

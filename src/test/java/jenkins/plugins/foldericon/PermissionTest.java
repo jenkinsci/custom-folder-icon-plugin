@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 import jenkins.model.Jenkins;
 import jenkins.plugins.foldericon.CustomFolderIcon.DescriptorImpl;
 import jenkins.plugins.foldericon.utils.MockMultiPartRequest;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.MockAuthorizationStrategy;
@@ -56,7 +57,9 @@ import org.springframework.security.access.AccessDeniedException;
 @WithJenkins
 class PermissionTest {
 
-    private static final String ADMIN_USER = "administering_sloth";
+    private static final String ADMINISTRATOR_USER = "administering_sloth";
+
+    private static final String MANAGE_USER = "managing_axolotl";
 
     private static final String CONFIGURE_USER = "configuring_red_panda";
 
@@ -83,7 +86,8 @@ class PermissionTest {
         r.jenkins.setSecurityRealm(r.createDummySecurityRealm());
 
         MockAuthorizationStrategy strategy = new MockAuthorizationStrategy();
-        strategy.grant(Jenkins.ADMINISTER).onItems(project).to(ADMIN_USER);
+        strategy.grant(Jenkins.ADMINISTER).onItems(project).to(ADMINISTRATOR_USER);
+        strategy.grant(Jenkins.MANAGE).onItems(project).to(MANAGE_USER);
         strategy.grant(Item.CONFIGURE).onItems(project).to(CONFIGURE_USER);
         strategy.grant(Item.READ).onItems(project).to(READ_USER);
         r.jenkins.setAuthorizationStrategy(strategy);
@@ -96,6 +100,9 @@ class PermissionTest {
         try (ACLContext ignored = ACL.as(User.get(READ_USER, true, Collections.emptyMap()))) {
             assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, null));
             assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, project));
+
+            strategy.grant(Jenkins.READ).onRoot().to(READ_USER);
+            assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, project));
         }
 
         // Item.CONFIGURE
@@ -106,14 +113,23 @@ class PermissionTest {
             validateResponse(response, 0, FILE_NAME_PATTERN, null);
         }
 
+        // Jenkins.MANAGE
+        try (ACLContext ignored = ACL.as(User.get(MANAGE_USER, true, Collections.emptyMap()))) {
+            assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, null));
+            assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, project));
+
+            strategy.grant(Jenkins.MANAGE).onRoot().to(MANAGE_USER);
+            assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, project));
+        }
+
         // Jenkins.ADMINISTER
-        try (ACLContext ignored = ACL.as(User.get(ADMIN_USER, true, Collections.emptyMap()))) {
+        try (ACLContext ignored = ACL.as(User.get(ADMINISTRATOR_USER, true, Collections.emptyMap()))) {
             assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, null));
 
             HttpResponse response = descriptor.doUploadIcon(mockRequest, project);
             validateResponse(response, 0, FILE_NAME_PATTERN, null);
 
-            strategy.grant(Jenkins.ADMINISTER).onRoot().to(ADMIN_USER);
+            strategy.grant(Jenkins.ADMINISTER).onRoot().to(ADMINISTRATOR_USER);
             response = descriptor.doUploadIcon(mockRequest, project);
             validateResponse(response, 0, FILE_NAME_PATTERN, null);
         }
@@ -141,8 +157,8 @@ class PermissionTest {
         r.jenkins.setSecurityRealm(r.createDummySecurityRealm());
 
         MockAuthorizationStrategy strategy = new MockAuthorizationStrategy();
-        strategy.grant(Jenkins.ADMINISTER).onRoot().to(ADMIN_USER);
-        strategy.grant(Jenkins.MANAGE).onRoot().to(CONFIGURE_USER);
+        strategy.grant(Jenkins.ADMINISTER).onRoot().to(ADMINISTRATOR_USER);
+        strategy.grant(Jenkins.MANAGE).onRoot().to(MANAGE_USER);
         strategy.grant(Jenkins.READ).onRoot().to(READ_USER);
         r.jenkins.setAuthorizationStrategy(strategy);
 
@@ -157,16 +173,53 @@ class PermissionTest {
         }
 
         // Jenkins.MANAGE
-        try (ACLContext ignored = ACL.as(User.get(CONFIGURE_USER, true, Collections.emptyMap()))) {
-            assertThrows(AccessDeniedException.class, () -> descriptor.doCleanup(null));
-            assertTrue(file.exists());
-        }
-
-        // Jenkins.ADMINISTER
-        try (ACLContext ignored = ACL.as(User.get(ADMIN_USER, true, Collections.emptyMap()))) {
+        try (ACLContext ignored = ACL.as(User.get(MANAGE_USER, true, Collections.emptyMap()))) {
             HttpResponse response = descriptor.doCleanup(null);
             validateResponse(response, HttpServletResponse.SC_OK, null, null);
             assertFalse(file.exists());
+        }
+
+        // Jenkins.ADMINISTER
+        try (ACLContext ignored = ACL.as(User.get(ADMINISTRATOR_USER, true, Collections.emptyMap()))) {
+            HttpResponse response = descriptor.doCleanup(null);
+            validateResponse(response, HttpServletResponse.SC_OK, null, null);
+            assertFalse(file.exists());
+        }
+    }
+
+    /**
+     * Test behavior of {@link CustomFolderIconConfiguration#getDiskUsage()}.
+     */
+    @Test
+    void testGetDiskUsage(JenkinsRule r) {
+        CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
+
+        r.jenkins.setSecurityRealm(r.createDummySecurityRealm());
+
+        MockAuthorizationStrategy strategy = new MockAuthorizationStrategy();
+        strategy.grant(Jenkins.ADMINISTER).onRoot().to(ADMINISTRATOR_USER);
+        strategy.grant(Jenkins.MANAGE).onRoot().to(MANAGE_USER);
+        strategy.grant(Jenkins.READ).onRoot().to(READ_USER);
+        r.jenkins.setAuthorizationStrategy(strategy);
+
+        // unauthenticated
+        assertThrows(AccessDeniedException.class, descriptor::getDiskUsage);
+
+        // Jenkins.READ
+        try (ACLContext ignored = ACL.as(User.get(READ_USER, true, Collections.emptyMap()))) {
+            assertThrows(AccessDeniedException.class, descriptor::getDiskUsage);
+        }
+
+        // Jenkins.MANAGE
+        try (ACLContext ignored = ACL.as(User.get(MANAGE_USER, true, Collections.emptyMap()))) {
+            String size = descriptor.getDiskUsage();
+            assertEquals(FileUtils.byteCountToDisplaySize(0), size);
+        }
+
+        // Jenkins.ADMINISTER
+        try (ACLContext ignored = ACL.as(User.get(ADMINISTRATOR_USER, true, Collections.emptyMap()))) {
+            String size = descriptor.getDiskUsage();
+            assertEquals(FileUtils.byteCountToDisplaySize(0), size);
         }
     }
 }
