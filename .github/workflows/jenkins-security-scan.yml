@@ -8,6 +8,9 @@ on:
     types: [ opened, synchronize, reopened ]
   workflow_dispatch:
 
+env:
+  MAVEN_OPTS: --no-transfer-progress
+
 permissions:
   security-events: write
   contents: read
