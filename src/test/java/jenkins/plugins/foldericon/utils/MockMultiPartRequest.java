@@ -26,14 +26,17 @@ package jenkins.plugins.foldericon.utils;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.security.Principal;
 import java.util.*;
 import javax.annotation.Nonnull;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import net.sf.json.JSONObject;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemHeaders;
+import org.apache.commons.fileupload2.core.FileItem;
+import org.apache.commons.fileupload2.core.FileItemHeaders;
+import org.apache.commons.fileupload2.core.FileItemHeadersProvider;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.*;
 import org.kohsuke.stapler.bind.BoundObjectTable;
@@ -627,7 +630,7 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
-    public FileItem getFileItem(String name) throws ServletException, IOException {
+    public FileItem getFileItem2(String name) throws ServletException, IOException {
         if (buffer != null && StringUtils.equals(name, "file")) {
             return new FileItem() {
                 @Override
@@ -661,7 +664,7 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public String getString(String encoding) {
+                public String getString(Charset encoding) {
                     return null;
                 }
 
@@ -671,10 +674,14 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public void write(File file) {}
+                public FileItem write(Path file) {
+                    return this;
+                }
 
                 @Override
-                public void delete() {}
+                public FileItem delete() {
+                    return this;
+                }
 
                 @Override
                 public String getFieldName() {
@@ -682,7 +689,9 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public void setFieldName(String name) {}
+                public FileItem setFieldName(String name) {
+                    return this;
+                }
 
                 @Override
                 public boolean isFormField() {
@@ -690,7 +699,9 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public void setFormField(boolean state) {}
+                public FileItem setFormField(boolean state) {
+                    return this;
+                }
 
                 @Override
                 public OutputStream getOutputStream() {
@@ -703,11 +714,19 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public void setHeaders(FileItemHeaders headers) {}
+                public FileItemHeadersProvider setHeaders(FileItemHeaders headers) {
+                    return null;
+                }
             };
         } else {
             return null;
         }
+    }
+
+    @Override
+    public org.apache.commons.fileupload.FileItem getFileItem(String name) throws ServletException, IOException {
+        FileItem fileItem = getFileItem2(name);
+        return fileItem != null ? org.apache.commons.fileupload.FileItem.fromFileUpload2FileItem(fileItem) : null;
     }
 
     @Override
