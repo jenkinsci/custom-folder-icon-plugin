@@ -630,7 +630,7 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
-    public FileItem getFileItem2(String name) throws ServletException, IOException {
+    public FileItem<?> getFileItem2(String name) {
         if (buffer != null && StringUtils.equals(name, "file")) {
             return new FileItem() {
                 @Override
@@ -674,12 +674,12 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public FileItem write(Path file) {
+                public FileItem<?> write(Path file) {
                     return this;
                 }
 
                 @Override
-                public FileItem delete() {
+                public FileItem<?> delete() {
                     return this;
                 }
 
@@ -689,7 +689,7 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public FileItem setFieldName(String name) {
+                public FileItem<?> setFieldName(String name) {
                     return this;
                 }
 
@@ -699,7 +699,7 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public FileItem setFormField(boolean state) {
+                public FileItem<?> setFormField(boolean state) {
                     return this;
                 }
 
@@ -714,7 +714,7 @@ public class MockMultiPartRequest implements StaplerRequest {
                 }
 
                 @Override
-                public FileItemHeadersProvider setHeaders(FileItemHeaders headers) {
+                public FileItemHeadersProvider<?> setHeaders(FileItemHeaders headers) {
                     return null;
                 }
             };
@@ -725,7 +725,7 @@ public class MockMultiPartRequest implements StaplerRequest {
 
     @Override
     public org.apache.commons.fileupload.FileItem getFileItem(String name) throws ServletException, IOException {
-        FileItem fileItem = getFileItem2(name);
+        FileItem<?> fileItem = getFileItem2(name);
         return fileItem != null ? org.apache.commons.fileupload.FileItem.fromFileUpload2FileItem(fileItem) : null;
     }
 

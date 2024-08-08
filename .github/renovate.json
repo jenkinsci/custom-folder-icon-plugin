@@ -11,27 +11,5 @@
   "labels": [
     "dependencies"
   ],
-  "rebaseWhen": "conflicted",
-  "regexManagers": [
-    {
-      "fileMatch": [
-        "Jenkinsfile"
-      ],
-      "matchStrings": [
-        "jenkins: '(?<currentValue>.*?)'"
-      ],
-      "depNameTemplate": "org.jenkins-ci.main:jenkins-war",
-      "datasourceTemplate": "maven"
-    }
-  ],
-  "packageRules": [
-    {
-      "matchDatasources": ["maven"],
-      "registryUrls": [
-        "https://repo.maven.apache.org/maven2",
-        "https://repo.jenkins-ci.org/public",
-        "https://repo.jenkins-ci.org/releases"
-      ]
-    }
-  ]
+  "rebaseWhen": "conflicted"
 }
