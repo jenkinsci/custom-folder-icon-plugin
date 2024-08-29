@@ -107,6 +107,17 @@ class JobDSLConfigurationTest {
         assertEquals("jenkins", customIcon.getIonicon());
     }
 
+    /**
+     * Test behavior for oss-icon.groovy.
+     *
+     * @throws Exception in case anything goes wrong
+     */
+    @Test
+    void testOpenSourceFolderIcon(JenkinsRule r) throws Exception {
+        OpenSourceFolderIcon customIcon = createFolder(r, "opensource-icon.groovy", OpenSourceFolderIcon.class);
+        assertEquals("cdf-icon-color", customIcon.getOssicon());
+    }
+
     @SuppressWarnings("unchecked")
     private static <T extends FolderIcon> T createFolder(JenkinsRule r, String scriptName, Class<T> clazz)
             throws Exception {

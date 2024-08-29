@@ -1,0 +1,21 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:f="/lib/form">
+    <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/oss.css" type="text/css" />
+    <script src="${rootURL}/plugin/custom-folder-icon/js/oss-config.js" type="text/javascript" />
+    <j:invokeStatic var="openSourceIcons" method="getAvailableIcons" className="io.jenkins.plugins.oss.symbols.OpenSourceSymbols" />
+    <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('preview')}">
+        <l:icon id="oss-preview" src="${openSourceIcons.get(instance.ossicon ?: 'cdf-icon-color')}" title="${icon.key}"
+                class="icon-xlg" />
+    </f:entry>
+    <f:advanced title="${%AvailableIcons}${not empty openSourceIcons ? ' (' + openSourceIcons.size() + ')' : ''}">
+        <j:forEach var="icon" items="${openSourceIcons}">
+            <a id="select-oss-${icon.key}" class="oss-icon-selection" onclick="setOpenSourceIcon('${icon.key}')">
+                <l:icon id="oss-icon-${icon.key}" src="${icon.value}" title="${icon.key}" tooltip="${icon.key}"
+                        class="icon-md" />
+            </a>
+        </j:forEach>
+    </f:advanced>
+    <f:entry field="ossicon">
+        <f:textbox id="oss-icon-name" value="${instance.ossicon}" clazz="oss-icon-name" />
+    </f:entry>
+</j:jelly>

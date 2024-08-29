@@ -1,0 +1,9 @@
+.oss-icon-name {
+    display: none;
+}
+
+.oss-icon-selection {
+    color: unset;
+    cursor: pointer;
+    text-decoration: none !important;
+}
