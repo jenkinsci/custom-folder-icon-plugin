@@ -205,7 +205,7 @@ Use icons provided by https://github.com/jenkinsci/oss-symbols-api-plugin[oss-sy
 
 image:images/oss-folder-icon.png[]
 
-Select the _Ionicon Folder Icon_ option and select any of the available icons.
+Select the _OpenSource Folder Icon_ option and select any of the available icons.
 
 image:images/oss-folder-icon-configuration.png[]
 
