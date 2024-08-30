@@ -199,6 +199,31 @@ folder('ionicon-icon') {
 }
 ----
 
+==== OpenSource Folder Icon
+
+Use icons provided by https://github.com/jenkinsci/oss-symbols-api-plugin[oss-symbols-api-plugin] as icon.
+
+image:images/oss-folder-icon.png[]
+
+Select the _OpenSource Folder Icon_ option and select any of the available icons.
+
+image:images/oss-folder-icon-configuration.png[]
+
+===== Job DSL
+
+Configuration via https://github.com/jenkinsci/job-dsl-plugin[job-dsl-plugin]:
+
+[source,groovy]
+----
+folder('opensource-icon') {
+    icon {
+        openSourceFolderIcon {
+            ossicon('cdf-icon-color')
+        }
+    }
+}
+----
+
 === Global Configuration
 
 Check for unused custom folder icon files and delete them.
