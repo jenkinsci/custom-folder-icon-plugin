@@ -44,7 +44,7 @@ $SVGTemplate = "<svg xmlns=`"http://www.w3.org/2000/svg`" class=`"emoji`" viewBo
 $counter = 0
 
 $runtime = Measure-Command {
-    foreach ($line in Get-Content -Encoding UTF8 $EmojiList)
+    foreach ($line in Get-Content -Encoding UTF8NoBOM $EmojiList)
     {
         $splitLine = $line.Split(":")
         $name = $splitLine[0]
@@ -54,7 +54,7 @@ $runtime = Measure-Command {
         $filename = $SymbolsPath + $EmojiPrefix + $name + $SVG
 
         "Writing " + $filename | Out-Host
-        $content | Out-File -NoNewline -Encoding UTF8 -FilePath $filename
+        $content | Out-File -NoNewline -Encoding UTF8NoBOM -FilePath $filename
 
         $counter++
     }

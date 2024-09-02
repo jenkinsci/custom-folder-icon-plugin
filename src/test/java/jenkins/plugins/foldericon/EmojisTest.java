@@ -31,10 +31,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -67,24 +65,29 @@ class EmojisTest {
         List<String> entries = Files.readAllLines(emojiList.toPath(), StandardCharsets.UTF_8);
         assertEquals(folderContents.length, entries.size());
 
+        for (String svg : folderContents) {
+            String emoji = Emojis.getAvailableIcons()
+                    .get(svg.replaceFirst("emoji_", "").replaceFirst(".svg", ""));
+            assertNotNull(emoji);
+        }
+
         for (String entry : entries) {
             String[] content = entry.split(":");
             assertEquals(2, content.length);
+
+            assertTrue(content[0].matches("^[a-z0-9_]+$"));
 
             String iconClassName = Emojis.getAvailableIcons().get(content[0]);
             assertNotNull(iconClassName);
             assertEquals(iconClassName, Emojis.getIconClassName(content[0]));
 
-            List<String> files = Arrays.stream(folderContents)
-                    .filter(file -> file.equals("emoji_" + content[0] + ".svg"))
-                    .collect(Collectors.toList());
-            assertEquals(1, files.size());
-
             String emoji = Emojis.getAvailableEmojis().get(content[0]);
             assertNotNull(emoji);
+            assertEquals(emoji, content[1]);
 
-            String svg = Files.readString(new File(svgFolder, files.get(0)).toPath(), StandardCharsets.UTF_8);
-            assertTrue(svg.contains(emoji));
+            String svg = Files.readString(
+                    new File(svgFolder, "emoji_" + content[0] + ".svg").toPath(), StandardCharsets.UTF_8);
+            assertTrue(svg.contains(content[1]));
         }
     }
 
