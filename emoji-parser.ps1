@@ -60,8 +60,7 @@ $runtime = Measure-Command {
     SearchAndReplace -regexPattern "ü" -replacement "u"
     SearchAndReplace -regexPattern "[\-\. ,()’!]" -replacement "_"
     SearchAndReplace -regexPattern "[\u201C\u201D]" -replacement "_"
-    SearchAndReplace -regexPattern "___" -replacement "_"
-    SearchAndReplace -regexPattern "__" -replacement "_"
+    SearchAndReplace -regexPattern "_{2,}" -replacement "_"
     SearchAndReplace -regexPattern "_$" -replacement ""
 
     # switch name and emoji
@@ -75,7 +74,7 @@ $runtime = Measure-Command {
     # remove empty lines
     $fileContent = Get-Content -Path $EmojiList -Encoding UTF8NoBOM
     $nonEmptyLines = $fileContent | Where-Object { $_.Trim() -ne "" }
-    $nonEmptyLines | Set-Content -Path $EmojiList -Encoding UTF8NoBOM
+    $nonEmptyLines -join "`r`n" | Set-Content -Path $EmojiList -Encoding UTF8NoBOM -NoNewline
 }
 
 "Done. Parsed Emojis in " + $runtime.Milliseconds + " ms" | Out-Host

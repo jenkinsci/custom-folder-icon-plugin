@@ -27,6 +27,8 @@ Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-pl
 
 This version requires Jenkins 2.357 and above in order to support the transition to https://www.jenkins.io/blog/2022/06/28/require-java-11/[Java 11].
 
+* Version 2.14 introduces a new type of icon.
+The `OpenSourceFolderIcon` provides icons from https://github.com/jenkinsci/oss-symbols-api-plugin[oss-symbols-api-plugin].
 * Version 2.11 moved the <<Global Configuration>> to the _Appearance_ configuration
 * Version 2.10 enables users to select the jobs to be considered for the combined build status in `BuildStatusFolderIcon`.
 
@@ -58,13 +60,13 @@ Legacy version for Jenkins versions before 2.357.
 
 There are multiple types of custom icons provided by this plugin.
 
-image:images/overview.png[]
+image:docs/overview.png[]
 
 ==== Custom Folder Icon
 
 Use your custom icon for a folder.
 
-image:images/custom-folder-icon.png[]
+image:docs/custom-folder-icon.png[]
 
 Select the _Custom Folder Icon_ option and use `Browse...` to choose a file.
 
@@ -76,7 +78,7 @@ You can also select an image from the list of the already available icons.
 
 The file will be deleted automatically if the folder it used is being deleted - unless of course the file is still used by another folder.
 
-image:images/custom-folder-icon-configuration.png[]
+image:docs/custom-folder-icon-configuration.png[]
 
 ===== Job DSL
 
@@ -99,7 +101,7 @@ folder('custom-icon') {
 
 See the combined build status of the jobs within a folder.
 
-image:images/build-status-folder-icon.png[]
+image:docs/build-status-folder-icon.png[]
 
 Select the _Build Status Folder Icon_ option to use the combined build status of the jobs within a folder as icon.
 
@@ -107,7 +109,7 @@ You can select which jobs should be considered when the combined build status is
 
 When no jobs are selected every job within the folder is considered for the combined build status.
 
-image:images/build-status-folder-icon-configuration.png[]
+image:docs/build-status-folder-icon-configuration.png[]
 
 ===== Job DSL
 
@@ -128,11 +130,11 @@ folder('build-status') {
 
 Use https://unicode.org/emoji/charts/full-emoji-list.html[unicode emojis] as icon.
 
-image:images/emoji-folder-icon.png[]
+image:docs/emoji-folder-icon.png[]
 
 Select the _Emoji Folder Icon_ option and select any of the available emojis.
 
-image:images/emoji-folder-icon-configuration.png[]
+image:docs/emoji-folder-icon-configuration.png[]
 
 ===== Job DSL
 
@@ -153,11 +155,11 @@ folder('emoji-icon') {
 
 Use https://fontawesome.com[Font Awesome Icons] provided by https://github.com/jenkinsci/font-awesome-api-plugin[font-awesome-api-plugin] as icon.
 
-image:images/fontawesome-folder-icon.png[]
+image:docs/fontawesome-folder-icon.png[]
 
 Select the _FontAwesome Folder Icon_ option and select any of the available icons.
 
-image:images/fontawesome-folder-icon-configuration.png[]
+image:docs/fontawesome-folder-icon-configuration.png[]
 
 ===== Job DSL
 
@@ -178,11 +180,11 @@ folder('fontawesome-icon') {
 
 Use https://ionic.io/ionicons[Ionicons] provided by https://github.com/jenkinsci/ionicons-api-plugin[ionicons-api-plugin] as icon.
 
-image:images/ionicon-folder-icon.png[]
+image:docs/ionicon-folder-icon.png[]
 
 Select the _Ionicon Folder Icon_ option and select any of the available icons.
 
-image:images/ionicon-folder-icon-configuration.png[]
+image:docs/ionicon-folder-icon-configuration.png[]
 
 ===== Job DSL
 
@@ -203,11 +205,11 @@ folder('ionicon-icon') {
 
 Use icons provided by https://github.com/jenkinsci/oss-symbols-api-plugin[oss-symbols-api-plugin] as icon.
 
-image:images/oss-folder-icon.png[]
+image:docs/oss-folder-icon.png[]
 
 Select the _OpenSource Folder Icon_ option and select any of the available icons.
 
-image:images/oss-folder-icon-configuration.png[]
+image:docs/oss-folder-icon-configuration.png[]
 
 ===== Job DSL
 
@@ -229,4 +231,4 @@ folder('opensource-icon') {
 Check for unused custom folder icon files and delete them.
 This operation will delete all images that are currently not used by any folder configuration.
 
-image:images/global-configuration.png[]
+image:docs/global-configuration.png[]

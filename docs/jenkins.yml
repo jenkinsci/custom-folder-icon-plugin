@@ -1,0 +1,194 @@
+# This JCasC file is used to set up Jenkins for screenshots
+jobs:
+  - script: >
+      folder('Folder with Build Status Icon') {
+        icon {
+          buildStatusFolderIcon {
+            jobs(['Successful Build Job'] as Set)
+          }
+        }
+      }
+  - script: >      
+      folder('Folder with Build Status Icon/Nested Folder') {
+        icon {
+          emojiFolderIcon {
+            emoji('robot')
+          }
+        }
+      }
+  - script: >
+      folder('Folder with Custom Icon') {
+        icon {
+          customFolderIcon {
+            foldericon('')
+          }
+        }
+      }
+  - script: >
+      folder('Folder with Emoji Icon') {
+        icon {
+          emojiFolderIcon {
+              emoji('sloth')
+          }
+        }
+      }
+  - script: >
+      folder('Folder with FontAwesome Icon') {
+        icon {
+          fontAwesomeFolderIcon {
+              fontAwesome('regular/hand-peace')
+          }
+        }
+      }
+  - script: >
+      folder('Folder with Ionicon Icon') {
+        icon {
+          ioniconFolderIcon {
+              ionicon('jenkins')
+          }
+        }
+      }
+  - script: >
+      folder('Folder with OpenSource Icon') {
+        icon {
+          openSourceFolderIcon {
+              ossicon('cdf-icon-color')
+          }
+        }
+      }
+  - script: >
+      pipelineJob('Folder with Build Status Icon/Successful Build Job') {
+        definition {
+          cps {
+            script("""\
+              pipeline {
+                agent any
+                stages {
+                  stage ('Build') {
+                    steps {
+                      echo 'Job successful'
+                    }
+                  }
+                }
+              }""".stripIndent())
+          }
+        }
+      }
+  - script: >
+      pipelineJob('Folder with Build Status Icon/Failing Build Job') {
+        definition {
+          cps {
+            script("""\
+              checkout('Job failed')
+            """.stripIndent())
+          }
+        }
+      }
+  - script: >
+      pipelineJob('Folder with Build Status Icon/Nested Folder/Build Job') {
+        definition {
+          cps {
+            script("""\
+              pipeline {
+                agent any
+                stages {
+                  stage ('Build') {
+                    steps {
+                      echo 'Job successful'
+                    }
+                  }
+                }
+              }""".stripIndent())
+          }
+        }
+      }
+  - script: >
+      pipelineJob('Folder with Custom Icon/Build Job') {
+        definition {
+          cps {
+            script("""\
+              pipeline {
+                agent any
+                stages {
+                  stage ('Build') {
+                    steps {
+                      echo 'Job successful'
+                    }
+                  }
+                }
+              }""".stripIndent())
+          }
+        }
+      }
+  - script: >
+      pipelineJob('Folder with Emoji Icon/Build Job') {
+        definition {
+          cps {
+            script("""\
+              pipeline {
+                agent any
+                stages {
+                  stage ('Build') {
+                    steps {
+                      echo 'Job successful'
+                    }
+                  }
+                }
+              }""".stripIndent())
+          }
+        }
+      }
+  - script: >
+      pipelineJob('Folder with FontAwesome Icon/Build Job') {
+        definition {
+          cps {
+            script("""\
+              pipeline {
+                agent any
+                stages {
+                  stage ('Build') {
+                    steps {
+                      echo 'Job successful'
+                    }
+                  }
+                }
+              }""".stripIndent())
+          }
+        }
+      }
+  - script: >
+      pipelineJob('Folder with Ionicon Icon/Build Job') {
+        definition {
+          cps {
+            script("""\
+              pipeline {
+                agent any
+                stages {
+                  stage ('Build') {
+                    steps {
+                      echo 'Job successful'
+                    }
+                  }
+                }
+              }""".stripIndent())
+          }
+        }
+      }
+  - script: >
+      pipelineJob('Folder with OpenSource Icon/Build Job') {
+        definition {
+          cps {
+            script("""\
+              pipeline {
+                agent any
+                stages {
+                  stage ('Build') {
+                    steps {
+                      echo 'Job successful'
+                    }
+                  }
+                }
+              }""".stripIndent())
+          }
+        }
+      }
