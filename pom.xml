@@ -62,19 +62,6 @@
     </dependencies>
   </dependencyManagement>
 
-  <!-- TODO: remove -->
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.jenkins-ci.tools</groupId>
-          <artifactId>maven-hpi-plugin</artifactId>
-          <version>3.58-rc1620.2a_1eceb_329f5</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-
   <dependencies>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
