@@ -43,7 +43,7 @@ $runtime = Measure-Command {
     SearchAndReplace -regexPattern "^(?!.+; fully-qualified     # |.+; component           # ).+$" -replacement ""
     SearchAndReplace -regexPattern "^(.*; fully-qualified     # |.*; component           # )" -replacement ""
     SearchAndReplace -regexPattern ": " -replacement "_"
-    SearchAndReplace -regexPattern " E\d+.\d+ " -replacement ":"
+    SearchAndReplace -regexPattern " E\d+\.\d+ " -replacement ":"
 
     # various replacements
     SearchAndReplace -regexPattern "&" -replacement "and"
