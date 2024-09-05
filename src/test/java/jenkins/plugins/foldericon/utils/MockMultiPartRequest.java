@@ -1,53 +1,54 @@
-/*
- * The MIT License
- *
- * Copyright (c) 2024 strangelookingnerd
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 package jenkins.plugins.foldericon.utils;
 
-import java.io.*;
+import jakarta.annotation.Nonnull;
+import jakarta.servlet.AsyncContext;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpUpgradeHandler;
+import jakarta.servlet.http.Part;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.security.Principal;
-import java.util.*;
-import javax.annotation.Nonnull;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import net.sf.json.JSONObject;
 import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.fileupload2.core.FileItemHeaders;
 import org.apache.commons.fileupload2.core.FileItemHeadersProvider;
 import org.apache.commons.lang.StringUtils;
-import org.kohsuke.stapler.*;
+import org.kohsuke.stapler.Ancestor;
+import org.kohsuke.stapler.BindInterceptor;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
+import org.kohsuke.stapler.WebApp;
 import org.kohsuke.stapler.bind.BoundObjectTable;
 import org.kohsuke.stapler.lang.Klass;
 
 /**
  * Mock request for multi-part uploads.
- *
- * @author strangelookingnerd
  */
-public class MockMultiPartRequest implements StaplerRequest {
+public class MockMultiPartRequest implements StaplerRequest2 {
 
     private final byte[] buffer;
     private ByteArrayInputStream stream = null;
@@ -534,22 +535,22 @@ public class MockMultiPartRequest implements StaplerRequest {
     }
 
     @Override
-    public boolean checkIfModified(long timestampOfResource, StaplerResponse rsp) {
+    public boolean checkIfModified(long timestampOfResource, StaplerResponse2 rsp) {
         return false;
     }
 
     @Override
-    public boolean checkIfModified(Date timestampOfResource, StaplerResponse rsp) {
+    public boolean checkIfModified(Date timestampOfResource, StaplerResponse2 rsp) {
         return false;
     }
 
     @Override
-    public boolean checkIfModified(Calendar timestampOfResource, StaplerResponse rsp) {
+    public boolean checkIfModified(Calendar timestampOfResource, StaplerResponse2 rsp) {
         return false;
     }
 
     @Override
-    public boolean checkIfModified(long timestampOfResource, StaplerResponse rsp, long expiration) {
+    public boolean checkIfModified(long timestampOfResource, StaplerResponse2 rsp, long expiration) {
         return false;
     }
 
