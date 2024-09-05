@@ -631,7 +631,7 @@ public class MockMultiPartRequest implements StaplerRequest2 {
     }
 
     @Override
-    public FileItem<?> getFileItem2(String name) {
+    public FileItem<?> getFileItem2(String name) throws ServletException, IOException {
         if (buffer != null && StringUtils.equals(name, "file")) {
             return new FileItem() {
                 @Override
@@ -725,6 +725,7 @@ public class MockMultiPartRequest implements StaplerRequest2 {
     }
 
     @Override
+    @Deprecated
     public org.apache.commons.fileupload.FileItem getFileItem(String name) throws ServletException, IOException {
         FileItem<?> fileItem = getFileItem2(name);
         return fileItem != null ? org.apache.commons.fileupload.FileItem.fromFileUpload2FileItem(fileItem) : null;
