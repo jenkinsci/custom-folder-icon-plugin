@@ -1,27 +1,3 @@
-/*
- * The MIT License
- *
- * Copyright (c) 2024 strangelookingnerd
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 package jenkins.plugins.foldericon;
 
 import com.cloudbees.hudson.plugins.folder.AbstractFolder;
@@ -41,13 +17,11 @@ import jenkins.model.Jenkins;
 import org.apache.commons.io.FileUtils;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 
 /**
  * The global Custom Folder Icon configuration.
- *
- * @author strangelookingnerd
  */
 @Extension
 public class CustomFolderIconConfiguration extends PageDecorator {
@@ -102,7 +76,7 @@ public class CustomFolderIconConfiguration extends PageDecorator {
      * @return OK
      */
     @RequirePOST
-    public HttpResponse doCleanup(@SuppressWarnings("unused") StaplerRequest req) {
+    public HttpResponse doCleanup(@SuppressWarnings("unused") StaplerRequest2 req) {
         Jenkins.get().checkPermission(Jenkins.MANAGE);
 
         FilePath iconDir = Jenkins.get().getRootPath().child(USER_CONTENT_PATH).child(PLUGIN_PATH);
