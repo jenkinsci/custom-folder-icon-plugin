@@ -153,7 +153,7 @@ public class CustomFolderIcon extends FolderIcon {
             }
 
             try {
-                FileItem file = req.getFileItem2("file");
+                FileItem<?> file = req.getFileItem2("file");
                 if (file == null || file.getSize() == 0) {
                     return HttpResponses.errorWithoutStack(
                             HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Messages.Upload_invalidFile());
@@ -189,15 +189,13 @@ public class CustomFolderIcon extends FolderIcon {
         public void onDeleted(Item item) {
             if (item instanceof AbstractFolder<?>) {
                 FolderIcon icon = ((AbstractFolder<?>) item).getIcon();
-                if (icon instanceof CustomFolderIcon) {
-                    String foldericon = ((CustomFolderIcon) icon).getFoldericon();
+                if (icon instanceof CustomFolderIcon customFolderIcon) {
+                    String foldericon = customFolderIcon.getFoldericon();
                     if (StringUtils.isNotEmpty(foldericon)) {
                         // delete the icon only if there is no other usage
                         boolean orphan = Jenkins.get().getAllItems(AbstractFolder.class).stream()
-                                        .filter(folder -> folder.getIcon() instanceof CustomFolderIcon
-                                                && StringUtils.equals(
-                                                        foldericon,
-                                                        ((CustomFolderIcon) folder.getIcon()).getFoldericon()))
+                                        .filter(folder -> folder.getIcon() instanceof CustomFolderIcon customIcon
+                                                && StringUtils.equals(foldericon, customIcon.getFoldericon()))
                                         .limit(2)
                                         .count()
                                 <= 1;

@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.CustomFolderIcon.DescriptorImpl;
 import jenkins.plugins.foldericon.utils.MockMultiPartRequest;
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -294,17 +294,13 @@ class CustomFolderIconTest {
         for (String exception : exceptions) {
             MockMultiPartRequest mockRequest = new MockMultiPartRequest(null) {
                 @Override
-                public FileItem getFileItem(String name) throws ServletException, IOException {
-                    switch (exception) {
-                        case "IOException":
-                            throw new IOException(exceptionMessage);
-                        case "InterruptedException":
-                            throw new InterruptedIOException(exceptionMessage);
-                        case "ServletException":
-                            throw new ServletException(exceptionMessage);
-                        default:
-                            return fail("Unexpected exception '" + exception + "' - Test is broken!");
-                    }
+                public FileItem<?> getFileItem2(String name) throws IOException, ServletException {
+                    return switch (exception) {
+                        case "IOException" -> throw new IOException(exceptionMessage);
+                        case "InterruptedException" -> throw new InterruptedIOException(exceptionMessage);
+                        case "ServletException" -> throw new ServletException(exceptionMessage);
+                        default -> fail("Unexpected exception '" + exception + "' - Test is broken!");
+                    };
                 }
             };
 
