@@ -1,27 +1,3 @@
-/*
- * The MIT License
- *
- * Copyright (c) 2024 strangelookingnerd
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 package jenkins.plugins.foldericon;
 
 import static jenkins.plugins.foldericon.CustomFolderIconConfiguration.PLUGIN_PATH;
@@ -35,6 +11,8 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Item;
 import hudson.model.listeners.ItemListener;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.Set;
@@ -42,18 +20,19 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 import jenkins.model.Jenkins;
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.lang.StringUtils;
-import org.kohsuke.stapler.*;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.HttpResponse;
+import org.kohsuke.stapler.HttpResponses;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 
 /**
  * A Custom Folder Icon.
- *
- * @author strangelookingnerd
  */
 public class CustomFolderIcon extends FolderIcon {
 
@@ -122,10 +101,10 @@ public class CustomFolderIcon extends FolderIcon {
     @Override
     public String getImageOf(String size) {
         if (StringUtils.isNotEmpty(getFoldericon())) {
-            return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH + "/" + USER_CONTENT_PATH + "/"
+            return Stapler.getCurrentRequest2().getContextPath() + Jenkins.RESOURCE_PATH + "/" + USER_CONTENT_PATH + "/"
                     + PLUGIN_PATH + "/" + getFoldericon();
         } else {
-            return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH + "/" + DEFAULT_ICON_PATH;
+            return Stapler.getCurrentRequest2().getContextPath() + Jenkins.RESOURCE_PATH + "/" + DEFAULT_ICON_PATH;
         }
     }
 
@@ -145,8 +124,6 @@ public class CustomFolderIcon extends FolderIcon {
 
     /**
      * The Descriptor.
-     *
-     * @author strangelookingnerd
      */
     @Extension
     public static class DescriptorImpl extends FolderIconDescriptor {
@@ -168,7 +145,7 @@ public class CustomFolderIcon extends FolderIcon {
          * @return the filename or an error message
          */
         @RequirePOST
-        public HttpResponse doUploadIcon(StaplerRequest req, @AncestorInPath Item item) {
+        public HttpResponse doUploadIcon(StaplerRequest2 req, @AncestorInPath Item item) {
             if (item != null) {
                 item.checkPermission(Item.CONFIGURE);
             } else {
@@ -176,7 +153,7 @@ public class CustomFolderIcon extends FolderIcon {
             }
 
             try {
-                FileItem file = req.getFileItem("file");
+                FileItem file = req.getFileItem2("file");
                 if (file == null || file.getSize() == 0) {
                     return HttpResponses.errorWithoutStack(
                             HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Messages.Upload_invalidFile());
@@ -204,8 +181,6 @@ public class CustomFolderIcon extends FolderIcon {
 
     /**
      * Item Listener to clean up unused icons when the folder is deleted.
-     *
-     * @author strangelookingnerd
      */
     @Extension
     public static class CustomFolderIconCleanup extends ItemListener {

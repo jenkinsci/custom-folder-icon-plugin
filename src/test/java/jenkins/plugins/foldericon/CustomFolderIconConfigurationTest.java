@@ -1,27 +1,3 @@
-/*
- * The MIT License
- *
- * Copyright (c) 2024 strangelookingnerd
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 package jenkins.plugins.foldericon;
 
 import static jenkins.plugins.foldericon.utils.TestUtils.createCustomIconFile;
@@ -32,11 +8,11 @@ import static org.mockito.Mockito.*;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
 import hudson.FilePath;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
-import javax.servlet.http.HttpServletResponse;
 import jenkins.appearance.AppearanceCategory;
 import jenkins.branch.OrganizationFolder;
 import jenkins.model.GlobalConfigurationCategory;
@@ -48,14 +24,12 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 
 /**
  * Custom Folder Icon Configuration Tests
- *
- * @author strangelookingnerd
  */
 @WithJenkins
 class CustomFolderIconConfigurationTest {
@@ -157,7 +131,7 @@ class CustomFolderIconConfigurationTest {
     }
 
     /**
-     * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest)}.
+     * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest2)}.
      *
      * @throws Exception in case anything goes wrong
      */
@@ -166,7 +140,7 @@ class CustomFolderIconConfigurationTest {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = mockStaplerRequest(stapler);
+            StaplerRequest2 mockReq = mockStaplerRequest(stapler);
 
             FilePath file = createCustomIconFile(r);
             HttpResponse response = descriptor.doCleanup(mockReq);
@@ -177,7 +151,7 @@ class CustomFolderIconConfigurationTest {
     }
 
     /**
-     * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest)}.
+     * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest2)}.
      *
      * @throws Exception in case anything goes wrong
      */
@@ -197,7 +171,7 @@ class CustomFolderIconConfigurationTest {
         assertTrue(parent.exists());
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = mockStaplerRequest(stapler);
+            StaplerRequest2 mockReq = mockStaplerRequest(stapler);
             HttpResponse response = descriptor.doCleanup(mockReq);
 
             validateResponse(response, HttpServletResponse.SC_OK, null, null);
@@ -205,7 +179,7 @@ class CustomFolderIconConfigurationTest {
     }
 
     /**
-     * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest)}.
+     * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest2)}.
      *
      * @throws Exception in case anything goes wrong
      */
@@ -223,7 +197,7 @@ class CustomFolderIconConfigurationTest {
         FilePath dummy = createCustomIconFile(r);
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = mockStaplerRequest(stapler);
+            StaplerRequest2 mockReq = mockStaplerRequest(stapler);
             HttpResponse response = descriptor.doCleanup(mockReq);
 
             validateResponse(response, HttpServletResponse.SC_OK, null, null);
@@ -232,7 +206,7 @@ class CustomFolderIconConfigurationTest {
     }
 
     /**
-     * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest)}.
+     * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest2)}.
      *
      * @throws Exception in case anything goes wrong
      */
@@ -251,7 +225,7 @@ class CustomFolderIconConfigurationTest {
         project2.setIcon(customIcon);
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = mockStaplerRequest(stapler);
+            StaplerRequest2 mockReq = mockStaplerRequest(stapler);
             HttpResponse response = descriptor.doCleanup(mockReq);
 
             validateResponse(response, HttpServletResponse.SC_OK, null, null);
@@ -261,7 +235,7 @@ class CustomFolderIconConfigurationTest {
     }
 
     /**
-     * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest)} when root does not exist.
+     * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest2)} when root does not exist.
      *
      * @throws Exception in case anything goes wrong
      */
@@ -270,7 +244,7 @@ class CustomFolderIconConfigurationTest {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = mockStaplerRequest(stapler);
+            StaplerRequest2 mockReq = mockStaplerRequest(stapler);
 
             FilePath parent = r.jenkins
                     .getRootPath()
@@ -286,7 +260,7 @@ class CustomFolderIconConfigurationTest {
     }
 
     /**
-     * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest)} if a file can not be deleted.
+     * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest2)} if a file can not be deleted.
      *
      * @throws Exception in case anything goes wrong
      */
@@ -295,7 +269,7 @@ class CustomFolderIconConfigurationTest {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = mockStaplerRequest(stapler);
+            StaplerRequest2 mockReq = mockStaplerRequest(stapler);
 
             FilePath file = createCustomIconFile(r);
             FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
@@ -327,7 +301,7 @@ class CustomFolderIconConfigurationTest {
     }
 
     /**
-     * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest)} if a file can not be deleted due to an exception.
+     * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest2)} if a file can not be deleted due to an exception.
      *
      * @throws Exception in case anything goes wrong
      */
@@ -336,7 +310,7 @@ class CustomFolderIconConfigurationTest {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = mockStaplerRequest(stapler);
+            StaplerRequest2 mockReq = mockStaplerRequest(stapler);
 
             FilePath file = createCustomIconFile(r);
             File remoteFile = new File(file.getRemote());
@@ -368,7 +342,7 @@ class CustomFolderIconConfigurationTest {
     }
 
     /**
-     * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest)} if a file can not be deleted due to an exception.
+     * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest2)} if a file can not be deleted due to an exception.
      *
      * @throws Exception in case anything goes wrong
      * @implNote Sometimes {@link #testDoCleanupFileNotDeletedWithException(JenkinsRule)} does not work.
@@ -378,7 +352,7 @@ class CustomFolderIconConfigurationTest {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
-            StaplerRequest mockReq = mockStaplerRequest(stapler);
+            StaplerRequest2 mockReq = mockStaplerRequest(stapler);
 
             FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
             FilePath file = createCustomIconFile(r);

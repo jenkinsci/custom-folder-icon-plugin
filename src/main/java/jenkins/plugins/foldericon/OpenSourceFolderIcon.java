@@ -1,27 +1,3 @@
-/*
- * The MIT License
- *
- * Copyright (c) 2024
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 package jenkins.plugins.foldericon;
 
 import com.cloudbees.hudson.plugins.folder.AbstractFolder;
@@ -45,6 +21,11 @@ public class OpenSourceFolderIcon extends FolderIcon {
 
     private AbstractFolder<?> owner;
 
+    /**
+     * Ctor.
+     *
+     * @param ossicon the icon to use
+     */
     @DataBoundConstructor
     public OpenSourceFolderIcon(String ossicon) {
         this.ossicon = StringUtils.isEmpty(ossicon) ? DEFAULT_ICON : ossicon;
@@ -55,6 +36,9 @@ public class OpenSourceFolderIcon extends FolderIcon {
         this.owner = folder;
     }
 
+    /**
+     * @return the icon
+     */
     public String getOssicon() {
         return ossicon;
     }
@@ -83,6 +67,9 @@ public class OpenSourceFolderIcon extends FolderIcon {
         return (DescriptorImpl) Jenkins.get().getDescriptorOrDie(getClass());
     }
 
+    /**
+     * The Descriptor.
+     */
     @Extension
     public static class DescriptorImpl extends FolderIconDescriptor {
 
