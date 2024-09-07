@@ -73,8 +73,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>oss-symbols-api</artifactId>
-      <version>53.v987b_68a_09499</version>
-      <!-- Until in bom -->
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
