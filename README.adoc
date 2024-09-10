@@ -1,5 +1,5 @@
 [[custom-folder-icon-plugin]]
-= image:src/main/webapp/icons/default.png[48,48] Custom Folder Icon Plugin
+= Custom Folder Icon Plugin
 :toc: macro
 :toclevels: 3
 :toc-title:
