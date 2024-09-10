@@ -38,7 +38,7 @@ public class CustomFolderIcon extends FolderIcon {
 
     private static final Logger LOGGER = Logger.getLogger(CustomFolderIcon.class.getName());
 
-    private static final String DEFAULT_ICON_PATH = "plugin/custom-folder-icon/icons/default.png";
+    private static final String DEFAULT_ICON_PATH = "plugin/custom-folder-icon/icons/default.svg";
 
     private final String foldericon;
 
