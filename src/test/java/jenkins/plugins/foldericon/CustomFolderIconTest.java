@@ -108,7 +108,7 @@ class CustomFolderIconTest {
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
             mockStaplerRequest(stapler);
-            validateIcon(icon, "default.png", null);
+            validateIcon(icon, "default.svg", null);
         }
     }
 
@@ -150,7 +150,7 @@ class CustomFolderIconTest {
      */
     @Test
     void testDoUploadIcon(JenkinsRule r) throws Exception {
-        File upload = new File("./src/main/webapp/icons/default.png");
+        File upload = new File("./src/main/webapp/icons/default.svg");
 
         byte[] buffer = createMultipartEntityBuffer(upload);
         MockMultiPartRequest mockRequest = new MockMultiPartRequest(buffer);
@@ -179,7 +179,7 @@ class CustomFolderIconTest {
     @Test
     void testDoUploadWithItem(JenkinsRule r) throws Exception {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
-        File upload = new File("./src/main/webapp/icons/default.png");
+        File upload = new File("./src/main/webapp/icons/default.svg");
 
         byte[] buffer = createMultipartEntityBuffer(upload);
         MockMultiPartRequest mockRequest = new MockMultiPartRequest(buffer);
