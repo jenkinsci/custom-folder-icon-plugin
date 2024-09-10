@@ -134,7 +134,7 @@ public final class TestUtils {
         iconDir.mkdirs();
 
         FilePath file = iconDir.child(UUID.randomUUID() + ".png");
-        file.copyFrom(new FilePath(new File("./src/main/webapp/icons/default.png")));
+        file.copyFrom(new FilePath(new File("./src/main/webapp/icons/default.svg")));
 
         assertTrue(file.exists());
 

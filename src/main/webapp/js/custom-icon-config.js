@@ -8,7 +8,7 @@ window.addEventListener("DOMContentLoaded", () => {
     let preview = document.getElementById("custom-icon-name").getAttribute("value");
     let url;
     if (preview == null || preview === "") {
-        url = rootURL + "/plugin/custom-folder-icon/icons/default.png";
+        url = rootURL + "/plugin/custom-folder-icon/icons/default.svg";
     } else {
         url = rootURL + "/userContent/customFolderIcons/" + preview;
     }

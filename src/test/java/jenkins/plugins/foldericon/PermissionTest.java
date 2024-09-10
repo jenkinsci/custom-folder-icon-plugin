@@ -52,7 +52,7 @@ class PermissionTest {
     void testDoUploadIcon(JenkinsRule r) throws Exception {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
 
-        File upload = new File("./src/main/webapp/icons/default.png");
+        File upload = new File("./src/main/webapp/icons/default.svg");
 
         byte[] buffer = createMultipartEntityBuffer(upload);
         MockMultiPartRequest mockRequest = new MockMultiPartRequest(buffer);

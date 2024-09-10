@@ -109,7 +109,7 @@ class JobDSLConfigurationTest {
 
             FilePath workspace = job.getSomeWorkspace();
             assertNotNull(workspace);
-            workspace.child("custom.png").copyFrom(new FilePath(new File("./src/main/webapp/icons/default.png")));
+            workspace.child("custom.png").copyFrom(new FilePath(new File("./src/main/webapp/icons/default.svg")));
         }
 
         URL url = JobDSLConfigurationTest.class.getClassLoader().getResource(scriptName);
