@@ -31,13 +31,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
+import hudson.FilePath;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.UUID;
+import jenkins.plugins.foldericon.CustomFolderIconConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
+import org.jvnet.hudson.test.JenkinsRule;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
@@ -141,5 +145,25 @@ public final class TestUtils {
             buffer = os.toByteArray();
         }
         return buffer;
+    }
+
+    /**
+     * Create a file in the plugins user content directory
+     *
+     * @param r the JenkinsRule
+     * @return the FilePath
+     * @throws Exception in case anything goes wrong
+     */
+    public static FilePath createCustomIconFile(JenkinsRule r) throws Exception {
+        FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
+        FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
+        iconDir.mkdirs();
+
+        FilePath file = iconDir.child(UUID.randomUUID() + ".png");
+        file.copyFrom(new FilePath(new File("./src/main/webapp/icons/default.png")));
+
+        assertTrue(file.exists());
+
+        return file;
     }
 }

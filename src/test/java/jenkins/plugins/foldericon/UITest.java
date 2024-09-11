@@ -1,5 +1,6 @@
 package jenkins.plugins.foldericon;
 
+import static jenkins.plugins.foldericon.utils.TestUtils.createCustomIconFile;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -18,7 +19,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 /**
- * Various UI Tests
+ * Various UI Tests.
  */
 @WithJenkins
 class UITest {
@@ -30,14 +31,7 @@ class UITest {
      */
     @Test
     void testCustomFolderIconGlobalConfiguration(JenkinsRule r) throws Throwable {
-        FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
-        FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
-        iconDir.mkdirs();
-
-        long timestamp = System.currentTimeMillis();
-        String filename = timestamp + ".png";
-        FilePath file = iconDir.child(filename);
-        file.touch(timestamp);
+        FilePath file = createCustomIconFile(r);
 
         try (JenkinsRule.WebClient webClient = r.createWebClient()) {
             HtmlPage appearance = webClient.goTo("manage/appearance");
@@ -54,14 +48,14 @@ class UITest {
 
             assertTimeoutPreemptively(Duration.ofSeconds(5), () -> {
                 while (file.exists()) {
-                    Thread.sleep(100);
+                    Thread.onSpinWait();
                 }
             });
             assertFalse(file.exists());
 
-            appearance.refresh();
+            appearance = (HtmlPage) appearance.refresh();
             assertTrue(StringUtils.contains(
-                    appearance.getVisibleText(), "Disk usage of icons:   " + FileUtils.byteCountToDisplaySize(0)));
+                    appearance.getVisibleText(), "Disk usage of icons:   " + FileUtils.byteCountToDisplaySize(0L)));
         }
     }
 
@@ -137,10 +131,17 @@ class UITest {
                     .findFirst()
                     .orElseThrow(() -> fail("Unable to select folder icon option " + folderIcon));
 
-            selection.click();
+            assertFalse(selection.isSelected());
+            configure = selection.click();
+            assertTrue(selection.isSelected());
             r.submit(form);
 
-            configure.refresh();
+            configure = (HtmlPage) configure.refresh();
+            selection = (HtmlOption) configure.getElementsByTagName("option").stream()
+                    .filter(option -> StringUtils.equals(option.getTextContent(), folderIcon))
+                    .findFirst()
+                    .orElseThrow(() -> fail("Unable to select folder icon option " + folderIcon));
+
             assertTrue(selection.isSelected());
         }
     }
