@@ -24,6 +24,7 @@
 
 package jenkins.plugins.foldericon;
 
+import static jenkins.plugins.foldericon.utils.TestUtils.createCustomIconFile;
 import static jenkins.plugins.foldericon.utils.TestUtils.mockStaplerRequest;
 import static jenkins.plugins.foldericon.utils.TestUtils.validateResponse;
 import static org.junit.jupiter.api.Assertions.*;
@@ -90,15 +91,7 @@ class CustomFolderIconConfigurationTest {
     void testGetDiskUsage(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
-        FilePath parent = r.jenkins
-                .getRootPath()
-                .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
-                .child(CustomFolderIconConfiguration.PLUGIN_PATH);
-        parent.mkdirs();
-
-        FilePath file = parent.child(System.currentTimeMillis() + ".png");
-        file.touch(System.currentTimeMillis());
-        assertTrue(file.exists());
+        FilePath file = createCustomIconFile(r);
 
         String usage = descriptor.getDiskUsage();
         assertEquals(FileUtils.byteCountToDisplaySize(file.length()), usage);
@@ -142,12 +135,7 @@ class CustomFolderIconConfigurationTest {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
-        FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
-        iconDir.mkdirs();
-
-        String filename = System.currentTimeMillis() + ".png";
-        FilePath file = iconDir.child(filename);
-        file.touch(System.currentTimeMillis());
+        FilePath file = createCustomIconFile(r);
 
         try (@SuppressWarnings("unused")
                 MockedConstruction<FilePath> mocked = mockConstructionWithAnswer(FilePath.class, invocation -> {
@@ -158,7 +146,7 @@ class CustomFolderIconConfigurationTest {
                         return true;
                     } else if (StringUtils.equals(call, "filePath.list();")) {
                         return List.of(file);
-                    } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
+                    } else if (StringUtils.equals(call, "filePath.child(\n    \"" + file.getName() + "\"\n);")) {
                         throw new IOException("Mocked Exception!");
                     }
                     return fail("Unexpected invocation '" + call + "' - Test is broken!");
@@ -180,15 +168,7 @@ class CustomFolderIconConfigurationTest {
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
             StaplerRequest mockReq = mockStaplerRequest(stapler);
 
-            FilePath parent = r.jenkins
-                    .getRootPath()
-                    .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
-                    .child(CustomFolderIconConfiguration.PLUGIN_PATH);
-            parent.mkdirs();
-
-            FilePath file = parent.child(System.currentTimeMillis() + ".png");
-            file.touch(System.currentTimeMillis());
-            assertTrue(file.exists());
+            FilePath file = createCustomIconFile(r);
             HttpResponse response = descriptor.doCleanup(mockReq);
 
             validateResponse(response, HttpServletResponse.SC_OK, null, null);
@@ -240,15 +220,7 @@ class CustomFolderIconConfigurationTest {
         project1.setIcon(customIcon);
         project2.setIcon(customIcon);
 
-        FilePath parent = r.jenkins
-                .getRootPath()
-                .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
-                .child(CustomFolderIconConfiguration.PLUGIN_PATH);
-        parent.mkdirs();
-
-        FilePath dummy = parent.child(DUMMY_PNG);
-        dummy.touch(System.currentTimeMillis());
-        assertTrue(dummy.exists());
+        FilePath dummy = createCustomIconFile(r);
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
             StaplerRequest mockReq = mockStaplerRequest(stapler);
@@ -266,28 +238,17 @@ class CustomFolderIconConfigurationTest {
      */
     @Test
     void testDoCleanupUsedAndUnusedIcons(JenkinsRule r) throws Exception {
+        FilePath dummy = createCustomIconFile(r);
+        FilePath unused = createCustomIconFile(r);
+
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
-        CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
+        CustomFolderIcon customIcon = new CustomFolderIcon(dummy.getName());
 
         Folder project1 = r.jenkins.createProject(Folder.class, "folder");
         OrganizationFolder project2 = r.jenkins.createProject(OrganizationFolder.class, "org");
 
         project1.setIcon(customIcon);
         project2.setIcon(customIcon);
-
-        FilePath parent = r.jenkins
-                .getRootPath()
-                .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
-                .child(CustomFolderIconConfiguration.PLUGIN_PATH);
-        parent.mkdirs();
-
-        FilePath dummy = parent.child(DUMMY_PNG);
-        dummy.touch(System.currentTimeMillis());
-        assertTrue(dummy.exists());
-
-        FilePath unused = parent.child("unused.png");
-        unused.touch(System.currentTimeMillis());
-        assertTrue(unused.exists());
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
             StaplerRequest mockReq = mockStaplerRequest(stapler);
@@ -336,13 +297,8 @@ class CustomFolderIconConfigurationTest {
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
             StaplerRequest mockReq = mockStaplerRequest(stapler);
 
+            FilePath file = createCustomIconFile(r);
             FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
-            FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
-            iconDir.mkdirs();
-
-            String filename = System.currentTimeMillis() + ".png";
-            FilePath file = iconDir.child(filename);
-            file.touch(System.currentTimeMillis());
 
             try (@SuppressWarnings("unused")
                     MockedConstruction<FilePath> mocked = mockConstructionWithAnswer(FilePath.class, invocation -> {
@@ -353,7 +309,7 @@ class CustomFolderIconConfigurationTest {
                             return true;
                         } else if (StringUtils.equals(call, "filePath.list();")) {
                             return List.of(file);
-                        } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
+                        } else if (StringUtils.equals(call, "filePath.child(\n    \"" + file.getName() + "\"\n);")) {
                             FilePath mock = mock(FilePath.class);
                             when(mock.delete()).thenReturn(false);
                             return mock;
@@ -382,14 +338,7 @@ class CustomFolderIconConfigurationTest {
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
             StaplerRequest mockReq = mockStaplerRequest(stapler);
 
-            FilePath parent = r.jenkins
-                    .getRootPath()
-                    .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
-                    .child(CustomFolderIconConfiguration.PLUGIN_PATH);
-            parent.mkdirs();
-
-            FilePath file = parent.child(System.currentTimeMillis() + ".png");
-            file.touch(System.currentTimeMillis());
+            FilePath file = createCustomIconFile(r);
             File remoteFile = new File(file.getRemote());
 
             // jenkins is pretty brutal when deleting files...
@@ -432,12 +381,7 @@ class CustomFolderIconConfigurationTest {
             StaplerRequest mockReq = mockStaplerRequest(stapler);
 
             FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
-            FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
-            iconDir.mkdirs();
-
-            String filename = System.currentTimeMillis() + ".png";
-            FilePath file = iconDir.child(filename);
-            file.touch(System.currentTimeMillis());
+            FilePath file = createCustomIconFile(r);
 
             try (@SuppressWarnings("unused")
                     MockedConstruction<FilePath> mocked = mockConstructionWithAnswer(FilePath.class, invocation -> {
@@ -448,7 +392,7 @@ class CustomFolderIconConfigurationTest {
                             return true;
                         } else if (StringUtils.equals(call, "filePath.list();")) {
                             return List.of(file);
-                        } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
+                        } else if (StringUtils.equals(call, "filePath.child(\n    \"" + file.getName() + "\"\n);")) {
                             throw new IOException("Mocked Exception!");
                         }
                         return fail("Unexpected invocation '" + call + "' - Test is broken!");

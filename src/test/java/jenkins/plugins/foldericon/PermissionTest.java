@@ -24,6 +24,7 @@
 
 package jenkins.plugins.foldericon;
 
+import static jenkins.plugins.foldericon.utils.TestUtils.createCustomIconFile;
 import static jenkins.plugins.foldericon.utils.TestUtils.createMultipartEntityBuffer;
 import static jenkins.plugins.foldericon.utils.TestUtils.validateResponse;
 import static org.junit.jupiter.api.Assertions.*;
@@ -142,15 +143,7 @@ class PermissionTest {
      */
     @Test
     void testDoCleanup(JenkinsRule r) throws Exception {
-        FilePath parent = r.jenkins
-                .getRootPath()
-                .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
-                .child(CustomFolderIconConfiguration.PLUGIN_PATH);
-        parent.mkdirs();
-
-        FilePath file = parent.child(System.currentTimeMillis() + ".png");
-        file.touch(System.currentTimeMillis());
-        assertTrue(file.exists());
+        FilePath file = createCustomIconFile(r);
 
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 

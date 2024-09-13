@@ -30,6 +30,7 @@ import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import hudson.FilePath;
 import hudson.model.*;
+import java.io.File;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -130,7 +131,7 @@ class JobDSLConfigurationTest {
 
             FilePath workspace = job.getSomeWorkspace();
             assertNotNull(workspace);
-            workspace.child("custom.png").touch(System.currentTimeMillis());
+            workspace.child("custom.png").copyFrom(new FilePath(new File("./src/main/webapp/icons/default.png")));
         }
 
         URL url = JobDSLConfigurationTest.class.getClassLoader().getResource(scriptName);

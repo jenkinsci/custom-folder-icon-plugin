@@ -353,24 +353,9 @@ class CustomFolderIconTest {
         assertNotNull(icons);
         assertTrue(icons.isEmpty());
 
-        FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
-        FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
-        iconDir.mkdirs();
-
-        long timestamp1 = System.currentTimeMillis();
-        String filename1 = timestamp1 + ".png";
-        FilePath file1 = iconDir.child(filename1);
-        file1.touch(timestamp1);
-
-        long timestamp2 = timestamp1 + 10;
-        String filename2 = timestamp2 + ".png";
-        FilePath file2 = iconDir.child(filename2);
-        file2.touch(timestamp2);
-
-        long timestamp3 = timestamp2 + 10;
-        String filename3 = timestamp3 + ".png";
-        FilePath file3 = iconDir.child(filename3);
-        file3.touch(timestamp3);
+        FilePath file1 = createCustomIconFile(r);
+        FilePath file2 = createCustomIconFile(r);
+        FilePath file3 = createCustomIconFile(r);
 
         icons = CustomFolderIcon.getAvailableIcons();
 
@@ -404,24 +389,9 @@ class CustomFolderIconTest {
         assertNotNull(icons);
         assertTrue(icons.isEmpty());
 
-        FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
-        FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
-        iconDir.mkdirs();
-
-        long timestamp1 = System.currentTimeMillis();
-        String filename1 = timestamp1 + ".png";
-        FilePath file1 = iconDir.child(filename1);
-        file1.touch(timestamp1);
-
-        long timestamp2 = timestamp1 + 10;
-        String filename2 = timestamp2 + ".png";
-        FilePath file2 = iconDir.child(filename2);
-        file2.touch(timestamp2);
-
-        long timestamp3 = timestamp2 + 10;
-        String filename3 = timestamp3 + ".png";
-        FilePath file3 = iconDir.child(filename3);
-        file3.touch(timestamp3);
+        createCustomIconFile(r);
+        createCustomIconFile(r);
+        createCustomIconFile(r);
 
         try (@SuppressWarnings("unused")
                 MockedConstruction<FilePath> mocked = mockConstructionWithAnswer(FilePath.class, invocation -> {
@@ -452,22 +422,10 @@ class CustomFolderIconTest {
 
         FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
         FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
-        iconDir.mkdirs();
 
-        long timestamp1 = System.currentTimeMillis();
-        String filename1 = timestamp1 + ".png";
-        FilePath file1 = iconDir.child(filename1);
-        file1.touch(timestamp1);
-
-        long timestamp2 = timestamp1 + 10;
-        String filename2 = timestamp2 + ".png";
-        FilePath file2 = iconDir.child(filename2);
-        file2.touch(timestamp2);
-
-        long timestamp3 = timestamp2 + 10;
-        String filename3 = timestamp3 + ".png";
-        FilePath file3 = iconDir.child(filename3);
-        file3.touch(timestamp3);
+        FilePath file1 = createCustomIconFile(r);
+        FilePath file2 = createCustomIconFile(r);
+        FilePath file3 = createCustomIconFile(r);
 
         final int[] counter = {0};
 
@@ -495,13 +453,13 @@ class CustomFolderIconTest {
                     } else if (StringUtils.equals(call, "filePath.getName();")) {
                         if (counter[0] == 0) {
                             counter[0] = 1;
-                            return filename3;
+                            return file3.getName();
                         } else if (counter[0] == 1) {
                             counter[0] = 2;
-                            return filename2;
+                            return file2.getName();
                         } else if (counter[0] == 2) {
                             counter[0] = 0;
-                            return filename1;
+                            return file1.getName();
                         }
                     }
                     return fail("Unexpected invocation '" + call + "' - Test is broken!");
@@ -534,15 +492,8 @@ class CustomFolderIconTest {
      */
     @Test
     void testCleanupListener(JenkinsRule r) throws Exception {
-        FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
-        FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
-        iconDir.mkdirs();
-
-        String filename = System.currentTimeMillis() + ".png";
-        FilePath file = iconDir.child(filename);
-        file.touch(System.currentTimeMillis());
-
-        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+        FilePath file = createCustomIconFile(r);
+        CustomFolderIcon customIcon = new CustomFolderIcon(file.getName());
 
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
@@ -559,15 +510,8 @@ class CustomFolderIconTest {
      */
     @Test
     void testCleanupListenerOtherProjects(JenkinsRule r) throws Exception {
-        FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
-        FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
-        iconDir.mkdirs();
-
-        String filename = System.currentTimeMillis() + ".png";
-        FilePath file = iconDir.child(filename);
-        file.touch(System.currentTimeMillis());
-
-        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+        FilePath file = createCustomIconFile(r);
+        CustomFolderIcon customIcon = new CustomFolderIcon(file.getName());
 
         Folder project1 = r.jenkins.createProject(Folder.class, "folder-1");
         project1.setIcon(customIcon);
@@ -599,10 +543,8 @@ class CustomFolderIconTest {
         FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
         iconDir.mkdirs();
 
-        String filename = System.currentTimeMillis() + ".png";
-        FilePath file = iconDir.child(filename);
-
-        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+        FilePath file = iconDir.child(System.currentTimeMillis() + ".png");
+        CustomFolderIcon customIcon = new CustomFolderIcon(file.getName());
 
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
@@ -640,15 +582,8 @@ class CustomFolderIconTest {
      */
     @Test
     void testCleanupListenerIconUsed(JenkinsRule r) throws Exception {
-        FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
-        FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
-        iconDir.mkdirs();
-
-        String filename = System.currentTimeMillis() + ".png";
-        FilePath file = iconDir.child(filename);
-        file.touch(System.currentTimeMillis());
-
-        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+        FilePath file = createCustomIconFile(r);
+        CustomFolderIcon customIcon = new CustomFolderIcon(file.getName());
 
         Folder project1 = r.jenkins.createProject(Folder.class, "folder1");
         project1.setIcon(customIcon);
@@ -671,14 +606,9 @@ class CustomFolderIconTest {
     @Test
     void testCleanupListenerFileNotDeleted(JenkinsRule r) throws Exception {
         FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
-        FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
-        iconDir.mkdirs();
 
-        String filename = System.currentTimeMillis() + ".png";
-        FilePath file = iconDir.child(filename);
-        file.touch(System.currentTimeMillis());
-
-        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+        FilePath file = createCustomIconFile(r);
+        CustomFolderIcon customIcon = new CustomFolderIcon(file.getName());
 
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
@@ -688,7 +618,7 @@ class CustomFolderIconTest {
                     String call = invocation.toString();
                     if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
                         return userContent;
-                    } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
+                    } else if (StringUtils.equals(call, "filePath.child(\n    \"" + file.getName() + "\"\n);")) {
                         FilePath mock = mock(FilePath.class);
                         when(mock.delete()).thenReturn(false);
                         return mock;
@@ -710,16 +640,10 @@ class CustomFolderIconTest {
      */
     @Test
     void testCleanupListenerFileNotDeletedWithException(JenkinsRule r) throws Exception {
-        FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
-        FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
-        iconDir.mkdirs();
-
-        String filename = System.currentTimeMillis() + ".png";
-        FilePath file = iconDir.child(filename);
-        file.touch(System.currentTimeMillis());
+        FilePath file = createCustomIconFile(r);
         File remoteFile = new File(file.getRemote());
 
-        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+        CustomFolderIcon customIcon = new CustomFolderIcon(file.getName());
 
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
@@ -755,14 +679,9 @@ class CustomFolderIconTest {
     @Test
     void testCleanupListenerFileNotDeletedWithMockedException(JenkinsRule r) throws Exception {
         FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
-        FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
-        iconDir.mkdirs();
 
-        String filename = System.currentTimeMillis() + ".png";
-        FilePath file = iconDir.child(filename);
-        file.touch(System.currentTimeMillis());
-
-        CustomFolderIcon customIcon = new CustomFolderIcon(filename);
+        FilePath file = createCustomIconFile(r);
+        CustomFolderIcon customIcon = new CustomFolderIcon(file.getName());
 
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
@@ -772,7 +691,7 @@ class CustomFolderIconTest {
                     String call = invocation.toString();
                     if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
                         return userContent;
-                    } else if (StringUtils.equals(call, "filePath.child(\"" + filename + "\");")) {
+                    } else if (StringUtils.equals(call, "filePath.child(\n    \"" + file.getName() + "\"\n);")) {
                         throw new IOException("Mocked Exception!");
                     }
                     return fail("Unexpected invocation '" + call + "' - Test is broken!");
