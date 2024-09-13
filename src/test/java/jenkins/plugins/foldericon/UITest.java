@@ -11,6 +11,7 @@ import hudson.FilePath;
 import java.time.Duration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.htmlunit.WebAssert;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlOption;
 import org.htmlunit.html.HtmlPage;
@@ -35,10 +36,9 @@ class UITest {
 
         try (JenkinsRule.WebClient webClient = r.createWebClient()) {
             HtmlPage appearance = webClient.goTo("manage/appearance");
-            assertTrue(StringUtils.contains(appearance.getVisibleText(), "Custom Folder Icons"));
-            assertTrue(StringUtils.contains(
-                    appearance.getVisibleText(),
-                    "Disk usage of icons:   " + FileUtils.byteCountToDisplaySize(file.length())));
+            WebAssert.assertTextPresent(appearance, "Custom Folder Icons");
+            WebAssert.assertTextPresent(
+                    appearance, "Disk usage of icons:   " + FileUtils.byteCountToDisplaySize(file.length()));
 
             appearance.getElementsByTagName("input").stream()
                     .filter(input -> StringUtils.equals(input.getAttribute("value"), "Cleanup unused icons"))
@@ -54,8 +54,7 @@ class UITest {
             assertFalse(file.exists());
 
             appearance = (HtmlPage) appearance.refresh();
-            assertTrue(StringUtils.contains(
-                    appearance.getVisibleText(), "Disk usage of icons:   " + FileUtils.byteCountToDisplaySize(0L)));
+            WebAssert.assertTextPresent(appearance, "Disk usage of icons:   " + FileUtils.byteCountToDisplaySize(0L));
         }
     }
 
