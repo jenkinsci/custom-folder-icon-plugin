@@ -618,7 +618,7 @@ class CustomFolderIconTest {
                     String call = invocation.toString();
                     if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
                         return userContent;
-                    } else if (StringUtils.equals(call, "filePath.child(\"" + file.getName() + "\");")) {
+                    } else if (StringUtils.equals(call, "filePath.child(\n    \"" + file.getName() + "\"\n);")) {
                         FilePath mock = mock(FilePath.class);
                         when(mock.delete()).thenReturn(false);
                         return mock;
@@ -691,7 +691,7 @@ class CustomFolderIconTest {
                     String call = invocation.toString();
                     if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
                         return userContent;
-                    } else if (StringUtils.equals(call, "filePath.child(\"" + file.getName() + "\");")) {
+                    } else if (StringUtils.equals(call, "filePath.child(\n    \"" + file.getName() + "\"\n);")) {
                         throw new IOException("Mocked Exception!");
                     }
                     return fail("Unexpected invocation '" + call + "' - Test is broken!");

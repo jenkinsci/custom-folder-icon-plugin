@@ -146,8 +146,7 @@ class CustomFolderIconConfigurationTest {
                         return true;
                     } else if (StringUtils.equals(call, "filePath.list();")) {
                         return List.of(file);
-                    } else if (StringUtils.equals(
-                            call, "filePath.child(\n" + "    \"" + file.getName() + "\"\n" + ");")) {
+                    } else if (StringUtils.equals(call, "filePath.child(\n    \"" + file.getName() + "\"\n);")) {
                         throw new IOException("Mocked Exception!");
                     }
                     return fail("Unexpected invocation '" + call + "' - Test is broken!");
@@ -310,8 +309,7 @@ class CustomFolderIconConfigurationTest {
                             return true;
                         } else if (StringUtils.equals(call, "filePath.list();")) {
                             return List.of(file);
-                        } else if (StringUtils.equals(
-                                call, "filePath.child(\n" + "    \"" + file.getName() + "\"\n" + ");")) {
+                        } else if (StringUtils.equals(call, "filePath.child(\n    \"" + file.getName() + "\"\n);")) {
                             FilePath mock = mock(FilePath.class);
                             when(mock.delete()).thenReturn(false);
                             return mock;
@@ -394,8 +392,7 @@ class CustomFolderIconConfigurationTest {
                             return true;
                         } else if (StringUtils.equals(call, "filePath.list();")) {
                             return List.of(file);
-                        } else if (StringUtils.equals(
-                                call, "filePath.child(\n" + "    \"" + file.getName() + "\"\n" + ");")) {
+                        } else if (StringUtils.equals(call, "filePath.child(\n    \"" + file.getName() + "\"\n);")) {
                             throw new IOException("Mocked Exception!");
                         }
                         return fail("Unexpected invocation '" + call + "' - Test is broken!");
