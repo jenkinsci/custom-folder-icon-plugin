@@ -59,6 +59,12 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <!-- TODO: JENKINS-73339 until in parent POM, work around https://github.com/jenkinsci/plugin-pom/issues/936 -->
+      <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>5.0.0</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -133,17 +139,4 @@
       <url>https://repo.jenkins-ci.org/public/</url>
     </pluginRepository>
   </pluginRepositories>
-
-  <!-- TODO: remove -->
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.jenkins-ci.tools</groupId>
-          <artifactId>maven-hpi-plugin</artifactId>
-          <version>3.58-rc1620.2a_1eceb_329f5</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
 </project>

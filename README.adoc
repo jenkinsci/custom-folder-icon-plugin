@@ -25,8 +25,6 @@ Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-pl
 
 === Version 2.x
 
-This version requires Jenkins 2.357 and above in order to support the transition to https://www.jenkins.io/blog/2022/06/28/require-java-11/[Java 11].
-
 * Version 2.14 introduces a new type of icon.
 The `OpenSourceFolderIcon` provides icons from https://github.com/jenkinsci/oss-symbols-api-plugin[oss-symbols-api-plugin].
 * Version 2.11 moved the <<Global Configuration>> to the _Appearance_ configuration
