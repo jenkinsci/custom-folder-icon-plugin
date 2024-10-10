@@ -65,6 +65,10 @@
   <dependencies>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
+      <artifactId>emoji-symbols-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
       <artifactId>font-awesome-api</artifactId>
     </dependency>
     <dependency>
