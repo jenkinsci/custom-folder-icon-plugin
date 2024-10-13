@@ -128,7 +128,7 @@ folder('build-status') {
 
 ==== Emoji Folder Icon
 
-Use https://unicode.org/emoji/charts/full-emoji-list.html[unicode emojis] as icon.
+Use https://github.com/jenkinsci/emoji-symbols-api-plugin[Unicode emojis] as icon.
 
 image:docs/emoji-folder-icon.png[]
 

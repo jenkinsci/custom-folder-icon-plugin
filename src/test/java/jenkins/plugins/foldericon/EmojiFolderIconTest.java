@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
+import io.jenkins.plugins.emoji.symbols.Emojis;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.EmojiFolderIcon.DescriptorImpl;
 import org.apache.commons.lang.StringUtils;

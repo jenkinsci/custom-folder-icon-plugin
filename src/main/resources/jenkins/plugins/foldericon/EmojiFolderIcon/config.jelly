@@ -26,7 +26,7 @@ SOFTWARE.
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:f="/lib/form">
     <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/emoji.css" type="text/css" />
     <script src="${rootURL}/plugin/custom-folder-icon/js/emoji-config.js" type="text/javascript" />
-    <j:invokeStatic var="emojis" method="getAvailableIcons" className="jenkins.plugins.foldericon.Emojis" />
+    <j:invokeStatic var="emojis" method="getAvailableIcons" className="io.jenkins.plugins.emoji.symbols.Emojis" />
     <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('preview')}">
         <l:icon id="emoji-preview" src="${emojis.get(instance.emoji ?: 'sloth')}" title="${icon.key}"
                 class="icon-xlg" />
