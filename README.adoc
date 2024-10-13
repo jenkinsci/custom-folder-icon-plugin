@@ -25,14 +25,15 @@ Release notes are recorded in https://github.com/jenkinsci/custom-folder-icon-pl
 
 === Version 2.x
 
+* Version 2.16 requires Jenkins baseline 2.479.x and migrates to Java 17 and Jakarta EE 9.
 * Version 2.14 introduces a new type of icon.
 The `OpenSourceFolderIcon` provides icons from https://github.com/jenkinsci/oss-symbols-api-plugin[oss-symbols-api-plugin].
 * Version 2.11 moved the <<Global Configuration>> to the _Appearance_ configuration
-* Version 2.10 enables users to select the jobs to be considered for the combined build status in `BuildStatusFolderIcon`.
 
 .Changes in previous versions ...
 [%collapsible]
 ====
+* Version 2.10 enables users to select the jobs to be considered for the combined build status in `BuildStatusFolderIcon`.
 * Version 2.9 introduces a new type of icon.
 The `FontAwesomeFolderIcon` provides https://fontawesome.com[Font Awesome] icons.
 * Version 2.6 enables users to select and re-use an already existing `CustomFolderIcon`.
