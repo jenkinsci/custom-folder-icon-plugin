@@ -43,8 +43,7 @@ SOFTWARE.
                 </j:forEach>
             </f:advanced>
             <f:entry help="${descriptor.getHelpFile('cleanup')}">
-                <input id="custom-icon-cleanup" type="button" value="${%CleanupIcons}"
-                       onclick="doCustomIconCleanup('${%CleanupSuccess}', '${%CleanupFailed}')" />
+                <input id="custom-icon-cleanup" type="button" value="${%CleanupIcons}" />
             </f:entry>
         </j:if>
     </f:section>
