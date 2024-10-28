@@ -33,7 +33,7 @@ SOFTWARE.
     </f:entry>
     <f:advanced title="${%AvailableIcons}${not empty ionicons ? ' (' + ionicons.size() + ')' : ''}">
         <j:forEach var="icon" items="${ionicons}">
-            <a id="select-ionicon-${icon.key}" class="ionicon-icon-selection" onclick="setIoniconIcon('${icon.key}')">
+            <a id="select-ionicon-${icon.key}" class="ionicon-icon-selection">
                 <l:icon id="ionicon-icon-${icon.key}" src="${icon.value}" title="${icon.key}" tooltip="${icon.key}"
                         class="icon-md" />
             </a>

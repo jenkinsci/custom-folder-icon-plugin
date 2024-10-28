@@ -22,13 +22,13 @@
  * THE SOFTWARE.
  */
 
+// global instance
 let croppie
 
 /**
- * Initialization of preview image.
- *
+ * Initialization of croppie and preview image.
  */
-function initCustomIcon() {
+window.addEventListener("DOMContentLoaded", () => {
     let preview = document.getElementById("custom-icon-name").getAttribute("value");
     let url;
     if (preview == null || preview === "") {
@@ -53,89 +53,100 @@ function initCustomIcon() {
     } catch (e) {
         // NOP
     }
-}
+
+    return false;
+});
 
 /**
  * Set an icon for cropping / preview.
- *
- * @param {string} url The icon url.
  */
-function setCustomIcon(url) {
-    // load icon image
-    croppie.bind({
-        url: url,
-        zoom: 1
-    });
+Behaviour.specify("[id^=\"custom-icon-preview-\"]", "CustomIconPreviewSelection", 0, element => {
+    element.onclick = () => {
+        let url = element.src;
 
-    // reset the name in the upload input element
-    document.getElementById("custom-icon-upload").value = "";
+        // load icon image
+        croppie.bind({
+            url: url,
+            zoom: 1
+        });
 
-    // set the file name - in case you don't crop / upload the image again it will simply be re-used that way
-    let paths = url.split("/");
-    let icon = paths[paths.length - 1];
+        // reset the name in the upload input element
+        document.getElementById("custom-icon-upload").value = "";
 
-    let iconName = document.getElementById("custom-icon-name")
-    iconName.setAttribute("value", icon);
-    iconName.dispatchEvent(new Event("input"));
-}
+        // set the file name - in case you don't crop / upload the image again it will simply be re-used that way
+        let paths = url.split("/");
+        let icon = paths[paths.length - 1];
+
+        let iconName = document.getElementById("custom-icon-name")
+        iconName.setAttribute("value", icon);
+        iconName.dispatchEvent(new Event("input"));
+
+        return false;
+    }
+});
 
 
 /**
  * Set a file for cropping / preview.
- *
- * @param {Blob} file The file input.
  */
-function setCustomIconFile(file) {
-    // read file input
-    let reader = new FileReader();
-    reader.onload = function (ev) {
-        croppie.bind({
-            url: ev.target.result,
-            zoom: 1
-        });
+Behaviour.specify("[id^=\"custom-icon-upload\"]", "CustomIconPreview", 0, element => {
+    element.onchange = () => {
+        // read file input
+        let reader = new FileReader();
+        reader.onload = event => {
+            croppie.bind({
+                url: event.target.result,
+                zoom: 1
+            });
+        }
+        let file = element.files[0];
+        reader.readAsDataURL(file);
+
+        return false;
     }
-    reader.readAsDataURL(file);
-}
+});
 
 /**
  * Upload the cropped icon.
- *
- * @param {string} jobURL - The current job url.
- * @param {string} successMessage - The success message.
- * @param {string} errorMessage - The error message.
  */
-function doUploadCustomIcon(jobURL, successMessage, errorMessage) {
-    // get the icon blob
-    croppie.result("blob").then(blob => {
-        let formData = new FormData();
-        formData.append("file", blob);
-        return formData;
-    }).then(formData => {
-            // upload the icon
-            fetch(rootURL + "/" + jobURL + "descriptorByName/jenkins.plugins.foldericon.CustomFolderIcon/uploadIcon", {
-                method: "post",
-                headers: crumb.wrap({}),
-                body: formData
-            }).then(rsp => {
-                rsp.text().then(text => {
-                    let cropper = document.getElementById("custom-icon-cropper")
-                    if (rsp.ok) {
-                        let iconName = document.getElementById("custom-icon-name")
-                        iconName.setAttribute("value", text);
-                        iconName.dispatchEvent(new Event("input"));
-                        hoverNotification(successMessage + " " + text, cropper);
-                    } else {
-                        let error = text.substring(text.lastIndexOf("<title>") + 7, text.lastIndexOf("</title>"))
-                        hoverNotification(errorMessage + " " + error, cropper);
-                    }
+Behaviour.specify("[id^=\"custom-icon-upload-apply\"]", "CustomIconUpload", 0, element => {
+    element.onclick = () => {
+        // get the icon blob
+        croppie.result("blob").then(blob => {
+            let formData = new FormData();
+            formData.append("file", blob);
+            return formData;
+        }).then(formData => {
+                // upload the icon
+                let jobUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+
+                fetch(jobUrl + "/descriptorByName/jenkins.plugins.foldericon.CustomFolderIcon/uploadIcon", {
+                    method: "post",
+                    headers: crumb.wrap({}),
+                    body: formData
+                }).then(response => {
+                    response.text().then(text => {
+                        let cropper = document.getElementById("custom-icon-cropper")
+                        if (response.ok) {
+                            let iconName = document.getElementById("custom-icon-name")
+                            iconName.setAttribute("value", text);
+                            iconName.dispatchEvent(new Event("input"));
+                            hoverNotification("Image uploaded as " + text, cropper);
+                        } else {
+                            let error = text.substring(text.lastIndexOf("<title>") + 7, text.lastIndexOf("</title>"))
+                            hoverNotification("Image uploaded failed: " + error, cropper);
+                        }
+                    }).catch(error => {
+                        console.error(error);
+                    });
                 }).catch(error => {
                     console.error(error);
                 });
-            }).catch(error => {
-                console.error(error);
-            });
-        }
-    ).catch(error => {
-        console.error(error);
-    });
-}
+            }
+        ).catch(error => {
+            console.error(error);
+        });
+
+        return false;
+    }
+});

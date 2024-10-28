@@ -44,8 +44,7 @@ SOFTWARE.
             <b>${style.name().substring(0, 1)}${style.name().substring(1).toLowerCase()} Icons</b>
             <br />
             <j:forEach var="icon" items="${filtered}">
-                <a id="select-fontawesome-${icon.key}" class="fontawesome-icon-selection"
-                   onclick="setFontAwesomeIcon('${icon.key}')">
+                <a id="select-fontawesome-${icon.key}" class="fontawesome-icon-selection">
                     <l:icon id="fontawesome-icon-${icon.key}" src="${icon.value}" title="${icon.key}"
                             tooltip="${icon.key}"
                             class="icon-md" />

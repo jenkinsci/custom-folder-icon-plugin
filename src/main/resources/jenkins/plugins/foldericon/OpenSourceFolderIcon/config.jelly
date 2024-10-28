@@ -33,7 +33,7 @@ SOFTWARE.
     </f:entry>
     <f:advanced title="${%AvailableIcons}${not empty openSourceIcons ? ' (' + openSourceIcons.size() + ')' : ''}">
         <j:forEach var="icon" items="${openSourceIcons}">
-            <a id="select-oss-${icon.key}" class="oss-icon-selection" onclick="setOpenSourceIcon('${icon.key}')">
+            <a id="select-oss-${icon.key}" class="oss-icon-selection">
                 <l:icon id="oss-icon-${icon.key}" src="${icon.value}" title="${icon.key}" tooltip="${icon.key}"
                         class="icon-md" />
             </a>

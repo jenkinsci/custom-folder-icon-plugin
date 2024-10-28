@@ -33,7 +33,7 @@ SOFTWARE.
     </f:entry>
     <f:advanced title="${%AvailableIcons}${not empty emojis ? ' (' + emojis.size() + ')' : ''}">
         <j:forEach var="icon" items="${emojis}">
-            <a id="select-emoji-${icon.key}" class="emoji-icon-selection" onclick="setEmojiIcon('${icon.key}')">
+            <a id="select-emoji-${icon.key}" class="emoji-icon-selection">
                 <l:icon id="emoji-icon-${icon.key}" src="${icon.value}" title="${icon.key}" tooltip="${icon.key}"
                         class="icon-md" />
             </a>
