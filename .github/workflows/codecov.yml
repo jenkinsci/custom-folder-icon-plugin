@@ -12,15 +12,15 @@ jobs:
     name: Coverage on Ubuntu
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - name: Set up JDK 17 and Maven
+        uses: s4u/setup-maven-action@v1
         with:
           distribution: 'temurin'
           java-version: '17'
           check-latest: true
-          # cache: 'maven'
+          cache: 'maven'
       - name: Generate coverage with JaCoCo
-        run: mvn -X -U clean verify
+        run: mvn clean verify
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
