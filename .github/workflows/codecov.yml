@@ -18,9 +18,9 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           check-latest: true
-          cache: 'maven'
+          # cache: 'maven'
       - name: Generate coverage with JaCoCo
-        run: mvn clean verify jacoco:prepare-agent test integration-test jacoco:report
+        run: mvn -X clean verify jacoco:prepare-agent test integration-test jacoco:report
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
