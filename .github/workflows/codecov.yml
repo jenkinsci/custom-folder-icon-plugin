@@ -20,7 +20,7 @@ jobs:
           check-latest: true
           # cache: 'maven'
       - name: Generate coverage with JaCoCo
-        run: mvn -X clean verify jacoco:prepare-agent test integration-test jacoco:report
+        run: mvn -X -U clean verify
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
