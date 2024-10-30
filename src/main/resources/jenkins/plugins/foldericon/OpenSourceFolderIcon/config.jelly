@@ -1,41 +1,17 @@
-<!--
-The MIT License
-
-Copyright (c) 2024
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
--->
-
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:f="/lib/form">
     <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/oss.css" type="text/css" />
     <script src="${rootURL}/plugin/custom-folder-icon/js/oss-config.js" type="text/javascript" />
-    <j:invokeStatic var="openSourceIcons" method="getAvailableIcons" className="io.jenkins.plugins.oss.symbols.OpenSourceSymbols" />
+    <j:invokeStatic var="openSourceIcons" method="getAvailableIcons"
+                    className="io.jenkins.plugins.oss.symbols.OpenSourceSymbols" />
     <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('preview')}">
-        <l:icon id="oss-preview" src="${openSourceIcons.get(instance.ossicon ?: 'cdf-icon-color')}" title="${icon.key}"
-                class="icon-xlg" />
+        <l:icon id="oss-preview" src="${openSourceIcons.get(instance.ossicon ?: 'cdf-icon-color')}"
+                tooltip="${icon.key}" class="icon-xlg" />
     </f:entry>
     <f:advanced title="${%AvailableIcons}${not empty openSourceIcons ? ' (' + openSourceIcons.size() + ')' : ''}">
         <j:forEach var="icon" items="${openSourceIcons}">
             <a id="select-oss-${icon.key}" class="oss-icon-selection">
-                <l:icon id="oss-icon-${icon.key}" src="${icon.value}" title="${icon.key}" tooltip="${icon.key}"
-                        class="icon-md" />
+                <l:icon id="oss-icon-${icon.key}" src="${icon.value}" tooltip="${icon.key}" class="icon-md" />
             </a>
         </j:forEach>
     </f:advanced>
