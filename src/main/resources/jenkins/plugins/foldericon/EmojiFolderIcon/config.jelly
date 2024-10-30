@@ -4,14 +4,13 @@
     <script src="${rootURL}/plugin/custom-folder-icon/js/emoji-config.js" type="text/javascript" />
     <j:invokeStatic var="emojis" method="getAvailableIcons" className="io.jenkins.plugins.emoji.symbols.Emojis" />
     <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('preview')}">
-        <l:icon id="emoji-preview" src="${emojis.get(instance.emoji ?: 'sloth')}" title="${icon.key}"
+        <l:icon id="emoji-preview" src="${emojis.get(instance.emoji ?: 'sloth')}" tooltip="${icon.key}"
                 class="icon-xlg" />
     </f:entry>
     <f:advanced title="${%AvailableIcons}${not empty emojis ? ' (' + emojis.size() + ')' : ''}">
         <j:forEach var="icon" items="${emojis}">
             <a id="select-emoji-${icon.key}" class="emoji-icon-selection">
-                <l:icon id="emoji-icon-${icon.key}" src="${icon.value}" title="${icon.key}" tooltip="${icon.key}"
-                        class="icon-md" />
+                <l:icon id="emoji-icon-${icon.key}" src="${icon.value}" tooltip="${icon.key}" class="icon-md" />
             </a>
         </j:forEach>
     </f:advanced>

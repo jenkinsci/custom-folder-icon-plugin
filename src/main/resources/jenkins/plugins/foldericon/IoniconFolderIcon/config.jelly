@@ -4,14 +4,13 @@
     <script src="${rootURL}/plugin/custom-folder-icon/js/ionicon-config.js" type="text/javascript" />
     <j:invokeStatic var="ionicons" method="getAvailableIcons" className="io.jenkins.plugins.ionicons.Ionicons" />
     <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('preview')}">
-        <l:icon id="ionicon-preview" src="${ionicons.get(instance.ionicon ?: 'jenkins')}" title="${icon.key}"
+        <l:icon id="ionicon-preview" src="${ionicons.get(instance.ionicon ?: 'jenkins')}" tooltip="${icon.key}"
                 class="icon-xlg" />
     </f:entry>
     <f:advanced title="${%AvailableIcons}${not empty ionicons ? ' (' + ionicons.size() + ')' : ''}">
         <j:forEach var="icon" items="${ionicons}">
             <a id="select-ionicon-${icon.key}" class="ionicon-icon-selection">
-                <l:icon id="ionicon-icon-${icon.key}" src="${icon.value}" title="${icon.key}" tooltip="${icon.key}"
-                        class="icon-md" />
+                <l:icon id="ionicon-icon-${icon.key}" src="${icon.value}" tooltip="${icon.key}" class="icon-md" />
             </a>
         </j:forEach>
     </f:advanced>

@@ -6,8 +6,7 @@
                     className="io.jenkins.plugins.fontawesome.FontAwesomeIcons" />
     <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('preview')}">
         <l:icon id="fontawesome-preview" src="${fontawesomes.get(instance.fontAwesome ?: 'brands/jenkins')}"
-                title="${icon.key}"
-                class="icon-xlg" />
+                tooltip="${icon.key}" class="icon-xlg" />
     </f:entry>
     <f:advanced title="${%AvailableIcons}${not empty fontawesomes ? ' (' + fontawesomes.size() + ')' : ''}">
         <j:invokeStatic var="styles" method="values"
@@ -21,8 +20,7 @@
             <br />
             <j:forEach var="icon" items="${filtered}">
                 <a id="select-fontawesome-${icon.key}" class="fontawesome-icon-selection">
-                    <l:icon id="fontawesome-icon-${icon.key}" src="${icon.value}" title="${icon.key}"
-                            tooltip="${icon.key}"
+                    <l:icon id="fontawesome-icon-${icon.key}" src="${icon.value}" tooltip="${icon.key}"
                             class="icon-md" />
                 </a>
                 <st:nbsp />

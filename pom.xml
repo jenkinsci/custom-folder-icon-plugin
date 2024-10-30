@@ -42,8 +42,7 @@
   <properties>
     <gitHubRepo>jenkinsci/custom-folder-icon-plugin</gitHubRepo>
     <jenkins.baseline>2.479</jenkins.baseline>
-    <!-- TODO: set to LTS -->
-    <jenkins.version>${jenkins.baseline}</jenkins.version>
+    <jenkins.version>${jenkins.baseline}.1</jenkins.version>
     <revision>2.16</revision>
     <changelist>-SNAPSHOT</changelist>
     <spotless.check.skip>false</spotless.check.skip>

@@ -12,9 +12,7 @@
         <j:if test="${not empty customicons}">
             <f:advanced title="${%AvailableIcons}${not empty customicons ? ' (' + customicons.size() + ')' : ''}">
                 <j:forEach var="icon" items="${customicons}">
-                    <l:icon src="${rootURL}/userContent/customFolderIcons/${icon}" title="${icon}"
-                            tooltip="${icon}"
-                            class="icon-md" />
+                    <l:icon src="${rootURL}/userContent/customFolderIcons/${icon}" tooltip="${icon}" class="icon-md" />
                     <st:nbsp />
                 </j:forEach>
             </f:advanced>
