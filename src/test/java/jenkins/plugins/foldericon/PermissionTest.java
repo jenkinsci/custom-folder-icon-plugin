@@ -33,11 +33,8 @@ import org.springframework.security.access.AccessDeniedException;
 class PermissionTest {
 
     private static final String ADMINISTRATOR_USER = "administering_sloth";
-
     private static final String MANAGE_USER = "managing_axolotl";
-
     private static final String CONFIGURE_USER = "configuring_red_panda";
-
     private static final String READ_USER = "reading_duck";
 
     private static final String FILE_NAME_PATTERN =
@@ -49,7 +46,7 @@ class PermissionTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testDoUploadIcon(JenkinsRule r) throws Exception {
+    void doUploadIcon(JenkinsRule r) throws Exception {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
 
         File upload = new File("./src/main/webapp/icons/default.svg");
@@ -116,7 +113,7 @@ class PermissionTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testDoCleanup(JenkinsRule r) throws Exception {
+    void doCleanup(JenkinsRule r) throws Exception {
         FilePath file = createCustomIconFile(r);
 
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
@@ -158,7 +155,7 @@ class PermissionTest {
      * Test behavior of {@link CustomFolderIconConfiguration#getDiskUsage()}.
      */
     @Test
-    void testGetDiskUsage(JenkinsRule r) {
+    void getDiskUsage(JenkinsRule r) {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         r.jenkins.setSecurityRealm(r.createDummySecurityRealm());

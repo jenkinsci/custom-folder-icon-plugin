@@ -30,7 +30,7 @@ class EmojiFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testFolder(JenkinsRule r) throws Exception {
+    void folder(JenkinsRule r) throws Exception {
         EmojiFolderIcon customIcon = new EmojiFolderIcon(null);
         assertEquals(DEFAULT_ICON, customIcon.getEmoji());
         assertNull(customIcon.getImageOf(null));
@@ -56,7 +56,7 @@ class EmojiFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testOrganizationFolder(JenkinsRule r) throws Exception {
+    void organizationFolder(JenkinsRule r) throws Exception {
         EmojiFolderIcon customIcon = new EmojiFolderIcon(null);
         assertEquals(DEFAULT_ICON, customIcon.getEmoji());
         assertNull(customIcon.getImageOf(null));
@@ -80,7 +80,7 @@ class EmojiFolderIconTest {
      * Test behavior of {@link DescriptorImpl}.
      */
     @Test
-    void testDescriptor(@SuppressWarnings("unused") JenkinsRule r) {
+    void descriptor(@SuppressWarnings("unused") JenkinsRule r) {
         EmojiFolderIcon customIcon = new EmojiFolderIcon(DUMMY_ICON);
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.EmojiFolderIcon_description(), descriptor.getDisplayName());

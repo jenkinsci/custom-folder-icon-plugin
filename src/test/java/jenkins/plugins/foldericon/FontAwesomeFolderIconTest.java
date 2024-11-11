@@ -30,7 +30,7 @@ class FontAwesomeFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testFolder(JenkinsRule r) throws Exception {
+    void folder(JenkinsRule r) throws Exception {
         FontAwesomeFolderIcon customIcon = new FontAwesomeFolderIcon(null);
         assertEquals(DEFAULT_ICON, customIcon.getFontAwesome());
         assertNull(customIcon.getImageOf(null));
@@ -56,7 +56,7 @@ class FontAwesomeFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testOrganizationFolder(JenkinsRule r) throws Exception {
+    void organizationFolder(JenkinsRule r) throws Exception {
         FontAwesomeFolderIcon customIcon = new FontAwesomeFolderIcon(null);
         assertEquals(DEFAULT_ICON, customIcon.getFontAwesome());
         assertNull(customIcon.getImageOf(null));
@@ -80,7 +80,7 @@ class FontAwesomeFolderIconTest {
      * Test behavior of {@link DescriptorImpl}.
      */
     @Test
-    void testDescriptor(@SuppressWarnings("unused") JenkinsRule r) {
+    void descriptor(@SuppressWarnings("unused") JenkinsRule r) {
         FontAwesomeFolderIcon customIcon = new FontAwesomeFolderIcon(DUMMY_ICON);
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.FontAwesomeFolderIcon_description(), descriptor.getDisplayName());

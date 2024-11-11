@@ -42,7 +42,7 @@ class CustomFolderIconConfigurationTest {
      * Test behavior of {@link CustomFolderIconConfiguration#getCategory()}.
      */
     @Test
-    void testGetCategory(@SuppressWarnings("unused") JenkinsRule r) {
+    void getCategory(@SuppressWarnings("unused") JenkinsRule r) {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
         assertEquals(descriptor.getCategory(), GlobalConfigurationCategory.get(AppearanceCategory.class));
     }
@@ -51,7 +51,7 @@ class CustomFolderIconConfigurationTest {
      * Test behavior of {@link CustomFolderIconConfiguration#getRequiredGlobalConfigPagePermission()}.
      */
     @Test
-    void testGetRequiredGlobalConfigPagePermission(@SuppressWarnings("unused") JenkinsRule r) {
+    void getRequiredGlobalConfigPagePermission(@SuppressWarnings("unused") JenkinsRule r) {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
         assertEquals(Jenkins.MANAGE, descriptor.getRequiredGlobalConfigPagePermission());
     }
@@ -62,7 +62,7 @@ class CustomFolderIconConfigurationTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testGetDiskUsage(JenkinsRule r) throws Exception {
+    void getDiskUsage(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         FilePath file = createCustomIconFile(r);
@@ -77,7 +77,7 @@ class CustomFolderIconConfigurationTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testGetDiskUsageNoIcons(JenkinsRule r) throws Exception {
+    void getDiskUsageNoIcons(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         FilePath parent = r.jenkins
@@ -94,7 +94,7 @@ class CustomFolderIconConfigurationTest {
      * Test behavior of {@link CustomFolderIconConfiguration#getDiskUsage()}}.
      */
     @Test
-    void testGetDiskUsageNoRoot(@SuppressWarnings("unused") JenkinsRule r) {
+    void getDiskUsageNoRoot(@SuppressWarnings("unused") JenkinsRule r) {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         String usage = descriptor.getDiskUsage();
@@ -105,7 +105,7 @@ class CustomFolderIconConfigurationTest {
      * Test behavior of {@link CustomFolderIconConfiguration#getDiskUsage()}}.
      */
     @Test
-    void testGetDiskUsageWithException(JenkinsRule r) throws Exception {
+    void getDiskUsageWithException(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
@@ -136,7 +136,7 @@ class CustomFolderIconConfigurationTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testDoCleanupNoItems(JenkinsRule r) throws Exception {
+    void doCleanupNoItems(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
@@ -156,7 +156,7 @@ class CustomFolderIconConfigurationTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testDoCleanupMissingIcon(JenkinsRule r) throws Exception {
+    void doCleanupMissingIcon(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
         CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
 
@@ -184,7 +184,7 @@ class CustomFolderIconConfigurationTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testDoCleanupOnlyUsedIcons(JenkinsRule r) throws Exception {
+    void doCleanupOnlyUsedIcons(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
         CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
 
@@ -211,7 +211,7 @@ class CustomFolderIconConfigurationTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testDoCleanupUsedAndUnusedIcons(JenkinsRule r) throws Exception {
+    void doCleanupUsedAndUnusedIcons(JenkinsRule r) throws Exception {
         FilePath dummy = createCustomIconFile(r);
         FilePath unused = createCustomIconFile(r);
 
@@ -240,7 +240,7 @@ class CustomFolderIconConfigurationTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testDoCleanupNoRoot(JenkinsRule r) throws Exception {
+    void doCleanupNoRoot(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
@@ -265,7 +265,7 @@ class CustomFolderIconConfigurationTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testDoCleanupFileNotDeleted(JenkinsRule r) throws Exception {
+    void doCleanupFileNotDeleted(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
@@ -306,7 +306,7 @@ class CustomFolderIconConfigurationTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testDoCleanupFileNotDeletedWithException(JenkinsRule r) throws Exception {
+    void doCleanupFileNotDeletedWithException(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
@@ -345,10 +345,10 @@ class CustomFolderIconConfigurationTest {
      * Test behavior of {@link CustomFolderIconConfiguration#doCleanup(StaplerRequest2)} if a file can not be deleted due to an exception.
      *
      * @throws Exception in case anything goes wrong
-     * @implNote Sometimes {@link #testDoCleanupFileNotDeletedWithException(JenkinsRule)} does not work.
+     * @implNote Sometimes {@link #doCleanupFileNotDeletedWithException(JenkinsRule)} does not work.
      */
     @Test
-    void testDoCleanupFileNotDeletedWithMockedException(JenkinsRule r) throws Exception {
+    void doCleanupFileNotDeletedWithMockedException(JenkinsRule r) throws Exception {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {

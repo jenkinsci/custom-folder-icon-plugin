@@ -36,7 +36,7 @@ class BuildStatusFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testGetAvailableJobs(JenkinsRule r) throws Exception {
+    void getAvailableJobs(JenkinsRule r) throws Exception {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
 
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
@@ -57,7 +57,7 @@ class BuildStatusFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testWithConfiguredJobs(JenkinsRule r) throws Exception {
+    void withConfiguredJobs(JenkinsRule r) throws Exception {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
@@ -116,7 +116,7 @@ class BuildStatusFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testFolder(JenkinsRule r) throws Exception {
+    void folder(JenkinsRule r) throws Exception {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         assertTrue(StringUtils.startsWith(customIcon.getDescription(), Messages.Folder_description()));
 
@@ -134,7 +134,7 @@ class BuildStatusFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testOrganizationFolder(JenkinsRule r) throws Exception {
+    void organizationFolder(JenkinsRule r) throws Exception {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         assertTrue(StringUtils.startsWith(customIcon.getDescription(), Messages.Folder_description()));
 
@@ -150,7 +150,7 @@ class BuildStatusFolderIconTest {
      * Test behavior of {@link DescriptorImpl}.
      */
     @Test
-    void testDescriptor(@SuppressWarnings("unused") JenkinsRule r) {
+    void descriptor(@SuppressWarnings("unused") JenkinsRule r) {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.BuildStatusFolderIcon_description(), descriptor.getDisplayName());
@@ -163,7 +163,7 @@ class BuildStatusFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testFinishedBuildStatusIcon(JenkinsRule r) throws Exception {
+    void finishedBuildStatusIcon(JenkinsRule r) throws Exception {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
@@ -219,7 +219,7 @@ class BuildStatusFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testRunningBuildStatusIcon(JenkinsRule r) throws Exception {
+    void runningBuildStatusIcon(JenkinsRule r) throws Exception {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
@@ -256,7 +256,7 @@ class BuildStatusFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testRunningNoPreviousBuildStatusIcon(JenkinsRule r) throws Exception {
+    void runningNoPreviousBuildStatusIcon(JenkinsRule r) throws Exception {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
@@ -287,7 +287,7 @@ class BuildStatusFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testDisabledBuildStatusIcon(JenkinsRule r) throws Exception {
+    void disabledBuildStatusIcon(JenkinsRule r) throws Exception {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
@@ -314,7 +314,7 @@ class BuildStatusFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testNoBuildStatusIcon(JenkinsRule r) throws Exception {
+    void noBuildStatusIcon(JenkinsRule r) throws Exception {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);

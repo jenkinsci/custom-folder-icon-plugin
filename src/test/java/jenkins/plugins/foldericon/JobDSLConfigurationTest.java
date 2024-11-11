@@ -35,7 +35,7 @@ class JobDSLConfigurationTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testBuildStatusFolderIcon(JenkinsRule r) throws Exception {
+    void buildStatusFolderIcon(JenkinsRule r) throws Exception {
         BuildStatusFolderIcon customIcon = createFolder(r, "build-status.groovy", BuildStatusFolderIcon.class);
         assertEquals(Set.of("dev", "main"), customIcon.getJobs());
         assertEquals(BallColor.NOTBUILT.getIconClassName(), customIcon.getIconClassName());
@@ -47,7 +47,7 @@ class JobDSLConfigurationTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testCustomIconFolderIcon(JenkinsRule r) throws Exception {
+    void customIconFolderIcon(JenkinsRule r) throws Exception {
         CustomFolderIcon customIcon = createFolder(r, "custom-icon.groovy", CustomFolderIcon.class);
         assertEquals("custom.png", customIcon.getFoldericon());
         assertEquals(Set.of("custom.png"), CustomFolderIcon.getAvailableIcons());
@@ -59,7 +59,7 @@ class JobDSLConfigurationTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testEmojiFolderIcon(JenkinsRule r) throws Exception {
+    void emojiFolderIcon(JenkinsRule r) throws Exception {
         EmojiFolderIcon customIcon = createFolder(r, "emoji-icon.groovy", EmojiFolderIcon.class);
         assertEquals("sloth", customIcon.getEmoji());
     }
@@ -70,7 +70,7 @@ class JobDSLConfigurationTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testFontAwesomeFolderIcon(JenkinsRule r) throws Exception {
+    void fontAwesomeFolderIcon(JenkinsRule r) throws Exception {
         FontAwesomeFolderIcon customIcon = createFolder(r, "fontawesome-icon.groovy", FontAwesomeFolderIcon.class);
         assertEquals("brands/jenkins", customIcon.getFontAwesome());
     }
@@ -81,7 +81,7 @@ class JobDSLConfigurationTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testIoniconFolderIcon(JenkinsRule r) throws Exception {
+    void ioniconFolderIcon(JenkinsRule r) throws Exception {
         IoniconFolderIcon customIcon = createFolder(r, "ionicon-icon.groovy", IoniconFolderIcon.class);
         assertEquals("jenkins", customIcon.getIonicon());
     }
@@ -92,7 +92,7 @@ class JobDSLConfigurationTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void testOpenSourceFolderIcon(JenkinsRule r) throws Exception {
+    void openSourceFolderIcon(JenkinsRule r) throws Exception {
         OpenSourceFolderIcon customIcon = createFolder(r, "opensource-icon.groovy", OpenSourceFolderIcon.class);
         assertEquals("cdf-icon-color", customIcon.getOssicon());
     }

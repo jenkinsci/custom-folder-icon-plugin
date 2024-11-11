@@ -31,7 +31,7 @@ class UITest {
      * @throws Throwable in case anything goes wrong
      */
     @Test
-    void testCustomFolderIconGlobalConfiguration(JenkinsRule r) throws Throwable {
+    void customFolderIconGlobalConfiguration(JenkinsRule r) throws Throwable {
         FilePath file = createCustomIconFile(r);
 
         try (JenkinsRule.WebClient webClient = r.createWebClient()) {
@@ -64,7 +64,7 @@ class UITest {
      * @throws Throwable in case anything goes wrong
      */
     @Test
-    void testBuildStatusFolderIconOption(JenkinsRule r) throws Throwable {
+    void buildStatusFolderIconOption(JenkinsRule r) throws Throwable {
         selectFolderIconOption(r, Messages.BuildStatusFolderIcon_description());
     }
 
@@ -74,7 +74,7 @@ class UITest {
      * @throws Throwable in case anything goes wrong
      */
     @Test
-    void testCustomFolderIconOption(JenkinsRule r) throws Throwable {
+    void customFolderIconOption(JenkinsRule r) throws Throwable {
         selectFolderIconOption(r, Messages.CustomFolderIcon_description());
     }
 
@@ -84,7 +84,7 @@ class UITest {
      * @throws Throwable in case anything goes wrong
      */
     @Test
-    void testEmojiFolderIconOption(JenkinsRule r) throws Throwable {
+    void emojiFolderIconOption(JenkinsRule r) throws Throwable {
         selectFolderIconOption(r, Messages.EmojiFolderIcon_description());
     }
 
@@ -94,7 +94,7 @@ class UITest {
      * @throws Throwable in case anything goes wrong
      */
     @Test
-    void testFontAwesomeFolderIconOption(JenkinsRule r) throws Throwable {
+    void fontAwesomeFolderIconOption(JenkinsRule r) throws Throwable {
         selectFolderIconOption(r, Messages.FontAwesomeFolderIcon_description());
     }
 
@@ -104,7 +104,7 @@ class UITest {
      * @throws Throwable in case anything goes wrong
      */
     @Test
-    void testIoniconFolderIconOption(JenkinsRule r) throws Throwable {
+    void ioniconFolderIconOption(JenkinsRule r) throws Throwable {
         selectFolderIconOption(r, Messages.IoniconFolderIcon_description());
     }
 
@@ -114,7 +114,7 @@ class UITest {
      * @throws Throwable in case anything goes wrong
      */
     @Test
-    void testOpenSourceFolderIconOption(JenkinsRule r) throws Throwable {
+    void openSourceFolderIconOption(JenkinsRule r) throws Throwable {
         selectFolderIconOption(r, Messages.OpenSourceFolderIcon_description());
     }
 
