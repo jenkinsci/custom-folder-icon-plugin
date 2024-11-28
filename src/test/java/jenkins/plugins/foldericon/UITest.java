@@ -110,12 +110,7 @@ class UITest {
             DomElement cropper = configure.getElementById("custom-icon-cropper");
             assertNotNull(cropper);
 
-            for (DomElement element : cropper.getElementsByTagName("img")) {
-                System.out.println(element.getAttribute("src"));
-            }
-
             DomElement image = cropper.getElementsByTagName("img").get(0);
-
             assertNotNull(image);
             assertEquals("/jenkins/plugin/custom-folder-icon/icons/default.svg", image.getAttribute("src"));
         }
