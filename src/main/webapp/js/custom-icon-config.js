@@ -1,10 +1,11 @@
 // global instance
 let croppie
 
+
 /**
  * Initialization of croppie and preview image.
  */
-window.addEventListener("DOMContentLoaded", () => {
+Behaviour.specify("[id^=\"custom-icon-cropper\"]", "CustomIconCropper", 0, () => {
     let preview = document.getElementById("custom-icon-name").getAttribute("value");
     let url;
     if (preview == null || preview === "") {
@@ -32,6 +33,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     return false;
 });
+
 
 /**
  * Set an icon for cropping / preview.
@@ -81,6 +83,7 @@ Behaviour.specify("[id^=\"custom-icon-upload\"]", "CustomIconPreview", 0, elemen
         return false;
     }
 });
+
 
 /**
  * Upload the cropped icon.
