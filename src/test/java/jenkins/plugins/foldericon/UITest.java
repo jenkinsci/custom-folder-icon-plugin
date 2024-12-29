@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 import com.cloudbees.hudson.plugins.folder.Folder;
 import hudson.FilePath;
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.htmlunit.WebAssert;
@@ -20,7 +19,6 @@ import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlOption;
 import org.htmlunit.html.HtmlPage;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
@@ -89,7 +87,6 @@ class UITest {
      * @throws Throwable in case anything goes wrong
      */
     @Test
-    @Timeout(value = 60, unit = TimeUnit.SECONDS)
     void customFolderIconCroppieLoaded(JenkinsRule r) throws Throwable {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
 
@@ -105,23 +102,20 @@ class UITest {
                             fail("Unable to select folder icon option " + Messages.CustomFolderIcon_description()));
 
             assertFalse(selection.isSelected());
-            configure = selection.click();
+            selection.click();
             assertTrue(selection.isSelected());
             r.submit(form);
 
+            configure = (HtmlPage) webClient.getPage(project, "configure");
+            DomElement cropper = configure.getElementById("custom-icon-cropper");
+            assertNotNull(cropper);
+
             String src = null;
-
-            // the test is a little flaky for reasons I do not understand
-            while (StringUtils.isEmpty(src)) {
-                configure = (HtmlPage) configure.refresh();
-                DomElement cropper = configure.getElementById("custom-icon-cropper");
-                assertNotNull(cropper);
-
-                if (!cropper.getElementsByTagName("img").isEmpty()) {
-                    DomElement image = cropper.getElementsByTagName("img").get(0);
-                    src = image.getAttribute("src");
-                }
+            if (!cropper.getElementsByTagName("img").isEmpty()) {
+                DomElement image = cropper.getElementsByTagName("img").get(0);
+                src = image.getAttribute("src");
             }
+            assertNotNull(src);
 
             assertEquals("/jenkins/plugin/custom-folder-icon/icons/default.svg", src);
         }
