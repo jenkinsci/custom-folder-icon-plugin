@@ -42,12 +42,11 @@
   <properties>
     <gitHubRepo>jenkinsci/custom-folder-icon-plugin</gitHubRepo>
     <jenkins.baseline>2.479</jenkins.baseline>
-    <jenkins.version>${jenkins.baseline}.1</jenkins.version>
+    <!-- REMOVE -->
+    <jenkins.version>2.494-rc35897.1f8edd4c1651</jenkins.version>
     <revision>2.19</revision>
     <changelist>-SNAPSHOT</changelist>
     <spotless.check.skip>false</spotless.check.skip>
-    <!-- needed for Jenkins.MANAGE support -->
-    <useBeta>true</useBeta>
   </properties>
 
   <dependencyManagement>
