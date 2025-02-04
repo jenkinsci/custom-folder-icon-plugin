@@ -65,8 +65,10 @@ class PermissionTest {
         r.jenkins.setAuthorizationStrategy(strategy);
 
         // unauthenticated
-        assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, null));
-        assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, project));
+        try (ACLContext ignored = ACL.as2(Jenkins.ANONYMOUS2)) {
+            assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, null));
+            assertThrows(AccessDeniedException.class, () -> descriptor.doUploadIcon(mockRequest, project));
+        }
 
         // Item.READ
         try (ACLContext ignored = ACL.as(User.get(READ_USER, true, Collections.emptyMap()))) {
@@ -127,8 +129,10 @@ class PermissionTest {
         r.jenkins.setAuthorizationStrategy(strategy);
 
         // unauthenticated
-        assertThrows(AccessDeniedException.class, () -> descriptor.doCleanup(null));
-        assertTrue(file.exists());
+        try (ACLContext ignored = ACL.as2(Jenkins.ANONYMOUS2)) {
+            assertThrows(AccessDeniedException.class, () -> descriptor.doCleanup(null));
+            assertTrue(file.exists());
+        }
 
         // Jenkins.READ
         try (ACLContext ignored = ACL.as(User.get(READ_USER, true, Collections.emptyMap()))) {
@@ -167,7 +171,9 @@ class PermissionTest {
         r.jenkins.setAuthorizationStrategy(strategy);
 
         // unauthenticated
-        assertThrows(AccessDeniedException.class, descriptor::getDiskUsage);
+        try (ACLContext ignored = ACL.as2(Jenkins.ANONYMOUS2)) {
+            assertThrows(AccessDeniedException.class, descriptor::getDiskUsage);
+        }
 
         // Jenkins.READ
         try (ACLContext ignored = ACL.as(User.get(READ_USER, true, Collections.emptyMap()))) {
