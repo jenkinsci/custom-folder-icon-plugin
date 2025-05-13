@@ -11,6 +11,7 @@ import hudson.model.Item;
 import hudson.model.User;
 import hudson.security.ACL;
 import hudson.security.ACLContext;
+import hudson.util.FormValidation;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.Collections;
@@ -198,6 +199,70 @@ class PermissionTest {
         try (ACLContext ignored = ACL.as(User.get(ADMINISTRATOR_USER, true, Collections.emptyMap()))) {
             String size = descriptor.getDiskUsage();
             assertEquals(FileUtils.byteCountToDisplaySize(0), size);
+        }
+    }
+
+    /**
+     * Test behavior of {@link UrlFolderIcon.DescriptorImpl#doCheckUrl(Item, String)}.
+     *
+     * @throws Exception in case anything goes wrong
+     */
+    @Test
+    void doCheckUrl() throws Exception {
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        UrlFolderIcon.DescriptorImpl descriptor = new UrlFolderIcon.DescriptorImpl();
+
+        r.jenkins.setSecurityRealm(r.createDummySecurityRealm());
+
+        MockAuthorizationStrategy strategy = new MockAuthorizationStrategy();
+        strategy.grant(Jenkins.ADMINISTER).onItems(project).to(ADMINISTRATOR_USER);
+        strategy.grant(Jenkins.MANAGE).onItems(project).to(MANAGE_USER);
+        strategy.grant(Item.CONFIGURE).onItems(project).to(CONFIGURE_USER);
+        strategy.grant(Item.READ).onItems(project).to(READ_USER);
+        r.jenkins.setAuthorizationStrategy(strategy);
+
+        // unauthenticated
+        try (ACLContext ignored = ACL.as2(Jenkins.ANONYMOUS2)) {
+            assertThrows(AccessDeniedException.class, () -> descriptor.doCheckUrl(null, "https://jenkins.io"));
+            assertThrows(AccessDeniedException.class, () -> descriptor.doCheckUrl(project, "https://jenkins.io"));
+        }
+
+        // Item.READ
+        try (ACLContext ignored = ACL.as(User.get(READ_USER, true, Collections.emptyMap()))) {
+            assertThrows(AccessDeniedException.class, () -> descriptor.doCheckUrl(null, "https://jenkins.io"));
+            assertThrows(AccessDeniedException.class, () -> descriptor.doCheckUrl(project, "https://jenkins.io"));
+
+            strategy.grant(Jenkins.READ).onRoot().to(READ_USER);
+            assertThrows(AccessDeniedException.class, () -> descriptor.doCheckUrl(project, "https://jenkins.io"));
+        }
+
+        // Item.CONFIGURE
+        try (ACLContext ignored = ACL.as(User.get(CONFIGURE_USER, true, Collections.emptyMap()))) {
+            assertThrows(AccessDeniedException.class, () -> descriptor.doCheckUrl(null, "https://jenkins.io"));
+
+            FormValidation result = descriptor.doCheckUrl(project, "https://jenkins.io");
+            assertEquals(FormValidation.ok().kind, result.kind);
+        }
+
+        // Jenkins.MANAGE
+        try (ACLContext ignored = ACL.as(User.get(MANAGE_USER, true, Collections.emptyMap()))) {
+            assertThrows(AccessDeniedException.class, () -> descriptor.doCheckUrl(null, "https://jenkins.io"));
+            assertThrows(AccessDeniedException.class, () -> descriptor.doCheckUrl(project, "https://jenkins.io"));
+
+            strategy.grant(Jenkins.MANAGE).onRoot().to(MANAGE_USER);
+            assertThrows(AccessDeniedException.class, () -> descriptor.doCheckUrl(project, "https://jenkins.io"));
+        }
+
+        // Jenkins.ADMINISTER
+        try (ACLContext ignored = ACL.as(User.get(ADMINISTRATOR_USER, true, Collections.emptyMap()))) {
+            assertThrows(AccessDeniedException.class, () -> descriptor.doCheckUrl(null, "https://jenkins.io"));
+
+            FormValidation result = descriptor.doCheckUrl(project, "https://jenkins.io");
+            assertEquals(FormValidation.ok().kind, result.kind);
+
+            strategy.grant(Jenkins.ADMINISTER).onRoot().to(ADMINISTRATOR_USER);
+            result = descriptor.doCheckUrl(project, "https://jenkins.io");
+            assertEquals(FormValidation.ok().kind, result.kind);
         }
     }
 }

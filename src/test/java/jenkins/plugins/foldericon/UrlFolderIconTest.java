@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
+import hudson.model.Item;
 import hudson.util.FormValidation;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.UrlFolderIcon.DescriptorImpl;
@@ -97,20 +98,20 @@ class UrlFolderIconTest {
     }
 
     /**
-     * Test behavior of {@link DescriptorImpl#doCheckUrl(String)}.
+     * Test behavior of {@link DescriptorImpl#doCheckUrl(Item, String)}.
      */
     @Test
     void doCheckUrl() {
         UrlFolderIcon customIcon = new UrlFolderIcon(DUMMY_ICON);
         DescriptorImpl descriptor = customIcon.getDescriptor();
 
-        assertEquals(FormValidation.ok().kind, descriptor.doCheckUrl(null).kind);
-        assertEquals(FormValidation.ok().kind, descriptor.doCheckUrl("").kind);
-        assertEquals(FormValidation.ok().kind, descriptor.doCheckUrl("http://jenkins.io").kind);
-        assertEquals(FormValidation.ok().kind, descriptor.doCheckUrl("https://jenkins.io").kind);
-        assertEquals(FormValidation.ok().kind, descriptor.doCheckUrl("HTTPS://jenkins.io").kind);
+        assertEquals(FormValidation.ok().kind, descriptor.doCheckUrl(null, null).kind);
+        assertEquals(FormValidation.ok().kind, descriptor.doCheckUrl(null, "").kind);
+        assertEquals(FormValidation.ok().kind, descriptor.doCheckUrl(null, "http://jenkins.io").kind);
+        assertEquals(FormValidation.ok().kind, descriptor.doCheckUrl(null, "https://jenkins.io").kind);
+        assertEquals(FormValidation.ok().kind, descriptor.doCheckUrl(null, "HTTPS://jenkins.io").kind);
 
-        FormValidation actual = descriptor.doCheckUrl(DUMMY_ICON);
+        FormValidation actual = descriptor.doCheckUrl(null, DUMMY_ICON);
         FormValidation expected = FormValidation.error(Messages.Url_invalidUrl());
         assertEquals(expected.kind, actual.kind);
         assertEquals(expected.getMessage(), actual.getMessage());
