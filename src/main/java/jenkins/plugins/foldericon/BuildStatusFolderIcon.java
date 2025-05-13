@@ -80,7 +80,7 @@ public class BuildStatusFolderIcon extends FolderIcon {
                     .collect(Collectors.toSet());
         }
 
-        // if filtered result is empty return all available instead
+        // if a filtered result is empty, return all available instead
         return filteredJobs.isEmpty() ? availableJobs : filteredJobs;
     }
 

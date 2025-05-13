@@ -2,15 +2,17 @@ package jenkins.plugins.foldericon.utils;
 
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.model.Result;
-import hudson.tasks.Publisher;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.Builder;
 
 /**
  * Force build results.
  */
-public class ResultPublisher extends Publisher {
+public class ResultBuilder extends Builder {
     private final Result result;
 
     /**
@@ -18,8 +20,7 @@ public class ResultPublisher extends Publisher {
      *
      * @param result the desired result.
      */
-    @SuppressWarnings("deprecation")
-    public ResultPublisher(Result result) {
+    public ResultBuilder(Result result) {
         this.result = result;
     }
 
@@ -30,7 +31,12 @@ public class ResultPublisher extends Publisher {
     }
 
     @Override
-    public Descriptor<Publisher> getDescriptor() {
-        return new Descriptor<>(ResultPublisher.class) {};
+    public Descriptor<Builder> getDescriptor() {
+        return new BuildStepDescriptor<>() {
+            @Override
+            public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+                return true;
+            }
+        };
     }
 }

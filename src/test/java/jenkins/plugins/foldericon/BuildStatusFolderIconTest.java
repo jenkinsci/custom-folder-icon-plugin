@@ -16,8 +16,9 @@ import java.util.Set;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.BuildStatusFolderIcon.DescriptorImpl;
 import jenkins.plugins.foldericon.utils.DelayBuilder;
-import jenkins.plugins.foldericon.utils.ResultPublisher;
+import jenkins.plugins.foldericon.utils.ResultBuilder;
 import org.apache.commons.lang.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
@@ -30,13 +31,20 @@ import org.mockito.MockedStatic;
 @WithJenkins
 class BuildStatusFolderIconTest {
 
+    private JenkinsRule r;
+
+    @BeforeEach
+    void setUp(JenkinsRule rule) {
+        r = rule;
+    }
+
     /**
      * Test behavior of {@link BuildStatusFolderIcon#getAvailableJobs()}.
      *
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void getAvailableJobs(JenkinsRule r) throws Exception {
+    void getAvailableJobs() throws Exception {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
 
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
@@ -57,7 +65,7 @@ class BuildStatusFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void withConfiguredJobs(JenkinsRule r) throws Exception {
+    void withConfiguredJobs() throws Exception {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
@@ -69,15 +77,16 @@ class BuildStatusFolderIconTest {
             r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(successBuild));
 
             FreeStyleProject aborted = project.createProject(FreeStyleProject.class, "Aborted");
-            aborted.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.ABORTED)));
+            aborted.getBuildersList().replaceBy(Collections.singleton(new ResultBuilder(Result.ABORTED)));
             r.buildAndAssertStatus(Result.ABORTED, aborted);
 
             Folder subfolder = project.createProject(Folder.class, "subfolder");
             FreeStyleProject nested = subfolder.createProject(FreeStyleProject.class, "Nested");
-            nested.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.NOT_BUILT)));
+            nested.getBuildersList().replaceBy(Collections.singleton(new ResultBuilder(Result.NOT_BUILT)));
             r.buildAndAssertStatus(Result.NOT_BUILT, nested);
 
             // Validate
+
             BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(Set.of());
             project.setIcon(customIcon);
             FolderIcon icon = project.getIcon();
@@ -116,7 +125,7 @@ class BuildStatusFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void folder(JenkinsRule r) throws Exception {
+    void folder() throws Exception {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         assertTrue(StringUtils.startsWith(customIcon.getDescription(), Messages.Folder_description()));
 
@@ -134,7 +143,7 @@ class BuildStatusFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void organizationFolder(JenkinsRule r) throws Exception {
+    void organizationFolder() throws Exception {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         assertTrue(StringUtils.startsWith(customIcon.getDescription(), Messages.Folder_description()));
 
@@ -150,7 +159,7 @@ class BuildStatusFolderIconTest {
      * Test behavior of {@link DescriptorImpl}.
      */
     @Test
-    void descriptor(@SuppressWarnings("unused") JenkinsRule r) {
+    void descriptor() {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.BuildStatusFolderIcon_description(), descriptor.getDisplayName());
@@ -163,7 +172,7 @@ class BuildStatusFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void finishedBuildStatusIcon(JenkinsRule r) throws Exception {
+    void finishedBuildStatusIcon() throws Exception {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
@@ -185,28 +194,28 @@ class BuildStatusFolderIconTest {
             validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
             // Unstable
             FreeStyleProject unstable = project.createProject(FreeStyleProject.class, "Unstable");
-            unstable.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.UNSTABLE)));
+            unstable.getBuildersList().replaceBy(Collections.singleton(new ResultBuilder(Result.UNSTABLE)));
             r.buildAndAssertStatus(Result.UNSTABLE, unstable);
 
             validateIcon(icon, BallColor.YELLOW.getImage(), BallColor.YELLOW.getIconClassName());
 
             // Failure
             FreeStyleProject failure = project.createProject(FreeStyleProject.class, "Failure");
-            failure.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.FAILURE)));
+            failure.getBuildersList().replaceBy(Collections.singleton(new ResultBuilder(Result.FAILURE)));
             r.buildAndAssertStatus(Result.FAILURE, failure);
 
             validateIcon(icon, BallColor.RED.getImage(), BallColor.RED.getIconClassName());
 
             // Not build
             FreeStyleProject notBuilt = project.createProject(FreeStyleProject.class, "Not Built");
-            notBuilt.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.NOT_BUILT)));
+            notBuilt.getBuildersList().replaceBy(Collections.singleton(new ResultBuilder(Result.NOT_BUILT)));
             r.buildAndAssertStatus(Result.NOT_BUILT, notBuilt);
 
             validateIcon(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconClassName());
 
             // Aborted
             FreeStyleProject aborted = project.createProject(FreeStyleProject.class, "Aborted");
-            aborted.getPublishersList().replaceBy(Collections.singleton(new ResultPublisher(Result.ABORTED)));
+            aborted.getBuildersList().replaceBy(Collections.singleton(new ResultBuilder(Result.ABORTED)));
             r.buildAndAssertStatus(Result.ABORTED, aborted);
 
             validateIcon(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconClassName());
@@ -219,7 +228,7 @@ class BuildStatusFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void runningBuildStatusIcon(JenkinsRule r) throws Exception {
+    void runningBuildStatusIcon() throws Exception {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
@@ -256,7 +265,7 @@ class BuildStatusFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void runningNoPreviousBuildStatusIcon(JenkinsRule r) throws Exception {
+    void runningNoPreviousBuildStatusIcon() throws Exception {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
@@ -287,7 +296,7 @@ class BuildStatusFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void disabledBuildStatusIcon(JenkinsRule r) throws Exception {
+    void disabledBuildStatusIcon() throws Exception {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
@@ -314,7 +323,7 @@ class BuildStatusFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void noBuildStatusIcon(JenkinsRule r) throws Exception {
+    void noBuildStatusIcon() throws Exception {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);

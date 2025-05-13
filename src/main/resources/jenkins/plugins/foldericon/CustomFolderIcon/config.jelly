@@ -1,31 +1,33 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
-    <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/custom-icon.css" type="text/css" />
-    <script src="${rootURL}/plugin/custom-folder-icon/js/custom-icon-config.js" type="text/javascript" />
-    <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/croppie.css" type="text/css" />
-    <script src="${rootURL}/plugin/custom-folder-icon/scripts/croppie.js" type="text/javascript" />
-    <j:invokeStatic var="customicons" method="getAvailableIcons"
-                    className="jenkins.plugins.foldericon.CustomFolderIcon" />
-    <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('upload')}">
-        <div>
-            <div id="custom-icon-cropper"><!-- set in custom-icon-config.js --></div>
-            <f:file id="custom-icon-upload" accept="image/*" clazz="custom-icon jenkins-file-upload" />
-            <st:nbsp />
-            <input id="custom-icon-upload-apply" type="button" value="${%Apply}" />
-        </div>
-    </f:entry>
-    <j:if test="${not empty customicons}">
-        <f:advanced title="${%AvailableIcons}${not empty customicons ? ' (' + customicons.size() + ')' : ''}">
-            <j:forEach var="icon" items="${customicons}">
-                <a tooltip="${icon}">
-                    <img id="custom-icon-preview-${icon}" class="custom-icon-selection"
-                         src="${rootURL}/userContent/customFolderIcons/${icon}" />
-                </a>
-                <st:nbsp />
-            </j:forEach>
-        </f:advanced>
-    </j:if>
-    <f:entry field="foldericon">
-        <f:textbox id="custom-icon-name" value="${instance.foldericon}" clazz="custom-icon-name" />
-    </f:entry>
+  <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/custom-icon.css" type="text/css"/>
+  <script src="${rootURL}/plugin/custom-folder-icon/js/custom-icon-config.js" type="text/javascript"/>
+  <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/croppie.css" type="text/css"/>
+  <script src="${rootURL}/plugin/custom-folder-icon/scripts/croppie.js" type="text/javascript"/>
+  <j:invokeStatic var="customicons" method="getAvailableIcons"
+                  className="jenkins.plugins.foldericon.CustomFolderIcon"/>
+  <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('upload')}">
+    <div>
+      <div id="custom-icon-cropper"><!-- set in custom-icon-config.js --></div>
+      <f:file id="custom-icon-upload" accept="image/*" clazz="custom-icon jenkins-file-upload"/>
+      <st:nbsp/>
+      <button id="custom-icon-upload-apply" class="jenkins-button">
+        ${%Apply}
+      </button>
+    </div>
+  </f:entry>
+  <j:if test="${not empty customicons}">
+    <f:advanced title="${%AvailableIcons}${not empty customicons ? ' (' + customicons.size() + ')' : ''}">
+      <j:forEach var="icon" items="${customicons}">
+        <a tooltip="${icon}">
+          <img id="custom-icon-preview-${icon}" class="custom-icon-selection"
+               src="${rootURL}/userContent/customFolderIcons/${icon}"/>
+        </a>
+        <st:nbsp/>
+      </j:forEach>
+    </f:advanced>
+  </j:if>
+  <f:entry field="foldericon">
+    <f:textbox id="custom-icon-name" value="${instance.foldericon}" clazz="custom-icon-name"/>
+  </f:entry>
 </j:jelly>

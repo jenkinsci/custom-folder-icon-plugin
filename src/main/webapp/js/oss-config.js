@@ -1,7 +1,7 @@
 /**
  * Select the icon for preview.
  */
-Behaviour.specify("[id^=\"select-oss-\"]", "OssPreviewSelection", 0, element => {
+Behaviour.specify('[id^="select-oss-"]', "OssPreviewSelection", 0, (element) => {
     element.onclick = () => {
         let icon = element.id.replace("select-oss-", "");
 
@@ -23,5 +23,5 @@ Behaviour.specify("[id^=\"select-oss-\"]", "OssPreviewSelection", 0, element => 
         oldPreview.parentElement.replaceChild(newPreview, oldPreview);
 
         return false;
-    }
+    };
 });

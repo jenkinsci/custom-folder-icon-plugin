@@ -18,6 +18,7 @@ import jenkins.model.Jenkins;
 import jenkins.plugins.foldericon.CustomFolderIcon.DescriptorImpl;
 import jenkins.plugins.foldericon.utils.MockMultiPartRequest;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.MockAuthorizationStrategy;
@@ -40,13 +41,20 @@ class PermissionTest {
     private static final String FILE_NAME_PATTERN =
             "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\\.png$";
 
+    private JenkinsRule r;
+
+    @BeforeEach
+    void setUp(JenkinsRule rule) {
+        r = rule;
+    }
+
     /**
      * Test behavior of {@link DescriptorImpl#doUploadIcon(StaplerRequest2, Item)}.
      *
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void doUploadIcon(JenkinsRule r) throws Exception {
+    void doUploadIcon() throws Exception {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
 
         File upload = new File("./src/main/webapp/icons/default.svg");
@@ -115,7 +123,7 @@ class PermissionTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void doCleanup(JenkinsRule r) throws Exception {
+    void doCleanup() throws Exception {
         FilePath file = createCustomIconFile(r);
 
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
@@ -159,7 +167,7 @@ class PermissionTest {
      * Test behavior of {@link CustomFolderIconConfiguration#getDiskUsage()}.
      */
     @Test
-    void getDiskUsage(JenkinsRule r) {
+    void getDiskUsage() {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         r.jenkins.setSecurityRealm(r.createDummySecurityRealm());

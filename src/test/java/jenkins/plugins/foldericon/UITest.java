@@ -1,6 +1,7 @@
 package jenkins.plugins.foldericon;
 
 import static jenkins.plugins.foldericon.utils.TestUtils.createCustomIconFile;
+import static org.htmlunit.WebAssert.assertTextPresent;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -11,14 +12,17 @@ import static org.junit.jupiter.api.Assertions.fail;
 import com.cloudbees.hudson.plugins.folder.Folder;
 import hudson.FilePath;
 import java.time.Duration;
+import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.htmlunit.WebAssert;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlOption;
 import org.htmlunit.html.HtmlPage;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
@@ -28,23 +32,74 @@ import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 @WithJenkins
 class UITest {
 
+    private JenkinsRule r;
+
+    @BeforeEach
+    void setUp(JenkinsRule rule) {
+        r = rule;
+    }
+
+    static Stream<String> options() {
+        return Stream.of(
+                Messages.BuildStatusFolderIcon_description(),
+                Messages.CustomFolderIcon_description(),
+                Messages.EmojiFolderIcon_description(),
+                Messages.FontAwesomeFolderIcon_description(),
+                Messages.IoniconFolderIcon_description(),
+                Messages.OpenSourceFolderIcon_description(),
+                Messages.UrlFolderIcon_description());
+    }
+
     /**
-     * Test behavior of the CustomFolderIconConfiguration.
+     * Test the behavior of the folder icon option selection.
+     *
+     * @throws Throwable in case anything goes wrong
+     */
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("options")
+    void selectFolderIconOption(String folderIconOption) throws Throwable {
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+
+        try (JenkinsRule.WebClient webClient = r.createWebClient()) {
+            HtmlPage configure = webClient.getPage(project, "configure");
+            HtmlForm form = configure.getFormByName("config");
+
+            HtmlOption selection = (HtmlOption) configure.getElementsByTagName("option").stream()
+                    .filter(option -> StringUtils.equals(option.getTextContent(), folderIconOption))
+                    .findFirst()
+                    .orElseThrow(() -> fail("Unable to select folder icon option " + folderIconOption));
+
+            assertFalse(selection.isSelected());
+            configure = selection.click();
+            assertTrue(selection.isSelected());
+            r.submit(form);
+
+            configure = (HtmlPage) configure.refresh();
+            selection = (HtmlOption) configure.getElementsByTagName("option").stream()
+                    .filter(option -> StringUtils.equals(option.getTextContent(), folderIconOption))
+                    .findFirst()
+                    .orElseThrow(() -> fail("Unable to select folder icon option " + folderIconOption));
+
+            assertTrue(selection.isSelected());
+        }
+    }
+
+    /**
+     * Test the behavior of the CustomFolderIconConfiguration.
      *
      * @throws Throwable in case anything goes wrong
      */
     @Test
-    void customFolderIconGlobalConfiguration(JenkinsRule r) throws Throwable {
+    void customFolderIconGlobalConfiguration() throws Throwable {
         FilePath file = createCustomIconFile(r);
 
         try (JenkinsRule.WebClient webClient = r.createWebClient()) {
             HtmlPage appearance = webClient.goTo("manage/appearance");
-            WebAssert.assertTextPresent(appearance, "Custom Folder Icons");
-            WebAssert.assertTextPresent(
-                    appearance, "Disk usage of icons:   " + FileUtils.byteCountToDisplaySize(file.length()));
+            assertTextPresent(appearance, "Custom Folder Icons");
+            assertTextPresent(appearance, "Disk usage of icons:   " + FileUtils.byteCountToDisplaySize(file.length()));
 
-            appearance.getElementsByTagName("input").stream()
-                    .filter(input -> StringUtils.equals(input.getAttribute("value"), "Cleanup unused icons"))
+            appearance.getElementsByTagName("button").stream()
+                    .filter(button -> StringUtils.equals(button.getTextContent(), "Cleanup unused icons"))
                     .findFirst()
                     .orElseThrow(() -> fail("Unable to cleanup unused icons"))
                     .click();
@@ -57,37 +112,17 @@ class UITest {
             assertFalse(file.exists());
 
             appearance = (HtmlPage) appearance.refresh();
-            WebAssert.assertTextPresent(appearance, "Disk usage of icons:   " + FileUtils.byteCountToDisplaySize(0L));
+            assertTextPresent(appearance, "Disk usage of icons:   " + FileUtils.byteCountToDisplaySize(0L));
         }
     }
 
     /**
-     * Test behavior of the folder icon option selection.
+     * Test the behavior of croppie.js.
      *
      * @throws Throwable in case anything goes wrong
      */
     @Test
-    void buildStatusFolderIconOption(JenkinsRule r) throws Throwable {
-        selectFolderIconOption(r, Messages.BuildStatusFolderIcon_description());
-    }
-
-    /**
-     * Test behavior of the folder icon option selection.
-     *
-     * @throws Throwable in case anything goes wrong
-     */
-    @Test
-    void customFolderIconOption(JenkinsRule r) throws Throwable {
-        selectFolderIconOption(r, Messages.CustomFolderIcon_description());
-    }
-
-    /**
-     * Test behavior of croppie.js.
-     *
-     * @throws Throwable in case anything goes wrong
-     */
-    @Test
-    void customFolderIconCroppieLoaded(JenkinsRule r) throws Throwable {
+    void customFolderIconCroppieLoaded() throws Throwable {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
 
         try (JenkinsRule.WebClient webClient = r.createWebClient()) {
@@ -106,7 +141,7 @@ class UITest {
             assertTrue(selection.isSelected());
             r.submit(form);
 
-            configure = (HtmlPage) webClient.getPage(project, "configure");
+            configure = webClient.getPage(project, "configure");
             DomElement cropper = configure.getElementById("custom-icon-cropper");
             assertNotNull(cropper);
 
@@ -118,73 +153,6 @@ class UITest {
             assertNotNull(src);
 
             assertEquals("/jenkins/plugin/custom-folder-icon/icons/default.svg", src);
-        }
-    }
-
-    /**
-     * Test behavior of the folder icon option selection.
-     *
-     * @throws Throwable in case anything goes wrong
-     */
-    @Test
-    void emojiFolderIconOption(JenkinsRule r) throws Throwable {
-        selectFolderIconOption(r, Messages.EmojiFolderIcon_description());
-    }
-
-    /**
-     * Test behavior of the folder icon option selection.
-     *
-     * @throws Throwable in case anything goes wrong
-     */
-    @Test
-    void fontAwesomeFolderIconOption(JenkinsRule r) throws Throwable {
-        selectFolderIconOption(r, Messages.FontAwesomeFolderIcon_description());
-    }
-
-    /**
-     * Test behavior of the folder icon option selection.
-     *
-     * @throws Throwable in case anything goes wrong
-     */
-    @Test
-    void ioniconFolderIconOption(JenkinsRule r) throws Throwable {
-        selectFolderIconOption(r, Messages.IoniconFolderIcon_description());
-    }
-
-    /**
-     * Test behavior of the folder icon option selection.
-     *
-     * @throws Throwable in case anything goes wrong
-     */
-    @Test
-    void openSourceFolderIconOption(JenkinsRule r) throws Throwable {
-        selectFolderIconOption(r, Messages.OpenSourceFolderIcon_description());
-    }
-
-    private static void selectFolderIconOption(JenkinsRule r, String folderIcon) throws Throwable {
-        Folder project = r.jenkins.createProject(Folder.class, "folder");
-
-        try (JenkinsRule.WebClient webClient = r.createWebClient()) {
-            HtmlPage configure = webClient.getPage(project, "configure");
-            HtmlForm form = configure.getFormByName("config");
-
-            HtmlOption selection = (HtmlOption) configure.getElementsByTagName("option").stream()
-                    .filter(option -> StringUtils.equals(option.getTextContent(), folderIcon))
-                    .findFirst()
-                    .orElseThrow(() -> fail("Unable to select folder icon option " + folderIcon));
-
-            assertFalse(selection.isSelected());
-            configure = selection.click();
-            assertTrue(selection.isSelected());
-            r.submit(form);
-
-            configure = (HtmlPage) configure.refresh();
-            selection = (HtmlOption) configure.getElementsByTagName("option").stream()
-                    .filter(option -> StringUtils.equals(option.getTextContent(), folderIcon))
-                    .findFirst()
-                    .orElseThrow(() -> fail("Unable to select folder icon option " + folderIcon));
-
-            assertTrue(selection.isSelected());
         }
     }
 }

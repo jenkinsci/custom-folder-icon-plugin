@@ -70,7 +70,7 @@ public class CustomFolderIconConfiguration extends PageDecorator {
     }
 
     /**
-     * Cleanup unused icons.
+     * Clean up unused icons.
      *
      * @param req the request
      * @return OK

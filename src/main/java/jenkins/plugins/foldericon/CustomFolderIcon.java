@@ -100,7 +100,7 @@ public class CustomFolderIcon extends FolderIcon {
 
     @Override
     public String getImageOf(String size) {
-        if (StringUtils.isNotEmpty(getFoldericon())) {
+        if (StringUtils.isNotBlank(getFoldericon())) {
             return Stapler.getCurrentRequest2().getContextPath() + Jenkins.RESOURCE_PATH + "/" + USER_CONTENT_PATH + "/"
                     + PLUGIN_PATH + "/" + getFoldericon();
         } else {
@@ -191,7 +191,7 @@ public class CustomFolderIcon extends FolderIcon {
                 FolderIcon icon = ((AbstractFolder<?>) item).getIcon();
                 if (icon instanceof CustomFolderIcon customFolderIcon) {
                     String foldericon = customFolderIcon.getFoldericon();
-                    if (StringUtils.isNotEmpty(foldericon)) {
+                    if (StringUtils.isNotBlank(foldericon)) {
                         // delete the icon only if there is no other usage
                         boolean orphan = Jenkins.get().getAllItems(AbstractFolder.class).stream()
                                         .filter(folder -> folder.getIcon() instanceof CustomFolderIcon customIcon

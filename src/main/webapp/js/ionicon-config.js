@@ -1,7 +1,7 @@
 /**
  * Select the icon for preview.
  */
-Behaviour.specify("[id^=\"select-ionicon-\"]", "IoniconPreviewSelection", 0, element => {
+Behaviour.specify('[id^="select-ionicon-"]', "IoniconPreviewSelection", 0, (element) => {
     element.onclick = () => {
         let icon = element.id.replace("select-ionicon-", "");
 
@@ -23,5 +23,5 @@ Behaviour.specify("[id^=\"select-ionicon-\"]", "IoniconPreviewSelection", 0, ele
         oldPreview.parentElement.replaceChild(newPreview, oldPreview);
 
         return false;
-    }
+    };
 });

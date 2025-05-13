@@ -28,6 +28,7 @@ import jenkins.plugins.foldericon.CustomFolderIcon.DescriptorImpl;
 import jenkins.plugins.foldericon.utils.MockMultiPartRequest;
 import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.lang.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
@@ -50,13 +51,20 @@ class CustomFolderIconTest {
     private static final String FILE_NAME_PATTERN =
             "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\\.png$";
 
+    private JenkinsRule r;
+
+    @BeforeEach
+    void setUp(JenkinsRule rule) {
+        r = rule;
+    }
+
     /**
      * Test behavior on a regular {@link Folder}.
      *
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void folder(JenkinsRule r) throws Exception {
+    void folder() throws Exception {
         CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
         assertEquals(DUMMY_PNG, customIcon.getFoldericon());
         assertEquals(Messages.Folder_description(), customIcon.getDescription());
@@ -77,7 +85,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void organizationFolder(JenkinsRule r) throws Exception {
+    void organizationFolder() throws Exception {
         CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
         assertEquals(DUMMY_PNG, customIcon.getFoldericon());
         assertEquals(Messages.Folder_description(), customIcon.getDescription());
@@ -98,7 +106,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void defaultImagePath(JenkinsRule r) throws Exception {
+    void defaultImagePath() throws Exception {
         CustomFolderIcon customIcon = new CustomFolderIcon(null);
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
@@ -118,7 +126,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void imagePath(JenkinsRule r) throws Exception {
+    void imagePath() throws Exception {
         CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
@@ -136,7 +144,7 @@ class CustomFolderIconTest {
      * Test behavior of {@link DescriptorImpl}.
      */
     @Test
-    void descriptor(@SuppressWarnings("unused") JenkinsRule r) {
+    void descriptor() {
         CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.CustomFolderIcon_description(), descriptor.getDisplayName());
@@ -149,7 +157,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void doUploadIcon(JenkinsRule r) throws Exception {
+    void doUploadIcon() throws Exception {
         File upload = new File("./src/main/webapp/icons/default.svg");
 
         byte[] buffer = createMultipartEntityBuffer(upload);
@@ -177,7 +185,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void doUploadWithItem(JenkinsRule r) throws Exception {
+    void doUploadWithItem() throws Exception {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         File upload = new File("./src/main/webapp/icons/default.svg");
 
@@ -206,7 +214,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void doUploadIconNoFile(@SuppressWarnings("unused") JenkinsRule r) throws Exception {
+    void doUploadIconNoFile() throws Exception {
         MockMultiPartRequest mockRequest = new MockMultiPartRequest(null);
         DescriptorImpl descriptor = new DescriptorImpl();
         HttpResponse response = descriptor.doUploadIcon(mockRequest, null);
@@ -220,7 +228,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void doUploadBrokenRequest(@SuppressWarnings("unused") JenkinsRule r) throws Exception {
+    void doUploadBrokenRequest() throws Exception {
         DescriptorImpl descriptor = new DescriptorImpl();
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
@@ -238,7 +246,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void doUploadLargeFile(@SuppressWarnings("unused") JenkinsRule r) throws Exception {
+    void doUploadLargeFile() throws Exception {
         File upload = File.createTempFile("large", ".png");
         upload.deleteOnExit();
         try (RandomAccessFile raf = new RandomAccessFile(upload, "rw")) {
@@ -263,7 +271,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void doUploadEmptyFile(@SuppressWarnings("unused") JenkinsRule r) throws Exception {
+    void doUploadEmptyFile() throws Exception {
         File upload = File.createTempFile("empty", ".png");
         upload.deleteOnExit();
 
@@ -287,7 +295,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void doUploadIconThrowingExceptions(@SuppressWarnings("unused") JenkinsRule r) throws Exception {
+    void doUploadIconThrowingExceptions() throws Exception {
         List<String> exceptions = Arrays.asList("IOException", "InterruptedException", "ServletException");
         String exceptionMessage = "Oh no :(";
 
@@ -317,7 +325,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void getAvailableIcons(JenkinsRule r) throws Exception {
+    void getAvailableIcons() throws Exception {
         Set<String> icons = CustomFolderIcon.getAvailableIcons();
 
         assertNotNull(icons);
@@ -353,7 +361,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void getAvailableIconsThrowingExceptions(JenkinsRule r) throws Exception {
+    void getAvailableIconsThrowingExceptions() throws Exception {
         Set<String> icons = CustomFolderIcon.getAvailableIcons();
 
         assertNotNull(icons);
@@ -384,7 +392,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void getAvailableIconsComparatorThrowingExceptions(JenkinsRule r) throws Exception {
+    void getAvailableIconsComparatorThrowingExceptions() throws Exception {
         Set<String> icons = CustomFolderIcon.getAvailableIcons();
 
         assertNotNull(icons);
@@ -461,7 +469,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void cleanupListener(JenkinsRule r) throws Exception {
+    void cleanupListener() throws Exception {
         FilePath file = createCustomIconFile(r);
         CustomFolderIcon customIcon = new CustomFolderIcon(file.getName());
 
@@ -479,7 +487,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void cleanupListenerOtherProjects(JenkinsRule r) throws Exception {
+    void cleanupListenerOtherProjects() throws Exception {
         FilePath file = createCustomIconFile(r);
         CustomFolderIcon customIcon = new CustomFolderIcon(file.getName());
 
@@ -508,7 +516,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void cleanupListenerNoFile(JenkinsRule r) throws Exception {
+    void cleanupListenerNoFile() throws Exception {
         FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
         FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
         iconDir.mkdirs();
@@ -530,7 +538,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void cleanupListenerDefaultIcon(JenkinsRule r) throws Exception {
+    void cleanupListenerDefaultIcon() throws Exception {
         FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
         FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
         iconDir.mkdirs();
@@ -551,7 +559,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void cleanupListenerIconUsed(JenkinsRule r) throws Exception {
+    void cleanupListenerIconUsed() throws Exception {
         FilePath file = createCustomIconFile(r);
         CustomFolderIcon customIcon = new CustomFolderIcon(file.getName());
 
@@ -574,7 +582,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void cleanupListenerFileNotDeleted(JenkinsRule r) throws Exception {
+    void cleanupListenerFileNotDeleted() throws Exception {
         FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
 
         FilePath file = createCustomIconFile(r);
@@ -609,7 +617,7 @@ class CustomFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void cleanupListenerFileNotDeletedWithException(JenkinsRule r) throws Exception {
+    void cleanupListenerFileNotDeletedWithException() throws Exception {
         FilePath file = createCustomIconFile(r);
         File remoteFile = new File(file.getRemote());
 
@@ -644,10 +652,10 @@ class CustomFolderIconTest {
      * Test behavior of {@link CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)} when the file is not deleted due to an exception.
      *
      * @throws Exception in case anything goes wrong
-     * @implNote Sometimes {@link #cleanupListenerFileNotDeletedWithException(JenkinsRule)} does not work.
+     * @implNote Sometimes {@link #cleanupListenerFileNotDeletedWithException()} does not work.
      */
     @Test
-    void cleanupListenerFileNotDeletedWithMockedException(JenkinsRule r) throws Exception {
+    void cleanupListenerFileNotDeletedWithMockedException() throws Exception {
         FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
 
         FilePath file = createCustomIconFile(r);

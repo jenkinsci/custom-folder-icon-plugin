@@ -5,30 +5,32 @@ import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import com.cloudbees.hudson.plugins.folder.FolderIconDescriptor;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
-import io.jenkins.plugins.ionicons.Ionicons;
+import hudson.util.FormValidation;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 
 /**
- * An Ionicon Folder Icon.
+ * An URL Folder Icon.
  */
-public class IoniconFolderIcon extends FolderIcon {
+public class UrlFolderIcon extends FolderIcon {
 
-    private static final String DEFAULT_ICON = "jenkins";
+    private static final String DEFAULT_ICON_PATH = "plugin/custom-folder-icon/icons/default.svg";
 
-    private final String ionicon;
+    private final String url;
 
     private AbstractFolder<?> owner;
 
     /**
      * Ctor.
      *
-     * @param ionicon the icon to use
+     * @param url the url to use
      */
     @DataBoundConstructor
-    public IoniconFolderIcon(String ionicon) {
-        this.ionicon = StringUtils.isBlank(ionicon) ? DEFAULT_ICON : ionicon;
+    public UrlFolderIcon(String url) {
+        this.url = url;
     }
 
     @Override
@@ -37,20 +39,19 @@ public class IoniconFolderIcon extends FolderIcon {
     }
 
     /**
-     * @return the icon
+     * @return the url
      */
-    public String getIonicon() {
-        return ionicon;
+    public String getUrl() {
+        return url;
     }
 
     @Override
     public String getImageOf(String size) {
-        return null;
-    }
-
-    @Override
-    public String getIconClassName() {
-        return Ionicons.getIconClassName(getIonicon());
+        if (StringUtils.isNotBlank(getUrl())) {
+            return getUrl();
+        } else {
+            return Jenkins.get().getRootUrl() + DEFAULT_ICON_PATH;
+        }
     }
 
     @Override
@@ -76,7 +77,15 @@ public class IoniconFolderIcon extends FolderIcon {
         @Override
         @NonNull
         public String getDisplayName() {
-            return Messages.IoniconFolderIcon_description();
+            return Messages.UrlFolderIcon_description();
+        }
+
+        @RequirePOST
+        public FormValidation doCheckUrl(@QueryParameter String value) {
+            if (StringUtils.isNotBlank(value) && !StringUtils.startsWithIgnoreCase(value, "http")) {
+                return FormValidation.error(Messages.Url_invalidUrl());
+            }
+            return FormValidation.ok();
         }
     }
 }
