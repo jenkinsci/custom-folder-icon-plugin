@@ -28,7 +28,7 @@ public class EmojiFolderIcon extends FolderIcon {
      */
     @DataBoundConstructor
     public EmojiFolderIcon(String emoji) {
-        this.emoji = StringUtils.isEmpty(emoji) ? DEFAULT_ICON : emoji;
+        this.emoji = StringUtils.isBlank(emoji) ? DEFAULT_ICON : emoji;
     }
 
     @Override

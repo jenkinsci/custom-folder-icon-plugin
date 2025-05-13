@@ -28,7 +28,7 @@ public class IoniconFolderIcon extends FolderIcon {
      */
     @DataBoundConstructor
     public IoniconFolderIcon(String ionicon) {
-        this.ionicon = StringUtils.isEmpty(ionicon) ? DEFAULT_ICON : ionicon;
+        this.ionicon = StringUtils.isBlank(ionicon) ? DEFAULT_ICON : ionicon;
     }
 
     @Override

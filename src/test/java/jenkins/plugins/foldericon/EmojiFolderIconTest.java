@@ -8,6 +8,7 @@ import io.jenkins.plugins.emoji.symbols.Emojis;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.EmojiFolderIcon.DescriptorImpl;
 import org.apache.commons.lang.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
@@ -24,13 +25,20 @@ class EmojiFolderIconTest {
     private static final String DUMMY_ICON_CLASS_NAME = Emojis.getIconClassName(DUMMY_ICON);
     private static final String DEFAULT_ICON_CLASS_NAME = Emojis.getIconClassName(DEFAULT_ICON);
 
+    private JenkinsRule r;
+
+    @BeforeEach
+    void setUp(JenkinsRule rule) {
+        r = rule;
+    }
+
     /**
      * Test behavior on a regular {@link Folder}.
      *
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void folder(JenkinsRule r) throws Exception {
+    void folder() throws Exception {
         EmojiFolderIcon customIcon = new EmojiFolderIcon(null);
         assertEquals(DEFAULT_ICON, customIcon.getEmoji());
         assertNull(customIcon.getImageOf(null));
@@ -56,7 +64,7 @@ class EmojiFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void organizationFolder(JenkinsRule r) throws Exception {
+    void organizationFolder() throws Exception {
         EmojiFolderIcon customIcon = new EmojiFolderIcon(null);
         assertEquals(DEFAULT_ICON, customIcon.getEmoji());
         assertNull(customIcon.getImageOf(null));
@@ -80,7 +88,7 @@ class EmojiFolderIconTest {
      * Test behavior of {@link DescriptorImpl}.
      */
     @Test
-    void descriptor(@SuppressWarnings("unused") JenkinsRule r) {
+    void descriptor() {
         EmojiFolderIcon customIcon = new EmojiFolderIcon(DUMMY_ICON);
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.EmojiFolderIcon_description(), descriptor.getDisplayName());

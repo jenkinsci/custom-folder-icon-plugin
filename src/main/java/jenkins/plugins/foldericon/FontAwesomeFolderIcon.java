@@ -28,7 +28,7 @@ public class FontAwesomeFolderIcon extends FolderIcon {
      */
     @DataBoundConstructor
     public FontAwesomeFolderIcon(String fontAwesome) {
-        this.fontAwesome = StringUtils.isEmpty(fontAwesome) ? DEFAULT_ICON : fontAwesome;
+        this.fontAwesome = StringUtils.isBlank(fontAwesome) ? DEFAULT_ICON : fontAwesome;
     }
 
     @Override

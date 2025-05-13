@@ -57,6 +57,14 @@ jobs:
         }
       }
   - script: >
+      folder('Folder with URL Icon') {
+        icon {
+          urlFolderIcon {
+            url('https://get.jenkins.io/art/jenkins-logo/headshot.svg')
+          }
+        }
+      }
+  - script: >
       pipelineJob('Folder with Build Status Icon/Successful Build Job') {
         definition {
           cps {
@@ -192,3 +200,21 @@ jobs:
           }
         }
       }
+  - script: >
+        pipelineJob('Folder with URL Icon/Build Job') {
+          definition {
+            cps {
+              script("""\
+                pipeline {
+                  agent any
+                  stages {
+                    stage ('Build') {
+                      steps {
+                        echo 'Job successful'
+                      }
+                    }
+                  }
+                }""".stripIndent())
+            }
+          }
+        }

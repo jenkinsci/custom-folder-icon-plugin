@@ -72,7 +72,7 @@ public final class TestUtils {
      * Common validation of responses.
      *
      * @param response             the response to validate
-     * @param expectedCode         the expected CODE or 0 if none
+     * @param expectedCode         the expected CODE or 0 if none expected
      * @param expectedTextPattern  the expected TEXT pattern
      * @param expectedErrorMessage the expected ERROR_MESSAGE
      * @throws Exception in case anything goes wrong
@@ -86,13 +86,13 @@ public final class TestUtils {
             assertEquals(expectedCode, code.get(response));
         }
 
-        if (StringUtils.isNotEmpty(expectedTextPattern)) {
+        if (StringUtils.isNotBlank(expectedTextPattern)) {
             Field text = response.getClass().getDeclaredField("val$text");
             text.setAccessible(true);
             assertThat((String) text.get(response), matchesPattern(expectedTextPattern));
         }
 
-        if (StringUtils.isNotEmpty(expectedErrorMessage)) {
+        if (StringUtils.isNotBlank(expectedErrorMessage)) {
             Field message = response.getClass().getDeclaredField("val$errorMessage");
             message.setAccessible(true);
             assertEquals(expectedErrorMessage, message.get(response));

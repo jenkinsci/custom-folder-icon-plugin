@@ -1,7 +1,7 @@
 /**
  * Select the icon for preview.
  */
-Behaviour.specify("[id^=\"select-fontawesome-\"]", "FontAwesomePreviewSelection", 0, element => {
+Behaviour.specify('[id^="select-fontawesome-"]', "FontAwesomePreviewSelection", 0, (element) => {
     element.onclick = () => {
         let icon = element.id.replace("select-fontawesome-", "");
 
@@ -23,5 +23,5 @@ Behaviour.specify("[id^=\"select-fontawesome-\"]", "FontAwesomePreviewSelection"
         oldPreview.parentElement.replaceChild(newPreview, oldPreview);
 
         return false;
-    }
+    };
 });

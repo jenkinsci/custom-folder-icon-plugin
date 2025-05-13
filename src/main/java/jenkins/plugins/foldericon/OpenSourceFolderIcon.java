@@ -28,7 +28,7 @@ public class OpenSourceFolderIcon extends FolderIcon {
      */
     @DataBoundConstructor
     public OpenSourceFolderIcon(String ossicon) {
-        this.ossicon = StringUtils.isEmpty(ossicon) ? DEFAULT_ICON : ossicon;
+        this.ossicon = StringUtils.isBlank(ossicon) ? DEFAULT_ICON : ossicon;
     }
 
     @Override

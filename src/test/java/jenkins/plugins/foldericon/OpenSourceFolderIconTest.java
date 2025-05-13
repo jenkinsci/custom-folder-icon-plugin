@@ -11,6 +11,7 @@ import io.jenkins.plugins.oss.symbols.OpenSourceSymbols;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.OpenSourceFolderIcon.DescriptorImpl;
 import org.apache.commons.lang.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
@@ -27,13 +28,20 @@ class OpenSourceFolderIconTest {
     private static final String DUMMY_ICON_CLASS_NAME = OpenSourceSymbols.getIconClassName(DUMMY_ICON);
     private static final String DEFAULT_ICON_CLASS_NAME = OpenSourceSymbols.getIconClassName(DEFAULT_ICON);
 
+    private JenkinsRule r;
+
+    @BeforeEach
+    void setUp(JenkinsRule rule) {
+        r = rule;
+    }
+
     /**
      * Test behavior on a regular {@link Folder}.
      *
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void folder(JenkinsRule r) throws Exception {
+    void folder() throws Exception {
         OpenSourceFolderIcon customIcon = new OpenSourceFolderIcon(null);
         assertEquals(DEFAULT_ICON, customIcon.getOssicon());
         assertNull(customIcon.getImageOf(null));
@@ -59,7 +67,7 @@ class OpenSourceFolderIconTest {
      * @throws Exception in case anything goes wrong
      */
     @Test
-    void organizationFolder(JenkinsRule r) throws Exception {
+    void organizationFolder() throws Exception {
         OpenSourceFolderIcon customIcon = new OpenSourceFolderIcon(null);
         assertEquals(DEFAULT_ICON, customIcon.getOssicon());
         assertNull(customIcon.getImageOf(null));
@@ -83,7 +91,7 @@ class OpenSourceFolderIconTest {
      * Test behavior of {@link DescriptorImpl}.
      */
     @Test
-    void descriptor(@SuppressWarnings("unused") JenkinsRule r) {
+    void descriptor() {
         OpenSourceFolderIcon customIcon = new OpenSourceFolderIcon(DUMMY_ICON);
         DescriptorImpl descriptor = customIcon.getDescriptor();
         assertEquals(Messages.OpenSourceFolderIcon_description(), descriptor.getDisplayName());

@@ -15,6 +15,7 @@ import jenkins.appearance.AppearanceCategory;
 import jenkins.model.GlobalConfigurationCategory;
 import jenkins.model.Jenkins;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
 import org.kohsuke.stapler.StaplerRequest2;
@@ -70,7 +71,7 @@ public class CustomFolderIconConfiguration extends PageDecorator {
     }
 
     /**
-     * Cleanup unused icons.
+     * Clean up unused icons.
      *
      * @param req the request
      * @return OK
@@ -86,6 +87,7 @@ public class CustomFolderIconConfiguration extends PageDecorator {
         Set<String> usedIcons = Jenkins.get().getAllItems(AbstractFolder.class).stream()
                 .filter(folder -> folder.getIcon() instanceof CustomFolderIcon)
                 .map(folder -> ((CustomFolderIcon) folder.getIcon()).getFoldericon())
+                .filter(StringUtils::isNotBlank)
                 .collect(Collectors.toSet());
 
         if (usedIcons.isEmpty() || existingIcons.removeAll(usedIcons)) {
