@@ -1,6 +1,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
-  <script src="${rootURL}/plugin/custom-folder-icon/js/custom-icon-global.js" type="text/javascript"/>
+  <st:adjunct includes="jenkins.plugins.foldericon.CustomFolderIconConfiguration.custom-icon-global"/>
+
   <j:invokeStatic var="customicons" method="getAvailableIcons"
                   className="jenkins.plugins.foldericon.CustomFolderIcon"/>
   <f:section title="${%CustomFolderIcons}">
