@@ -1,6 +1,7 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-  <script src="${rootURL}/plugin/custom-folder-icon/js/url-config.js" type="text/javascript"/>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
+  <st:adjunct includes="jenkins.plugins.foldericon.UrlFolderIcon.url-icon"/>
+
   <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('preview')}">
     <a id="url-preview" tooltip="${instance.getImageOf('')}">
       <img src="${instance.getImageOf('')}" class="icon-xlg"/>

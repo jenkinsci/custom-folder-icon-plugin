@@ -1,14 +1,13 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
-  <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/custom-icon.css" type="text/css"/>
-  <script src="${rootURL}/plugin/custom-folder-icon/js/custom-icon-config.js" type="text/javascript"/>
-  <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/croppie.css" type="text/css"/>
-  <script src="${rootURL}/plugin/custom-folder-icon/scripts/croppie.js" type="text/javascript"/>
+  <st:adjunct includes="jenkins.plugins.foldericon.CustomFolderIcon.custom-icon"/>
+  <st:adjunct includes="jenkins.plugins.foldericon.CustomFolderIcon.croppie"/>
+
   <j:invokeStatic var="customicons" method="getAvailableIcons"
                   className="jenkins.plugins.foldericon.CustomFolderIcon"/>
   <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('upload')}">
     <div>
-      <div id="custom-icon-cropper"><!-- set in custom-icon-config.js --></div>
+      <div id="custom-icon-cropper"><!-- set in custom-icon.js --></div>
       <f:file id="custom-icon-upload" accept="image/*" clazz="custom-icon jenkins-file-upload"/>
       <st:nbsp/>
       <button id="custom-icon-upload-apply" class="jenkins-button">

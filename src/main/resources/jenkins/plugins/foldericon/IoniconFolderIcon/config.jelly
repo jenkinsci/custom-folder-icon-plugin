@@ -1,7 +1,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
-  <link rel="stylesheet" href="${rootURL}/plugin/custom-folder-icon/css/ionicon.css" type="text/css"/>
-  <script src="${rootURL}/plugin/custom-folder-icon/js/ionicon-config.js" type="text/javascript"/>
+  <st:adjunct includes="jenkins.plugins.foldericon.IoniconFolderIcon.ionicon-icon"/>
+
   <j:invokeStatic var="ionicons" method="getAvailableIcons" className="io.jenkins.plugins.ionicons.Ionicons"/>
   <f:entry title="${%IconPreview}" help="${descriptor.getHelpFile('preview')}">
     <l:icon id="ionicon-preview" src="${ionicons.get(instance.ionicon ?: 'jenkins')}" tooltip="${icon.key}"
