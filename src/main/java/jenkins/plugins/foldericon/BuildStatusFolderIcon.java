@@ -119,7 +119,7 @@ public class BuildStatusFolderIcon extends FolderIcon {
 
     @Override
     public String getIconClassName() {
-        return getCombinedBallColor().getIconClassName();
+        return "symbol-status-" + getCombinedBallColor().getIconName();
     }
 
     @Override

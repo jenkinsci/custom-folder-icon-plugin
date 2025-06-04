@@ -69,6 +69,17 @@ public final class TestUtils {
     }
 
     /**
+     * Common validation of symbols.
+     *
+     * @param icon              the icon to validate
+     * @param expectedImageName the expected image name
+     * @param expectedIconName  the expected icon name
+     */
+    public static void validateSymbol(FolderIcon icon, String expectedImageName, String expectedIconName) {
+        validateIcon(icon, expectedImageName, "symbol-status-" + expectedIconName);
+    }
+
+    /**
      * Common validation of responses.
      *
      * @param response             the response to validate
