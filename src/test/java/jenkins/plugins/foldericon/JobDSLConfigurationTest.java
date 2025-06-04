@@ -46,7 +46,7 @@ class JobDSLConfigurationTest {
     void buildStatusFolderIcon() throws Exception {
         BuildStatusFolderIcon customIcon = createFolder(r, "build-status.groovy", BuildStatusFolderIcon.class);
         assertEquals(Set.of("dev", "main"), customIcon.getJobs());
-        assertEquals(BallColor.NOTBUILT.getIconClassName(), customIcon.getIconClassName());
+        assertEquals("symbol-status-" + BallColor.NOTBUILT.getIconName(), customIcon.getIconClassName());
     }
 
     /**

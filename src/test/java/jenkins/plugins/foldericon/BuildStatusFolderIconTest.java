@@ -1,7 +1,7 @@
 package jenkins.plugins.foldericon;
 
 import static jenkins.plugins.foldericon.utils.TestUtils.mockStaplerRequest;
-import static jenkins.plugins.foldericon.utils.TestUtils.validateIcon;
+import static jenkins.plugins.foldericon.utils.TestUtils.validateSymbol;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mockStatic;
 
@@ -90,32 +90,32 @@ class BuildStatusFolderIconTest {
             BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(Set.of());
             project.setIcon(customIcon);
             FolderIcon icon = project.getIcon();
-            validateIcon(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconClassName());
+            validateSymbol(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconName());
 
             customIcon = new BuildStatusFolderIcon(Set.of("Success"));
             project.setIcon(customIcon);
             icon = project.getIcon();
-            validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
+            validateSymbol(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconName());
 
             customIcon = new BuildStatusFolderIcon(Set.of("Success", "Aborted"));
             project.setIcon(customIcon);
             icon = project.getIcon();
-            validateIcon(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconClassName());
+            validateSymbol(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconName());
 
             customIcon = new BuildStatusFolderIcon(Set.of("subfolder » Nested"));
             project.setIcon(customIcon);
             icon = project.getIcon();
-            validateIcon(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconClassName());
+            validateSymbol(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconName());
 
             customIcon = new BuildStatusFolderIcon(Set.of("doesnotexist"));
             project.setIcon(customIcon);
             icon = project.getIcon();
-            validateIcon(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconClassName());
+            validateSymbol(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconName());
 
             customIcon = new BuildStatusFolderIcon(Set.of("Success", "doesnotexist"));
             project.setIcon(customIcon);
             icon = project.getIcon();
-            validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
+            validateSymbol(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconName());
         }
     }
 
@@ -184,41 +184,41 @@ class BuildStatusFolderIconTest {
             mockStaplerRequest(stapler);
 
             // default
-            validateIcon(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconClassName());
+            validateSymbol(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconName());
 
             // Success
             FreeStyleProject success = project.createProject(FreeStyleProject.class, "Success");
             FreeStyleBuild successBuild = success.scheduleBuild2(0).get();
             r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(successBuild));
 
-            validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
+            validateSymbol(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconName());
             // Unstable
             FreeStyleProject unstable = project.createProject(FreeStyleProject.class, "Unstable");
             unstable.getBuildersList().replaceBy(Collections.singleton(new ResultBuilder(Result.UNSTABLE)));
             r.buildAndAssertStatus(Result.UNSTABLE, unstable);
 
-            validateIcon(icon, BallColor.YELLOW.getImage(), BallColor.YELLOW.getIconClassName());
+            validateSymbol(icon, BallColor.YELLOW.getImage(), BallColor.YELLOW.getIconName());
 
             // Failure
             FreeStyleProject failure = project.createProject(FreeStyleProject.class, "Failure");
             failure.getBuildersList().replaceBy(Collections.singleton(new ResultBuilder(Result.FAILURE)));
             r.buildAndAssertStatus(Result.FAILURE, failure);
 
-            validateIcon(icon, BallColor.RED.getImage(), BallColor.RED.getIconClassName());
+            validateSymbol(icon, BallColor.RED.getImage(), BallColor.RED.getIconName());
 
             // Not build
             FreeStyleProject notBuilt = project.createProject(FreeStyleProject.class, "Not Built");
             notBuilt.getBuildersList().replaceBy(Collections.singleton(new ResultBuilder(Result.NOT_BUILT)));
             r.buildAndAssertStatus(Result.NOT_BUILT, notBuilt);
 
-            validateIcon(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconClassName());
+            validateSymbol(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconName());
 
             // Aborted
             FreeStyleProject aborted = project.createProject(FreeStyleProject.class, "Aborted");
             aborted.getBuildersList().replaceBy(Collections.singleton(new ResultBuilder(Result.ABORTED)));
             r.buildAndAssertStatus(Result.ABORTED, aborted);
 
-            validateIcon(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconClassName());
+            validateSymbol(icon, BallColor.ABORTED.getImage(), BallColor.ABORTED.getIconName());
         }
     }
 
@@ -244,7 +244,7 @@ class BuildStatusFolderIconTest {
             FreeStyleBuild successBuild = success.scheduleBuild2(0).get();
             r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(successBuild));
 
-            validateIcon(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconClassName());
+            validateSymbol(icon, BallColor.BLUE.getImage(), BallColor.BLUE.getIconName());
 
             // Running Build
             DelayBuilder builder = new DelayBuilder();
@@ -252,7 +252,7 @@ class BuildStatusFolderIconTest {
             FreeStyleBuild runningBuild =
                     success.scheduleBuild2(0).getStartCondition().get();
 
-            validateIcon(icon, BallColor.BLUE_ANIME.getImage(), BallColor.BLUE_ANIME.getIconClassName());
+            validateSymbol(icon, BallColor.BLUE_ANIME.getImage(), BallColor.BLUE_ANIME.getIconName());
             builder.release();
 
             r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(runningBuild));
@@ -283,7 +283,7 @@ class BuildStatusFolderIconTest {
             FreeStyleBuild runningBuild =
                     running.scheduleBuild2(0).getStartCondition().get();
 
-            validateIcon(icon, BallColor.NOTBUILT_ANIME.getImage(), BallColor.NOTBUILT_ANIME.getIconClassName());
+            validateSymbol(icon, BallColor.NOTBUILT_ANIME.getImage(), BallColor.NOTBUILT_ANIME.getIconName());
             builder.release();
 
             r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(runningBuild));
@@ -313,7 +313,7 @@ class BuildStatusFolderIconTest {
 
             assertFalse(disabled.isBuildable());
             assertTrue(disabled.isDisabled());
-            validateIcon(icon, BallColor.DISABLED.getImage(), BallColor.DISABLED.getIconClassName());
+            validateSymbol(icon, BallColor.DISABLED.getImage(), BallColor.DISABLED.getIconName());
         }
     }
 
@@ -337,7 +337,7 @@ class BuildStatusFolderIconTest {
             // No Build
             project.createProject(FreeStyleProject.class, "No Build");
 
-            validateIcon(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconClassName());
+            validateSymbol(icon, BallColor.NOTBUILT.getImage(), BallColor.NOTBUILT.getIconName());
         }
     }
 }
