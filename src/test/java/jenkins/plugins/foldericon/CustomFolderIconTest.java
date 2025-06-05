@@ -27,7 +27,7 @@ import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.CustomFolderIcon.DescriptorImpl;
 import jenkins.plugins.foldericon.utils.MockMultiPartRequest;
 import org.apache.commons.fileupload2.core.FileItem;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;

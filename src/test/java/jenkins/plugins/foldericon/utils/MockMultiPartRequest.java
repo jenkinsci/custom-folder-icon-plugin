@@ -35,7 +35,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.fileupload2.core.FileItemHeaders;
 import org.apache.commons.fileupload2.core.FileItemHeadersProvider;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.BindInterceptor;
 import org.kohsuke.stapler.Stapler;

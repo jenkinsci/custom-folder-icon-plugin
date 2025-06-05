@@ -13,7 +13,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.UUID;
 import jenkins.plugins.foldericon.CustomFolderIconConfiguration;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;

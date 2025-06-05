@@ -11,7 +11,7 @@ import hudson.model.Item;
 import hudson.util.FormValidation;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.UrlFolderIcon.DescriptorImpl;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
