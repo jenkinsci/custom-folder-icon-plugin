@@ -10,7 +10,7 @@ import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import io.jenkins.plugins.oss.symbols.OpenSourceSymbols;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.OpenSourceFolderIcon.DescriptorImpl;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
