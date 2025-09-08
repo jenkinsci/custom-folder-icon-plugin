@@ -1,16 +1,16 @@
 package jenkins.plugins.foldericon;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.startsWith;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import io.jenkins.plugins.oss.symbols.OpenSourceSymbols;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.OpenSourceFolderIcon.DescriptorImpl;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -43,22 +43,24 @@ class OpenSourceFolderIconTest {
     @Test
     void folder() throws Exception {
         OpenSourceFolderIcon customIcon = new OpenSourceFolderIcon(null);
-        assertEquals(DEFAULT_ICON, customIcon.getOssicon());
-        assertNull(customIcon.getImageOf(null));
-        assertEquals(DEFAULT_ICON_CLASS_NAME, customIcon.getIconClassName());
+        assertThat(customIcon.getOssicon(), is(DEFAULT_ICON));
+        assertThat(customIcon.getImageOf(null), nullValue());
+        assertThat(customIcon.getImageOf(""), nullValue());
+        assertThat(customIcon.getIconClassName(), is(DEFAULT_ICON_CLASS_NAME));
 
         customIcon = new OpenSourceFolderIcon(DUMMY_ICON);
-        assertTrue(StringUtils.startsWith(customIcon.getDescription(), Messages.Folder_description()));
-        assertEquals(DUMMY_ICON, customIcon.getOssicon());
-        assertNull(customIcon.getImageOf(null));
-        assertEquals(DUMMY_ICON_CLASS_NAME, customIcon.getIconClassName());
+        assertThat(customIcon.getDescription(), startsWith(Messages.Folder_description()));
+        assertThat(customIcon.getOssicon(), is(DUMMY_ICON));
+        assertThat(customIcon.getImageOf(null), nullValue());
+        assertThat(customIcon.getImageOf(""), nullValue());
+        assertThat(customIcon.getIconClassName(), is(DUMMY_ICON_CLASS_NAME));
 
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertInstanceOf(OpenSourceFolderIcon.class, icon);
-        assertTrue(StringUtils.startsWith(icon.getDescription(), project.getPronoun()));
+        assertThat(icon, instanceOf(OpenSourceFolderIcon.class));
+        assertThat(icon.getDescription(), startsWith(project.getPronoun()));
     }
 
     /**
@@ -69,22 +71,24 @@ class OpenSourceFolderIconTest {
     @Test
     void organizationFolder() throws Exception {
         OpenSourceFolderIcon customIcon = new OpenSourceFolderIcon(null);
-        assertEquals(DEFAULT_ICON, customIcon.getOssicon());
-        assertNull(customIcon.getImageOf(null));
-        assertEquals(DEFAULT_ICON_CLASS_NAME, customIcon.getIconClassName());
+        assertThat(customIcon.getOssicon(), is(DEFAULT_ICON));
+        assertThat(customIcon.getImageOf(null), nullValue());
+        assertThat(customIcon.getImageOf(""), nullValue());
+        assertThat(customIcon.getIconClassName(), is(DEFAULT_ICON_CLASS_NAME));
 
         customIcon = new OpenSourceFolderIcon(DUMMY_ICON);
-        assertTrue(StringUtils.startsWith(customIcon.getDescription(), Messages.Folder_description()));
-        assertEquals(DUMMY_ICON, customIcon.getOssicon());
-        assertNull(customIcon.getImageOf(null));
-        assertEquals(DUMMY_ICON_CLASS_NAME, customIcon.getIconClassName());
+        assertThat(customIcon.getDescription(), startsWith(Messages.Folder_description()));
+        assertThat(customIcon.getOssicon(), is(DUMMY_ICON));
+        assertThat(customIcon.getImageOf(null), nullValue());
+        assertThat(customIcon.getImageOf(""), nullValue());
+        assertThat(customIcon.getIconClassName(), is(DUMMY_ICON_CLASS_NAME));
 
         OrganizationFolder project = r.jenkins.createProject(OrganizationFolder.class, "org");
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertInstanceOf(OpenSourceFolderIcon.class, icon);
-        assertTrue(StringUtils.startsWith(icon.getDescription(), project.getPronoun()));
+        assertThat(icon, instanceOf(OpenSourceFolderIcon.class));
+        assertThat(icon.getDescription(), startsWith(project.getPronoun()));
     }
 
     /**
@@ -94,7 +98,7 @@ class OpenSourceFolderIconTest {
     void descriptor() {
         OpenSourceFolderIcon customIcon = new OpenSourceFolderIcon(DUMMY_ICON);
         DescriptorImpl descriptor = customIcon.getDescriptor();
-        assertEquals(Messages.OpenSourceFolderIcon_description(), descriptor.getDisplayName());
-        assertTrue(descriptor.isApplicable(null));
+        assertThat(descriptor.getDisplayName(), is(Messages.OpenSourceFolderIcon_description()));
+        assertThat(descriptor.isApplicable(null), is(true));
     }
 }

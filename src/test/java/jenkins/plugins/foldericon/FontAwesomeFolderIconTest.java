@@ -1,13 +1,16 @@
 package jenkins.plugins.foldericon;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.startsWith;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
 import io.jenkins.plugins.fontawesome.FontAwesomeIcons;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.FontAwesomeFolderIcon.DescriptorImpl;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -40,22 +43,24 @@ class FontAwesomeFolderIconTest {
     @Test
     void folder() throws Exception {
         FontAwesomeFolderIcon customIcon = new FontAwesomeFolderIcon(null);
-        assertEquals(DEFAULT_ICON, customIcon.getFontAwesome());
-        assertNull(customIcon.getImageOf(null));
-        assertEquals(DEFAULT_ICON_CLASS_NAME, customIcon.getIconClassName());
+        assertThat(customIcon.getFontAwesome(), is(DEFAULT_ICON));
+        assertThat(customIcon.getImageOf(null), nullValue());
+        assertThat(customIcon.getImageOf(""), nullValue());
+        assertThat(customIcon.getIconClassName(), is(DEFAULT_ICON_CLASS_NAME));
 
         customIcon = new FontAwesomeFolderIcon(DUMMY_ICON);
-        assertTrue(StringUtils.startsWith(customIcon.getDescription(), Messages.Folder_description()));
-        assertEquals(DUMMY_ICON, customIcon.getFontAwesome());
-        assertNull(customIcon.getImageOf(null));
-        assertEquals(DUMMY_ICON_CLASS_NAME, customIcon.getIconClassName());
+        assertThat(customIcon.getDescription(), startsWith(Messages.Folder_description()));
+        assertThat(customIcon.getFontAwesome(), is(DUMMY_ICON));
+        assertThat(customIcon.getImageOf(null), nullValue());
+        assertThat(customIcon.getImageOf(""), nullValue());
+        assertThat(customIcon.getIconClassName(), is(DUMMY_ICON_CLASS_NAME));
 
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertInstanceOf(FontAwesomeFolderIcon.class, icon);
-        assertTrue(StringUtils.startsWith(icon.getDescription(), project.getPronoun()));
+        assertThat(icon, instanceOf(FontAwesomeFolderIcon.class));
+        assertThat(icon.getDescription(), startsWith(project.getPronoun()));
     }
 
     /**
@@ -66,22 +71,24 @@ class FontAwesomeFolderIconTest {
     @Test
     void organizationFolder() throws Exception {
         FontAwesomeFolderIcon customIcon = new FontAwesomeFolderIcon(null);
-        assertEquals(DEFAULT_ICON, customIcon.getFontAwesome());
-        assertNull(customIcon.getImageOf(null));
-        assertEquals(DEFAULT_ICON_CLASS_NAME, customIcon.getIconClassName());
+        assertThat(customIcon.getFontAwesome(), is(DEFAULT_ICON));
+        assertThat(customIcon.getImageOf(null), nullValue());
+        assertThat(customIcon.getImageOf(""), nullValue());
+        assertThat(customIcon.getIconClassName(), is(DEFAULT_ICON_CLASS_NAME));
 
         customIcon = new FontAwesomeFolderIcon(DUMMY_ICON);
-        assertTrue(StringUtils.startsWith(customIcon.getDescription(), Messages.Folder_description()));
-        assertEquals(DUMMY_ICON, customIcon.getFontAwesome());
-        assertNull(customIcon.getImageOf(null));
-        assertEquals(DUMMY_ICON_CLASS_NAME, customIcon.getIconClassName());
+        assertThat(customIcon.getDescription(), startsWith(Messages.Folder_description()));
+        assertThat(customIcon.getFontAwesome(), is(DUMMY_ICON));
+        assertThat(customIcon.getImageOf(null), nullValue());
+        assertThat(customIcon.getImageOf(""), nullValue());
+        assertThat(customIcon.getIconClassName(), is(DUMMY_ICON_CLASS_NAME));
 
         OrganizationFolder project = r.jenkins.createProject(OrganizationFolder.class, "org");
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertInstanceOf(FontAwesomeFolderIcon.class, icon);
-        assertTrue(StringUtils.startsWith(icon.getDescription(), project.getPronoun()));
+        assertThat(icon, instanceOf(FontAwesomeFolderIcon.class));
+        assertThat(icon.getDescription(), startsWith(project.getPronoun()));
     }
 
     /**
@@ -91,7 +98,7 @@ class FontAwesomeFolderIconTest {
     void descriptor() {
         FontAwesomeFolderIcon customIcon = new FontAwesomeFolderIcon(DUMMY_ICON);
         DescriptorImpl descriptor = customIcon.getDescriptor();
-        assertEquals(Messages.FontAwesomeFolderIcon_description(), descriptor.getDisplayName());
-        assertTrue(descriptor.isApplicable(null));
+        assertThat(descriptor.getDisplayName(), is(Messages.FontAwesomeFolderIcon_description()));
+        assertThat(descriptor.isApplicable(null), is(true));
     }
 }

@@ -35,7 +35,6 @@ import net.sf.json.JSONObject;
 import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.fileupload2.core.FileItemHeaders;
 import org.apache.commons.fileupload2.core.FileItemHeadersProvider;
-import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.BindInterceptor;
 import org.kohsuke.stapler.Stapler;
@@ -632,7 +631,7 @@ public class MockMultiPartRequest implements StaplerRequest2 {
 
     @Override
     public FileItem<?> getFileItem2(String name) throws ServletException, IOException {
-        if (buffer != null && StringUtils.equals(name, "file")) {
+        if (buffer != null && name != null && name.equals("file")) {
             return new FileItem() {
                 @Override
                 public InputStream getInputStream() {

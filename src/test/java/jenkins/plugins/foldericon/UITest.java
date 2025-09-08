@@ -1,12 +1,11 @@
 package jenkins.plugins.foldericon;
 
 import static jenkins.plugins.foldericon.utils.TestUtils.createCustomIconFile;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.htmlunit.WebAssert.assertTextPresent;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
@@ -14,7 +13,6 @@ import hudson.FilePath;
 import java.time.Duration;
 import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlOption;
@@ -65,22 +63,22 @@ class UITest {
             HtmlForm form = configure.getFormByName("config");
 
             HtmlOption selection = (HtmlOption) configure.getElementsByTagName("option").stream()
-                    .filter(option -> StringUtils.equals(option.getTextContent(), folderIconOption))
+                    .filter(option -> folderIconOption.equals(option.getTextContent()))
                     .findFirst()
                     .orElseThrow(() -> fail("Unable to select folder icon option " + folderIconOption));
 
-            assertFalse(selection.isSelected());
+            assertThat(selection.isSelected(), is(false));
             configure = selection.click();
-            assertTrue(selection.isSelected());
+            assertThat(selection.isSelected(), is(true));
             r.submit(form);
 
             configure = (HtmlPage) configure.refresh();
             selection = (HtmlOption) configure.getElementsByTagName("option").stream()
-                    .filter(option -> StringUtils.equals(option.getTextContent(), folderIconOption))
+                    .filter(option -> folderIconOption.equals(option.getTextContent()))
                     .findFirst()
                     .orElseThrow(() -> fail("Unable to select folder icon option " + folderIconOption));
 
-            assertTrue(selection.isSelected());
+            assertThat(selection.isSelected(), is(true));
         }
     }
 
@@ -99,7 +97,7 @@ class UITest {
             assertTextPresent(appearance, "Disk usage of icons:   " + FileUtils.byteCountToDisplaySize(file.length()));
 
             appearance.getElementsByTagName("button").stream()
-                    .filter(button -> StringUtils.equals(button.getTextContent(), "Cleanup unused icons"))
+                    .filter(button -> "Cleanup unused icons".equals(button.getTextContent()))
                     .findFirst()
                     .orElseThrow(() -> fail("Unable to cleanup unused icons"))
                     .click();
@@ -109,7 +107,7 @@ class UITest {
                     Thread.onSpinWait();
                 }
             });
-            assertFalse(file.exists());
+            assertThat(file.exists(), is(false));
 
             appearance = (HtmlPage) appearance.refresh();
             assertTextPresent(appearance, "Disk usage of icons:   " + FileUtils.byteCountToDisplaySize(0L));
@@ -130,29 +128,28 @@ class UITest {
             HtmlForm form = configure.getFormByName("config");
 
             HtmlOption selection = (HtmlOption) configure.getElementsByTagName("option").stream()
-                    .filter(option ->
-                            StringUtils.equals(option.getTextContent(), Messages.CustomFolderIcon_description()))
+                    .filter(option -> Messages.CustomFolderIcon_description().equals(option.getTextContent()))
                     .findFirst()
                     .orElseThrow(() ->
                             fail("Unable to select folder icon option " + Messages.CustomFolderIcon_description()));
 
-            assertFalse(selection.isSelected());
+            assertThat(selection.isSelected(), is(false));
             selection.click();
-            assertTrue(selection.isSelected());
+            assertThat(selection.isSelected(), is(true));
             r.submit(form);
 
             configure = webClient.getPage(project, "configure");
             DomElement cropper = configure.getElementById("custom-icon-cropper");
-            assertNotNull(cropper);
+            assertThat(cropper, notNullValue());
 
             String src = null;
             if (!cropper.getElementsByTagName("img").isEmpty()) {
                 DomElement image = cropper.getElementsByTagName("img").get(0);
                 src = image.getAttribute("src");
             }
-            assertNotNull(src);
+            assertThat(src, notNullValue());
 
-            assertEquals("/jenkins/plugin/custom-folder-icon/icons/default.svg", src);
+            assertThat(src, is("/jenkins/plugin/custom-folder-icon/icons/default.svg"));
         }
     }
 }

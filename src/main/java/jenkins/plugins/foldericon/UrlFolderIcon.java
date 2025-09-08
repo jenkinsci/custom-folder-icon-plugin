@@ -7,8 +7,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.model.Item;
 import hudson.util.FormValidation;
+import java.util.Locale;
 import jenkins.model.Jenkins;
-import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -49,7 +49,7 @@ public class UrlFolderIcon extends FolderIcon {
 
     @Override
     public String getImageOf(String size) {
-        if (StringUtils.isNotBlank(getUrl())) {
+        if (getUrl() != null && !getUrl().isBlank()) {
             return getUrl();
         } else {
             return Jenkins.get().getRootUrl() + DEFAULT_ICON_PATH;
@@ -89,7 +89,9 @@ public class UrlFolderIcon extends FolderIcon {
             } else {
                 Jenkins.get().checkPermission(Jenkins.ADMINISTER);
             }
-            if (StringUtils.isNotBlank(value) && !StringUtils.startsWithIgnoreCase(value, "http")) {
+            if (value != null
+                    && !value.isBlank()
+                    && !value.toLowerCase(Locale.ROOT).startsWith("http")) {
                 return FormValidation.error(Messages.Url_invalidUrl());
             }
             return FormValidation.ok();

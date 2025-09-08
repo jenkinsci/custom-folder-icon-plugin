@@ -1,8 +1,21 @@
 package jenkins.plugins.foldericon;
 
-import static jenkins.plugins.foldericon.utils.TestUtils.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static jenkins.plugins.foldericon.utils.TestUtils.createCustomIconFile;
+import static jenkins.plugins.foldericon.utils.TestUtils.createMultipartEntityBuffer;
+import static jenkins.plugins.foldericon.utils.TestUtils.mockStaplerRequest;
+import static jenkins.plugins.foldericon.utils.TestUtils.validateIcon;
+import static jenkins.plugins.foldericon.utils.TestUtils.validateResponse;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstructionWithAnswer;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
@@ -27,7 +40,6 @@ import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.CustomFolderIcon.DescriptorImpl;
 import jenkins.plugins.foldericon.utils.MockMultiPartRequest;
 import org.apache.commons.fileupload2.core.FileItem;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -66,17 +78,31 @@ class CustomFolderIconTest {
     @Test
     void folder() throws Exception {
         CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
-        assertEquals(DUMMY_PNG, customIcon.getFoldericon());
-        assertEquals(Messages.Folder_description(), customIcon.getDescription());
+        assertThat(customIcon.getFoldericon(), is(DUMMY_PNG));
+        assertThat(customIcon.getDescription(), is(Messages.Folder_description()));
 
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertInstanceOf(CustomFolderIcon.class, icon);
+        assertThat(icon, instanceOf(CustomFolderIcon.class));
 
-        assertEquals(DUMMY_PNG, customIcon.getFoldericon());
-        assertEquals(project.getPronoun(), icon.getDescription());
+        assertThat(customIcon.getFoldericon(), is(DUMMY_PNG));
+        assertThat(icon.getDescription(), is(project.getPronoun()));
+
+        try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
+            mockStaplerRequest(stapler);
+
+            customIcon = new CustomFolderIcon("");
+            project.setIcon(customIcon);
+            icon = project.getIcon();
+            validateIcon(icon, "default.svg", null);
+
+            customIcon = new CustomFolderIcon(null);
+            project.setIcon(customIcon);
+            icon = project.getIcon();
+            validateIcon(icon, "default.svg", null);
+        }
     }
 
     /**
@@ -87,17 +113,31 @@ class CustomFolderIconTest {
     @Test
     void organizationFolder() throws Exception {
         CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
-        assertEquals(DUMMY_PNG, customIcon.getFoldericon());
-        assertEquals(Messages.Folder_description(), customIcon.getDescription());
+        assertThat(customIcon.getFoldericon(), is(DUMMY_PNG));
+        assertThat(customIcon.getDescription(), is(Messages.Folder_description()));
 
         OrganizationFolder project = r.jenkins.createProject(OrganizationFolder.class, "org");
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertInstanceOf(CustomFolderIcon.class, icon);
+        assertThat(icon, instanceOf(CustomFolderIcon.class));
 
-        assertEquals(DUMMY_PNG, customIcon.getFoldericon());
-        assertEquals(project.getPronoun(), icon.getDescription());
+        assertThat(customIcon.getFoldericon(), is(DUMMY_PNG));
+        assertThat(icon.getDescription(), is(project.getPronoun()));
+
+        try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
+            mockStaplerRequest(stapler);
+
+            customIcon = new CustomFolderIcon("");
+            project.setIcon(customIcon);
+            icon = project.getIcon();
+            validateIcon(icon, "default.svg", null);
+
+            customIcon = new CustomFolderIcon(null);
+            project.setIcon(customIcon);
+            icon = project.getIcon();
+            validateIcon(icon, "default.svg", null);
+        }
     }
 
     /**
@@ -112,7 +152,7 @@ class CustomFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertInstanceOf(CustomFolderIcon.class, icon);
+        assertThat(icon, instanceOf(CustomFolderIcon.class));
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
             mockStaplerRequest(stapler);
@@ -132,7 +172,7 @@ class CustomFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertInstanceOf(CustomFolderIcon.class, icon);
+        assertThat(icon, instanceOf(CustomFolderIcon.class));
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
             mockStaplerRequest(stapler);
@@ -147,8 +187,8 @@ class CustomFolderIconTest {
     void descriptor() {
         CustomFolderIcon customIcon = new CustomFolderIcon(DUMMY_PNG);
         DescriptorImpl descriptor = customIcon.getDescriptor();
-        assertEquals(Messages.CustomFolderIcon_description(), descriptor.getDisplayName());
-        assertTrue(descriptor.isApplicable(null));
+        assertThat(descriptor.getDisplayName(), is(Messages.CustomFolderIcon_description()));
+        assertThat(descriptor.isApplicable(null), is(true));
     }
 
     /**
@@ -176,7 +216,7 @@ class CustomFolderIconTest {
                 .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
                 .child(CustomFolderIconConfiguration.PLUGIN_PATH);
         FilePath file = parent.child(filename);
-        assertTrue(file.exists());
+        assertThat(file.exists(), is(true));
     }
 
     /**
@@ -205,7 +245,7 @@ class CustomFolderIconTest {
                 .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
                 .child(CustomFolderIconConfiguration.PLUGIN_PATH);
         FilePath file = parent.child(filename);
-        assertTrue(file.exists());
+        assertThat(file.exists(), is(true));
     }
 
     /**
@@ -328,8 +368,8 @@ class CustomFolderIconTest {
     void getAvailableIcons() throws Exception {
         Set<String> icons = CustomFolderIcon.getAvailableIcons();
 
-        assertNotNull(icons);
-        assertTrue(icons.isEmpty());
+        assertThat(icons, notNullValue());
+        assertThat(icons, empty());
 
         FilePath file1 = createCustomIconFile(r);
         FilePath file2 = createCustomIconFile(r);
@@ -337,8 +377,8 @@ class CustomFolderIconTest {
 
         icons = CustomFolderIcon.getAvailableIcons();
 
-        assertNotNull(icons);
-        assertEquals(3, icons.size());
+        assertThat(icons, notNullValue());
+        assertThat(icons, hasSize(3));
 
         Set<String> expected = Stream.of(file1, file2, file3)
                 .sorted(Comparator.comparingLong((FilePath file) -> {
@@ -352,7 +392,7 @@ class CustomFolderIconTest {
                 .map(FilePath::getName)
                 .collect(Collectors.toSet());
 
-        assertEquals(expected, icons);
+        assertThat(icons, is(expected));
     }
 
     /**
@@ -364,8 +404,8 @@ class CustomFolderIconTest {
     void getAvailableIconsThrowingExceptions() throws Exception {
         Set<String> icons = CustomFolderIcon.getAvailableIcons();
 
-        assertNotNull(icons);
-        assertTrue(icons.isEmpty());
+        assertThat(icons, notNullValue());
+        assertThat(icons, empty());
 
         createCustomIconFile(r);
         createCustomIconFile(r);
@@ -374,15 +414,15 @@ class CustomFolderIconTest {
         try (@SuppressWarnings("unused")
                 MockedConstruction<FilePath> mocked = mockConstructionWithAnswer(FilePath.class, invocation -> {
                     String call = invocation.toString();
-                    if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
+                    if (call != null && call.equals("filePath.child(\"userContent\");")) {
                         throw new IOException("Mocked Exception!");
                     }
                     return fail("Unexpected invocation '" + call + "' - Test is broken!");
                 })) {
             icons = CustomFolderIcon.getAvailableIcons();
 
-            assertNotNull(icons);
-            assertTrue(icons.isEmpty());
+            assertThat(icons, notNullValue());
+            assertThat(icons, empty());
         }
     }
 
@@ -395,8 +435,8 @@ class CustomFolderIconTest {
     void getAvailableIconsComparatorThrowingExceptions() throws Exception {
         Set<String> icons = CustomFolderIcon.getAvailableIcons();
 
-        assertNotNull(icons);
-        assertTrue(icons.isEmpty());
+        assertThat(icons, notNullValue());
+        assertThat(icons, empty());
 
         FilePath userContent = r.jenkins.getRootPath().child(CustomFolderIconConfiguration.USER_CONTENT_PATH);
         FilePath iconDir = userContent.child(CustomFolderIconConfiguration.PLUGIN_PATH);
@@ -410,42 +450,50 @@ class CustomFolderIconTest {
         try (@SuppressWarnings("unused")
                 MockedConstruction<FilePath> mocked = mockConstructionWithAnswer(FilePath.class, invocation -> {
                     String call = invocation.toString();
-
-                    if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
-                        return userContent;
-                    } else if (StringUtils.equals(call, "filePath.exists();")) {
-                        return true;
-                    } else if (StringUtils.equals(call, "filePath.list();")) {
-                        return iconDir.list();
-                    } else if (StringUtils.equals(call, "filePath.lastModified();")) {
-                        if (counter[0] == 0) {
-                            counter[0] = 1;
-                            return file3.lastModified();
-                        } else if (counter[0] == 1) {
-                            counter[0] = 2;
-                            return file2.lastModified();
-                        } else if (counter[0] == 2) {
-                            counter[0] = 0;
-                            throw new IOException("Mocked Exception!");
-                        }
-                    } else if (StringUtils.equals(call, "filePath.getName();")) {
-                        if (counter[0] == 0) {
-                            counter[0] = 1;
-                            return file3.getName();
-                        } else if (counter[0] == 1) {
-                            counter[0] = 2;
-                            return file2.getName();
-                        } else if (counter[0] == 2) {
-                            counter[0] = 0;
-                            return file1.getName();
+                    if (call != null) {
+                        switch (call) {
+                            case "filePath.child(\"userContent\");" -> {
+                                return userContent;
+                            }
+                            case "filePath.exists();" -> {
+                                return true;
+                            }
+                            case "filePath.list();" -> {
+                                return iconDir.list();
+                            }
+                            case "filePath.lastModified();" -> {
+                                if (counter[0] == 0) {
+                                    counter[0] = 1;
+                                    return file3.lastModified();
+                                } else if (counter[0] == 1) {
+                                    counter[0] = 2;
+                                    return file2.lastModified();
+                                } else if (counter[0] == 2) {
+                                    counter[0] = 0;
+                                    throw new IOException("Mocked Exception!");
+                                }
+                            }
+                            case "filePath.getName();" -> {
+                                if (counter[0] == 0) {
+                                    counter[0] = 1;
+                                    return file3.getName();
+                                } else if (counter[0] == 1) {
+                                    counter[0] = 2;
+                                    return file2.getName();
+                                } else if (counter[0] == 2) {
+                                    counter[0] = 0;
+                                    return file1.getName();
+                                }
+                            }
+                            default -> fail("Unexpected invocation '" + call + "' - Test is broken!");
                         }
                     }
                     return fail("Unexpected invocation '" + call + "' - Test is broken!");
                 })) {
             icons = CustomFolderIcon.getAvailableIcons();
 
-            assertNotNull(icons);
-            assertEquals(3, icons.size());
+            assertThat(icons, notNullValue());
+            assertThat(icons, hasSize(3));
         }
 
         Set<String> expected = Stream.of(file1, file2, file3)
@@ -460,7 +508,7 @@ class CustomFolderIconTest {
                 .map(FilePath::getName)
                 .collect(Collectors.toSet());
 
-        assertEquals(expected, icons);
+        assertThat(icons, is(expected));
     }
 
     /**
@@ -476,9 +524,45 @@ class CustomFolderIconTest {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
 
-        assertTrue(file.exists());
+        assertThat(file.exists(), is(true));
         project.delete();
-        assertFalse(file.exists());
+        assertThat(file.exists(), is(false));
+    }
+
+    /**
+     * Test behavior of {@link CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
+     *
+     * @throws Exception in case anything goes wrong
+     */
+    @Test
+    void cleanupListenerNullFolderIcon() throws Exception {
+        FilePath file = createCustomIconFile(r);
+        CustomFolderIcon customIcon = new CustomFolderIcon(null);
+
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+
+        assertThat(file.exists(), is(true));
+        project.delete();
+        assertThat(file.exists(), is(true));
+    }
+
+    /**
+     * Test behavior of {@link CustomFolderIcon.CustomFolderIconCleanup#onDeleted(Item)}.
+     *
+     * @throws Exception in case anything goes wrong
+     */
+    @Test
+    void cleanupListenerEmptyFolderIcon() throws Exception {
+        FilePath file = createCustomIconFile(r);
+        CustomFolderIcon customIcon = new CustomFolderIcon("");
+
+        Folder project = r.jenkins.createProject(Folder.class, "folder");
+        project.setIcon(customIcon);
+
+        assertThat(file.exists(), is(true));
+        project.delete();
+        assertThat(file.exists(), is(true));
     }
 
     /**
@@ -500,14 +584,14 @@ class CustomFolderIconTest {
         Folder project3 = r.jenkins.createProject(Folder.class, "folder-3");
         FreeStyleProject project4 = r.jenkins.createProject(FreeStyleProject.class, "job-1");
 
-        assertTrue(file.exists());
+        assertThat(file.exists(), is(true));
 
         project1.delete();
         project2.delete();
         project3.delete();
         project4.delete();
 
-        assertFalse(file.exists());
+        assertThat(file.exists(), is(false));
     }
 
     /**
@@ -527,9 +611,9 @@ class CustomFolderIconTest {
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
 
-        assertFalse(file.exists());
+        assertThat(file.exists(), is(false));
         project.delete();
-        assertFalse(file.exists());
+        assertThat(file.exists(), is(false));
     }
 
     /**
@@ -550,7 +634,7 @@ class CustomFolderIconTest {
 
         project.delete();
 
-        assertTrue(iconDir.exists());
+        assertThat(iconDir.exists(), is(true));
     }
 
     /**
@@ -569,11 +653,11 @@ class CustomFolderIconTest {
         Folder project2 = r.jenkins.createProject(Folder.class, "folder2");
         project2.setIcon(customIcon);
 
-        assertTrue(file.exists());
+        assertThat(file.exists(), is(true));
         project1.delete();
-        assertTrue(file.exists());
+        assertThat(file.exists(), is(true));
         project2.delete();
-        assertFalse(file.exists());
+        assertThat(file.exists(), is(false));
     }
 
     /**
@@ -594,21 +678,23 @@ class CustomFolderIconTest {
         try (@SuppressWarnings("unused")
                 MockedConstruction<FilePath> mocked = mockConstructionWithAnswer(FilePath.class, invocation -> {
                     String call = invocation.toString();
-                    if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
-                        return userContent;
-                    } else if (StringUtils.equals(call, "filePath.child(\n    \"" + file.getName() + "\"\n);")) {
-                        FilePath mock = mock(FilePath.class);
-                        when(mock.delete()).thenReturn(false);
-                        return mock;
+                    if (call != null) {
+                        if (call.equals("filePath.child(\"userContent\");")) {
+                            return userContent;
+                        } else if (call.equals("filePath.child(\n    \"" + file.getName() + "\"\n);")) {
+                            FilePath mock = mock(FilePath.class);
+                            when(mock.delete()).thenReturn(false);
+                            return mock;
+                        }
                     }
                     return fail("Unexpected invocation '" + call + "' - Test is broken!");
                 })) {
             project.delete();
         }
 
-        assertTrue(file.exists());
+        assertThat(file.exists(), is(true));
         file.delete();
-        assertFalse(file.exists());
+        assertThat(file.exists(), is(false));
     }
 
     /**
@@ -639,13 +725,13 @@ class CustomFolderIconTest {
         };
 
         blocker.start();
-        assertTrue(file.exists());
+        assertThat(file.exists(), is(true));
 
         project.delete();
         blocker.interrupt();
 
         file.delete();
-        assertFalse(file.exists());
+        assertThat(file.exists(), is(false));
     }
 
     /**
@@ -667,18 +753,20 @@ class CustomFolderIconTest {
         try (@SuppressWarnings("unused")
                 MockedConstruction<FilePath> mocked = mockConstructionWithAnswer(FilePath.class, invocation -> {
                     String call = invocation.toString();
-                    if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
-                        return userContent;
-                    } else if (StringUtils.equals(call, "filePath.child(\n    \"" + file.getName() + "\"\n);")) {
-                        throw new IOException("Mocked Exception!");
+                    if (call != null) {
+                        if (call.equals("filePath.child(\"userContent\");")) {
+                            return userContent;
+                        } else if (call.equals("filePath.child(\n    \"" + file.getName() + "\"\n);")) {
+                            throw new IOException("Mocked Exception!");
+                        }
                     }
                     return fail("Unexpected invocation '" + call + "' - Test is broken!");
                 })) {
             project.delete();
         }
 
-        assertTrue(file.exists());
+        assertThat(file.exists(), is(true));
         file.delete();
-        assertFalse(file.exists());
+        assertThat(file.exists(), is(false));
     }
 }

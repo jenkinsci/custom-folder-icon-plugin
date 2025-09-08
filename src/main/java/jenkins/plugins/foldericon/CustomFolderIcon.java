@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import jenkins.model.Jenkins;
 import org.apache.commons.fileupload2.core.FileItem;
-import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.HttpResponse;
@@ -100,7 +99,7 @@ public class CustomFolderIcon extends FolderIcon {
 
     @Override
     public String getImageOf(String size) {
-        if (StringUtils.isNotBlank(getFoldericon())) {
+        if (getFoldericon() != null && !getFoldericon().isBlank()) {
             return Stapler.getCurrentRequest2().getContextPath() + Jenkins.RESOURCE_PATH + "/" + USER_CONTENT_PATH + "/"
                     + PLUGIN_PATH + "/" + getFoldericon();
         } else {
@@ -191,11 +190,11 @@ public class CustomFolderIcon extends FolderIcon {
                 FolderIcon icon = ((AbstractFolder<?>) item).getIcon();
                 if (icon instanceof CustomFolderIcon customFolderIcon) {
                     String foldericon = customFolderIcon.getFoldericon();
-                    if (StringUtils.isNotBlank(foldericon)) {
+                    if (foldericon != null && !foldericon.isBlank()) {
                         // delete the icon only if there is no other usage
                         boolean orphan = Jenkins.get().getAllItems(AbstractFolder.class).stream()
                                         .filter(folder -> folder.getIcon() instanceof CustomFolderIcon customIcon
-                                                && StringUtils.equals(foldericon, customIcon.getFoldericon()))
+                                                && foldericon.equals(customIcon.getFoldericon()))
                                         .limit(2)
                                         .count()
                                 <= 1;
