@@ -1,8 +1,12 @@
 package jenkins.plugins.foldericon.utils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.matchesPattern;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -13,7 +17,6 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.UUID;
 import jenkins.plugins.foldericon.CustomFolderIconConfiguration;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
@@ -56,15 +59,15 @@ public final class TestUtils {
      */
     public static void validateIcon(FolderIcon icon, String expectedImageName, String expectedIconClass) {
         String image = icon.getImageOf("42");
-        assertTrue(StringUtils.endsWith(image, expectedImageName));
-        assertTrue(StringUtils.contains(image, JENKINS_CONTEXT_PATH));
-        assertFalse(StringUtils.contains(image, JENKINS_CONTEXT_PATH + JENKINS_CONTEXT_PATH));
+        assertThat(image, endsWith(expectedImageName));
+        assertThat(image, containsString(JENKINS_CONTEXT_PATH));
+        assertThat(image, not(containsString(JENKINS_CONTEXT_PATH + JENKINS_CONTEXT_PATH)));
 
         String iconClass = icon.getIconClassName();
         if (expectedIconClass != null) {
-            assertTrue(StringUtils.endsWith(iconClass, expectedIconClass));
+            assertThat(iconClass, endsWith(expectedIconClass));
         } else {
-            assertNull(iconClass);
+            assertThat(iconClass, nullValue());
         }
     }
 
@@ -94,19 +97,19 @@ public final class TestUtils {
         if (expectedCode != 0) {
             Field code = response.getClass().getDeclaredField("val$code");
             code.setAccessible(true);
-            assertEquals(expectedCode, code.get(response));
+            assertThat(expectedCode, is(code.get(response)));
         }
 
-        if (StringUtils.isNotBlank(expectedTextPattern)) {
+        if (expectedTextPattern != null && !expectedTextPattern.isBlank()) {
             Field text = response.getClass().getDeclaredField("val$text");
             text.setAccessible(true);
             assertThat((String) text.get(response), matchesPattern(expectedTextPattern));
         }
 
-        if (StringUtils.isNotBlank(expectedErrorMessage)) {
+        if (expectedErrorMessage != null && !expectedErrorMessage.isBlank()) {
             Field message = response.getClass().getDeclaredField("val$errorMessage");
             message.setAccessible(true);
-            assertEquals(expectedErrorMessage, message.get(response));
+            assertThat(expectedErrorMessage, is(message.get(response)));
         }
     }
 
@@ -147,7 +150,7 @@ public final class TestUtils {
         FilePath file = iconDir.child(UUID.randomUUID() + ".png");
         file.copyFrom(new FilePath(new File("./src/main/webapp/icons/default.svg")));
 
-        assertTrue(file.exists());
+        assertThat(file.exists(), is(true));
 
         return file;
     }

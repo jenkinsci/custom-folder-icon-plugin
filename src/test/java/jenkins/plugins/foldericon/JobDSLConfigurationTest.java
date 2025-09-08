@@ -1,6 +1,10 @@
 package jenkins.plugins.foldericon;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
@@ -16,9 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.Set;
 import javaposse.jobdsl.plugin.ExecuteDslScripts;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -45,8 +47,8 @@ class JobDSLConfigurationTest {
     @Test
     void buildStatusFolderIcon() throws Exception {
         BuildStatusFolderIcon customIcon = createFolder(r, "build-status.groovy", BuildStatusFolderIcon.class);
-        assertEquals(Set.of("dev", "main"), customIcon.getJobs());
-        assertEquals("symbol-status-" + BallColor.NOTBUILT.getIconName(), customIcon.getIconClassName());
+        assertThat(customIcon.getJobs(), contains("main", "dev"));
+        assertThat(customIcon.getIconClassName(), is("symbol-status-" + BallColor.NOTBUILT.getIconName()));
     }
 
     /**
@@ -57,8 +59,8 @@ class JobDSLConfigurationTest {
     @Test
     void customIconFolderIcon() throws Exception {
         CustomFolderIcon customIcon = createFolder(r, "custom-icon.groovy", CustomFolderIcon.class);
-        assertEquals("custom.png", customIcon.getFoldericon());
-        assertEquals(Set.of("custom.png"), CustomFolderIcon.getAvailableIcons());
+        assertThat(customIcon.getFoldericon(), is("custom.png"));
+        assertThat(CustomFolderIcon.getAvailableIcons(), contains("custom.png"));
     }
 
     /**
@@ -69,7 +71,7 @@ class JobDSLConfigurationTest {
     @Test
     void emojiFolderIcon() throws Exception {
         EmojiFolderIcon customIcon = createFolder(r, "emoji-icon.groovy", EmojiFolderIcon.class);
-        assertEquals("sloth", customIcon.getEmoji());
+        assertThat(customIcon.getEmoji(), is("sloth"));
     }
 
     /**
@@ -80,7 +82,7 @@ class JobDSLConfigurationTest {
     @Test
     void fontAwesomeFolderIcon() throws Exception {
         FontAwesomeFolderIcon customIcon = createFolder(r, "fontawesome-icon.groovy", FontAwesomeFolderIcon.class);
-        assertEquals("brands/jenkins", customIcon.getFontAwesome());
+        assertThat(customIcon.getFontAwesome(), is("brands/jenkins"));
     }
 
     /**
@@ -91,7 +93,7 @@ class JobDSLConfigurationTest {
     @Test
     void ioniconFolderIcon() throws Exception {
         IoniconFolderIcon customIcon = createFolder(r, "ionicon-icon.groovy", IoniconFolderIcon.class);
-        assertEquals("jenkins", customIcon.getIonicon());
+        assertThat(customIcon.getIonicon(), is("jenkins"));
     }
 
     /**
@@ -102,7 +104,7 @@ class JobDSLConfigurationTest {
     @Test
     void openSourceFolderIcon() throws Exception {
         OpenSourceFolderIcon customIcon = createFolder(r, "opensource-icon.groovy", OpenSourceFolderIcon.class);
-        assertEquals("cdf-icon-color", customIcon.getOssicon());
+        assertThat(customIcon.getOssicon(), is("cdf-icon-color"));
     }
 
     /**
@@ -113,7 +115,7 @@ class JobDSLConfigurationTest {
     @Test
     void urlFolderIcon() throws Exception {
         UrlFolderIcon customIcon = createFolder(r, "url-icon.groovy", UrlFolderIcon.class);
-        assertEquals("https://get.jenkins.io/art/jenkins-logo/headshot.svg", customIcon.getUrl());
+        assertThat(customIcon.getUrl(), is("https://get.jenkins.io/art/jenkins-logo/headshot.svg"));
     }
 
     @SuppressWarnings("unchecked")
@@ -127,12 +129,12 @@ class JobDSLConfigurationTest {
             r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(build));
 
             FilePath workspace = job.getSomeWorkspace();
-            assertNotNull(workspace);
+            assertThat(workspace, notNullValue());
             workspace.child("custom.png").copyFrom(new FilePath(new File("./src/main/webapp/icons/default.svg")));
         }
 
         URL url = JobDSLConfigurationTest.class.getClassLoader().getResource(scriptName);
-        assertNotNull(url);
+        assertThat(url, notNullValue());
         String script = Files.readString(Path.of(url.toURI()), StandardCharsets.UTF_8);
 
         ExecuteDslScripts dslBuildStep = new ExecuteDslScripts();
@@ -145,15 +147,15 @@ class JobDSLConfigurationTest {
         r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(build));
 
         // validate
-        Item item = r.getInstance().getItem(StringUtils.substringBefore(scriptName, '.'));
-        assertNotNull(item);
+        Item item = r.getInstance().getItem(scriptName.substring(0, scriptName.indexOf('.')));
+        assertThat(item, notNullValue());
 
-        assertInstanceOf(Folder.class, item);
+        assertThat(item, instanceOf(Folder.class));
         Folder folder = (Folder) item;
 
         FolderIcon icon = folder.getIcon();
-        assertNotNull(icon);
-        assertTrue(clazz.isInstance(icon));
+        assertThat(icon, notNullValue());
+        assertThat(clazz.isInstance(icon), is(true));
 
         return (T) icon;
     }

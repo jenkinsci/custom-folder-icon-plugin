@@ -3,8 +3,13 @@ package jenkins.plugins.foldericon;
 import static jenkins.plugins.foldericon.utils.TestUtils.createCustomIconFile;
 import static jenkins.plugins.foldericon.utils.TestUtils.mockStaplerRequest;
 import static jenkins.plugins.foldericon.utils.TestUtils.validateResponse;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstructionWithAnswer;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
 import hudson.FilePath;
@@ -18,7 +23,6 @@ import jenkins.branch.OrganizationFolder;
 import jenkins.model.GlobalConfigurationCategory;
 import jenkins.model.Jenkins;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -52,7 +56,7 @@ class CustomFolderIconConfigurationTest {
     @Test
     void getCategory() {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
-        assertEquals(descriptor.getCategory(), GlobalConfigurationCategory.get(AppearanceCategory.class));
+        assertThat(descriptor.getCategory(), is(GlobalConfigurationCategory.get(AppearanceCategory.class)));
     }
 
     /**
@@ -61,7 +65,7 @@ class CustomFolderIconConfigurationTest {
     @Test
     void getRequiredGlobalConfigPagePermission() {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
-        assertEquals(Jenkins.MANAGE, descriptor.getRequiredGlobalConfigPagePermission());
+        assertThat(descriptor.getRequiredGlobalConfigPagePermission(), is(Jenkins.MANAGE));
     }
 
     /**
@@ -76,7 +80,7 @@ class CustomFolderIconConfigurationTest {
         FilePath file = createCustomIconFile(r);
 
         String usage = descriptor.getDiskUsage();
-        assertEquals(FileUtils.byteCountToDisplaySize(file.length()), usage);
+        assertThat(usage, is(FileUtils.byteCountToDisplaySize(file.length())));
     }
 
     /**
@@ -95,7 +99,7 @@ class CustomFolderIconConfigurationTest {
         parent.mkdirs();
 
         String usage = descriptor.getDiskUsage();
-        assertEquals(FileUtils.byteCountToDisplaySize(0L), usage);
+        assertThat(usage, is(FileUtils.byteCountToDisplaySize(0L)));
     }
 
     /**
@@ -106,7 +110,7 @@ class CustomFolderIconConfigurationTest {
         CustomFolderIconConfiguration descriptor = new CustomFolderIconConfiguration();
 
         String usage = descriptor.getDiskUsage();
-        assertEquals(FileUtils.byteCountToDisplaySize(0L), usage);
+        assertThat(usage, is(FileUtils.byteCountToDisplaySize(0L)));
     }
 
     /**
@@ -122,19 +126,21 @@ class CustomFolderIconConfigurationTest {
         try (@SuppressWarnings("unused")
                 MockedConstruction<FilePath> mocked = mockConstructionWithAnswer(FilePath.class, invocation -> {
                     String call = invocation.toString();
-                    if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
-                        return userContent;
-                    } else if (StringUtils.equals(call, "filePath.exists();")) {
-                        return true;
-                    } else if (StringUtils.equals(call, "filePath.list();")) {
-                        return List.of(file);
-                    } else if (StringUtils.equals(call, "filePath.child(\n    \"" + file.getName() + "\"\n);")) {
-                        throw new IOException("Mocked Exception!");
+                    if (call != null) {
+                        if (call.equals("filePath.child(\"userContent\");")) {
+                            return userContent;
+                        } else if (call.equals("filePath.exists();")) {
+                            return true;
+                        } else if (call.equals("filePath.list();")) {
+                            return List.of(file);
+                        } else if (call.equals("filePath.child(\n    \"" + file.getName() + "\"\n);")) {
+                            throw new IOException("Mocked Exception!");
+                        }
                     }
                     return fail("Unexpected invocation '" + call + "' - Test is broken!");
                 })) {
             String usage = descriptor.getDiskUsage();
-            assertEquals(FileUtils.byteCountToDisplaySize(0L), usage);
+            assertThat(usage, is(FileUtils.byteCountToDisplaySize(0L)));
         }
     }
 
@@ -154,7 +160,7 @@ class CustomFolderIconConfigurationTest {
             HttpResponse response = descriptor.doCleanup(mockReq);
 
             validateResponse(response, HttpServletResponse.SC_OK, null, null);
-            assertFalse(file.exists());
+            assertThat(file.exists(), is(false));
         }
     }
 
@@ -176,7 +182,7 @@ class CustomFolderIconConfigurationTest {
                 .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
                 .child(CustomFolderIconConfiguration.PLUGIN_PATH);
         parent.mkdirs();
-        assertTrue(parent.exists());
+        assertThat(parent.exists(), is(true));
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
             StaplerRequest2 mockReq = mockStaplerRequest(stapler);
@@ -209,7 +215,7 @@ class CustomFolderIconConfigurationTest {
             HttpResponse response = descriptor.doCleanup(mockReq);
 
             validateResponse(response, HttpServletResponse.SC_OK, null, null);
-            assertTrue(dummy.exists());
+            assertThat(dummy.exists(), is(true));
         }
     }
 
@@ -237,8 +243,8 @@ class CustomFolderIconConfigurationTest {
             HttpResponse response = descriptor.doCleanup(mockReq);
 
             validateResponse(response, HttpServletResponse.SC_OK, null, null);
-            assertTrue(dummy.exists());
-            assertFalse(unused.exists());
+            assertThat(dummy.exists(), is(true));
+            assertThat(unused.exists(), is(false));
         }
     }
 
@@ -258,12 +264,12 @@ class CustomFolderIconConfigurationTest {
                     .getRootPath()
                     .child(CustomFolderIconConfiguration.USER_CONTENT_PATH)
                     .child(CustomFolderIconConfiguration.PLUGIN_PATH);
-            assertTrue(parent.delete());
+            assertThat(parent.delete(), is(true));
 
             HttpResponse response = descriptor.doCleanup(mockReq);
 
             validateResponse(response, HttpServletResponse.SC_OK, null, null);
-            assertFalse(parent.exists());
+            assertThat(parent.exists(), is(false));
         }
     }
 
@@ -285,16 +291,18 @@ class CustomFolderIconConfigurationTest {
             try (@SuppressWarnings("unused")
                     MockedConstruction<FilePath> mocked = mockConstructionWithAnswer(FilePath.class, invocation -> {
                         String call = invocation.toString();
-                        if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
-                            return userContent;
-                        } else if (StringUtils.equals(call, "filePath.exists();")) {
-                            return true;
-                        } else if (StringUtils.equals(call, "filePath.list();")) {
-                            return List.of(file);
-                        } else if (StringUtils.equals(call, "filePath.child(\n    \"" + file.getName() + "\"\n);")) {
-                            FilePath mock = mock(FilePath.class);
-                            when(mock.delete()).thenReturn(false);
-                            return mock;
+                        if (call != null) {
+                            if (call.equals("filePath.child(\"userContent\");")) {
+                                return userContent;
+                            } else if (call.equals("filePath.exists();")) {
+                                return true;
+                            } else if (call.equals("filePath.list();")) {
+                                return List.of(file);
+                            } else if (call.equals("filePath.child(\n    \"" + file.getName() + "\"\n);")) {
+                                FilePath mock = mock(FilePath.class);
+                                when(mock.delete()).thenReturn(false);
+                                return mock;
+                            }
                         }
                         return fail("Unexpected invocation '" + call + "' - Test is broken!");
                     })) {
@@ -302,9 +310,9 @@ class CustomFolderIconConfigurationTest {
                 validateResponse(response, HttpServletResponse.SC_OK, null, null);
             }
 
-            assertTrue(file.exists());
-            assertTrue(file.delete());
-            assertFalse(file.exists());
+            assertThat(file.exists(), is(true));
+            assertThat(file.delete(), is(true));
+            assertThat(file.exists(), is(false));
         }
     }
 
@@ -336,7 +344,7 @@ class CustomFolderIconConfigurationTest {
             };
 
             blocker.start();
-            assertTrue(file.exists());
+            assertThat(file.exists(), is(true));
 
             HttpResponse response = descriptor.doCleanup(mockReq);
             validateResponse(response, HttpServletResponse.SC_OK, null, null);
@@ -345,7 +353,7 @@ class CustomFolderIconConfigurationTest {
             response = descriptor.doCleanup(mockReq);
 
             validateResponse(response, HttpServletResponse.SC_OK, null, null);
-            assertFalse(file.exists());
+            assertThat(file.exists(), is(false));
         }
     }
 
@@ -368,14 +376,16 @@ class CustomFolderIconConfigurationTest {
             try (@SuppressWarnings("unused")
                     MockedConstruction<FilePath> mocked = mockConstructionWithAnswer(FilePath.class, invocation -> {
                         String call = invocation.toString();
-                        if (StringUtils.equals(call, "filePath.child(\"userContent\");")) {
-                            return userContent;
-                        } else if (StringUtils.equals(call, "filePath.exists();")) {
-                            return true;
-                        } else if (StringUtils.equals(call, "filePath.list();")) {
-                            return List.of(file);
-                        } else if (StringUtils.equals(call, "filePath.child(\n    \"" + file.getName() + "\"\n);")) {
-                            throw new IOException("Mocked Exception!");
+                        if (call != null) {
+                            if (call.equals("filePath.child(\"userContent\");")) {
+                                return userContent;
+                            } else if (call.equals("filePath.exists();")) {
+                                return true;
+                            } else if (call.equals("filePath.list();")) {
+                                return List.of(file);
+                            } else if (call.equals("filePath.child(\n    \"" + file.getName() + "\"\n);")) {
+                                throw new IOException("Mocked Exception!");
+                            }
                         }
                         return fail("Unexpected invocation '" + call + "' - Test is broken!");
                     })) {
@@ -383,9 +393,9 @@ class CustomFolderIconConfigurationTest {
                 validateResponse(response, HttpServletResponse.SC_OK, null, null);
             }
 
-            assertTrue(file.exists());
-            assertTrue(file.delete());
-            assertFalse(file.exists());
+            assertThat(file.exists(), is(true));
+            assertThat(file.delete(), is(true));
+            assertThat(file.exists(), is(false));
         }
     }
 }

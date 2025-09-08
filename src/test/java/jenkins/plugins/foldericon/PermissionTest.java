@@ -3,7 +3,9 @@ package jenkins.plugins.foldericon;
 import static jenkins.plugins.foldericon.utils.TestUtils.createCustomIconFile;
 import static jenkins.plugins.foldericon.utils.TestUtils.createMultipartEntityBuffer;
 import static jenkins.plugins.foldericon.utils.TestUtils.validateResponse;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
 import hudson.FilePath;
@@ -140,27 +142,27 @@ class PermissionTest {
         // unauthenticated
         try (ACLContext ignored = ACL.as2(Jenkins.ANONYMOUS2)) {
             assertThrows(AccessDeniedException.class, () -> descriptor.doCleanup(null));
-            assertTrue(file.exists());
+            assertThat(file.exists(), is(true));
         }
 
         // Jenkins.READ
         try (ACLContext ignored = ACL.as(User.get(READ_USER, true, Collections.emptyMap()))) {
             assertThrows(AccessDeniedException.class, () -> descriptor.doCleanup(null));
-            assertTrue(file.exists());
+            assertThat(file.exists(), is(true));
         }
 
         // Jenkins.MANAGE
         try (ACLContext ignored = ACL.as(User.get(MANAGE_USER, true, Collections.emptyMap()))) {
             HttpResponse response = descriptor.doCleanup(null);
             validateResponse(response, HttpServletResponse.SC_OK, null, null);
-            assertFalse(file.exists());
+            assertThat(file.exists(), is(false));
         }
 
         // Jenkins.ADMINISTER
         try (ACLContext ignored = ACL.as(User.get(ADMINISTRATOR_USER, true, Collections.emptyMap()))) {
             HttpResponse response = descriptor.doCleanup(null);
             validateResponse(response, HttpServletResponse.SC_OK, null, null);
-            assertFalse(file.exists());
+            assertThat(file.exists(), is(false));
         }
     }
 
@@ -192,13 +194,13 @@ class PermissionTest {
         // Jenkins.MANAGE
         try (ACLContext ignored = ACL.as(User.get(MANAGE_USER, true, Collections.emptyMap()))) {
             String size = descriptor.getDiskUsage();
-            assertEquals(FileUtils.byteCountToDisplaySize(0), size);
+            assertThat(size, is(FileUtils.byteCountToDisplaySize(0)));
         }
 
         // Jenkins.ADMINISTER
         try (ACLContext ignored = ACL.as(User.get(ADMINISTRATOR_USER, true, Collections.emptyMap()))) {
             String size = descriptor.getDiskUsage();
-            assertEquals(FileUtils.byteCountToDisplaySize(0), size);
+            assertThat(size, is(FileUtils.byteCountToDisplaySize(0)));
         }
     }
 
@@ -241,7 +243,7 @@ class PermissionTest {
             assertThrows(AccessDeniedException.class, () -> descriptor.doCheckUrl(null, "https://jenkins.io"));
 
             FormValidation result = descriptor.doCheckUrl(project, "https://jenkins.io");
-            assertEquals(FormValidation.ok().kind, result.kind);
+            assertThat(result.kind, is(FormValidation.ok().kind));
         }
 
         // Jenkins.MANAGE
@@ -258,11 +260,11 @@ class PermissionTest {
             assertThrows(AccessDeniedException.class, () -> descriptor.doCheckUrl(null, "https://jenkins.io"));
 
             FormValidation result = descriptor.doCheckUrl(project, "https://jenkins.io");
-            assertEquals(FormValidation.ok().kind, result.kind);
+            assertThat(result.kind, is(FormValidation.ok().kind));
 
             strategy.grant(Jenkins.ADMINISTER).onRoot().to(ADMINISTRATOR_USER);
             result = descriptor.doCheckUrl(project, "https://jenkins.io");
-            assertEquals(FormValidation.ok().kind, result.kind);
+            assertThat(result.kind, is(FormValidation.ok().kind));
         }
     }
 }

@@ -13,6 +13,7 @@ import hudson.tasks.Builder;
  * Force build results.
  */
 public class ResultBuilder extends Builder {
+
     private final Result result;
 
     /**

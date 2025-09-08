@@ -2,7 +2,13 @@ package jenkins.plugins.foldericon;
 
 import static jenkins.plugins.foldericon.utils.TestUtils.mockStaplerRequest;
 import static jenkins.plugins.foldericon.utils.TestUtils.validateSymbol;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Mockito.mockStatic;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
@@ -17,7 +23,6 @@ import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.BuildStatusFolderIcon.DescriptorImpl;
 import jenkins.plugins.foldericon.utils.DelayBuilder;
 import jenkins.plugins.foldericon.utils.ResultBuilder;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -50,13 +55,13 @@ class BuildStatusFolderIconTest {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         project.setIcon(customIcon);
 
-        assertTrue(customIcon.getAvailableJobs().isEmpty());
+        assertThat(customIcon.getAvailableJobs(), empty());
 
         project.createProject(FreeStyleProject.class, "Success");
         project.createProject(FreeStyleProject.class, "Aborted");
 
-        assertEquals(2, customIcon.getAvailableJobs().size());
-        assertEquals(Set.of("Aborted", "Success"), customIcon.getAvailableJobs());
+        assertThat(customIcon.getAvailableJobs(), hasSize(2));
+        assertThat(customIcon.getAvailableJobs(), contains("Aborted", "Success"));
     }
 
     /**
@@ -127,14 +132,14 @@ class BuildStatusFolderIconTest {
     @Test
     void folder() throws Exception {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
-        assertTrue(StringUtils.startsWith(customIcon.getDescription(), Messages.Folder_description()));
+        assertThat(customIcon.getDescription(), startsWith(Messages.Folder_description()));
 
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertInstanceOf(BuildStatusFolderIcon.class, icon);
-        assertTrue(StringUtils.startsWith(icon.getDescription(), project.getPronoun()));
+        assertThat(icon, instanceOf(BuildStatusFolderIcon.class));
+        assertThat(icon.getDescription(), startsWith(project.getPronoun()));
     }
 
     /**
@@ -145,14 +150,14 @@ class BuildStatusFolderIconTest {
     @Test
     void organizationFolder() throws Exception {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
-        assertTrue(StringUtils.startsWith(customIcon.getDescription(), Messages.Folder_description()));
+        assertThat(customIcon.getDescription(), startsWith(Messages.Folder_description()));
 
         OrganizationFolder project = r.jenkins.createProject(OrganizationFolder.class, "org");
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertInstanceOf(BuildStatusFolderIcon.class, icon);
-        assertTrue(StringUtils.startsWith(icon.getDescription(), project.getPronoun()));
+        assertThat(icon, instanceOf(BuildStatusFolderIcon.class));
+        assertThat(icon.getDescription(), startsWith(project.getPronoun()));
     }
 
     /**
@@ -162,8 +167,8 @@ class BuildStatusFolderIconTest {
     void descriptor() {
         BuildStatusFolderIcon customIcon = new BuildStatusFolderIcon(null);
         DescriptorImpl descriptor = customIcon.getDescriptor();
-        assertEquals(Messages.BuildStatusFolderIcon_description(), descriptor.getDisplayName());
-        assertTrue(descriptor.isApplicable(null));
+        assertThat(descriptor.getDisplayName(), is(Messages.BuildStatusFolderIcon_description()));
+        assertThat(descriptor.isApplicable(null), is(true));
     }
 
     /**
@@ -178,7 +183,7 @@ class BuildStatusFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertInstanceOf(BuildStatusFolderIcon.class, icon);
+        assertThat(icon, instanceOf(BuildStatusFolderIcon.class));
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
             mockStaplerRequest(stapler);
@@ -234,7 +239,7 @@ class BuildStatusFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertInstanceOf(BuildStatusFolderIcon.class, icon);
+        assertThat(icon, instanceOf(BuildStatusFolderIcon.class));
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
             mockStaplerRequest(stapler);
@@ -271,7 +276,7 @@ class BuildStatusFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertInstanceOf(BuildStatusFolderIcon.class, icon);
+        assertThat(icon, instanceOf(BuildStatusFolderIcon.class));
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
             mockStaplerRequest(stapler);
@@ -302,7 +307,7 @@ class BuildStatusFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertInstanceOf(BuildStatusFolderIcon.class, icon);
+        assertThat(icon, instanceOf(BuildStatusFolderIcon.class));
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
             mockStaplerRequest(stapler);
@@ -311,8 +316,8 @@ class BuildStatusFolderIconTest {
             FreeStyleProject disabled = project.createProject(FreeStyleProject.class, "Disabled");
             disabled.setDisabled(true);
 
-            assertFalse(disabled.isBuildable());
-            assertTrue(disabled.isDisabled());
+            assertThat(disabled.isBuildable(), is(false));
+            assertThat(disabled.isDisabled(), is(true));
             validateSymbol(icon, BallColor.DISABLED.getImage(), BallColor.DISABLED.getIconName());
         }
     }
@@ -329,7 +334,7 @@ class BuildStatusFolderIconTest {
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertInstanceOf(BuildStatusFolderIcon.class, icon);
+        assertThat(icon, instanceOf(BuildStatusFolderIcon.class));
 
         try (MockedStatic<Stapler> stapler = mockStatic(Stapler.class)) {
             mockStaplerRequest(stapler);

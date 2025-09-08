@@ -1,9 +1,10 @@
 package jenkins.plugins.foldericon;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.startsWith;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.FolderIcon;
@@ -11,7 +12,6 @@ import hudson.model.Item;
 import hudson.util.FormValidation;
 import jenkins.branch.OrganizationFolder;
 import jenkins.plugins.foldericon.UrlFolderIcon.DescriptorImpl;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -42,22 +42,27 @@ class UrlFolderIconTest {
     @Test
     void folder() throws Exception {
         UrlFolderIcon customIcon = new UrlFolderIcon(null);
-        assertNull(customIcon.getUrl());
-        assertEquals(r.jenkins.getRootUrl() + DEFAULT_ICON_PATH, customIcon.getImageOf(null));
-        assertNull(customIcon.getIconClassName());
+        assertThat(customIcon.getUrl(), nullValue());
+        assertThat(customIcon.getImageOf(null), is(r.jenkins.getRootUrl() + DEFAULT_ICON_PATH));
+        assertThat(customIcon.getIconClassName(), nullValue());
+
+        customIcon = new UrlFolderIcon("");
+        assertThat(customIcon.getUrl(), is(""));
+        assertThat(customIcon.getImageOf(null), is(r.jenkins.getRootUrl() + DEFAULT_ICON_PATH));
+        assertThat(customIcon.getIconClassName(), nullValue());
 
         customIcon = new UrlFolderIcon(DUMMY_ICON);
-        assertTrue(StringUtils.startsWith(customIcon.getDescription(), Messages.Folder_description()));
-        assertEquals(DUMMY_ICON, customIcon.getUrl());
-        assertEquals(DUMMY_ICON, customIcon.getImageOf(null));
-        assertNull(customIcon.getIconClassName());
+        assertThat(customIcon.getDescription(), startsWith(Messages.Folder_description()));
+        assertThat(customIcon.getUrl(), is(DUMMY_ICON));
+        assertThat(customIcon.getImageOf(null), is(DUMMY_ICON));
+        assertThat(customIcon.getIconClassName(), nullValue());
 
         Folder project = r.jenkins.createProject(Folder.class, "folder");
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertInstanceOf(UrlFolderIcon.class, icon);
-        assertTrue(StringUtils.startsWith(icon.getDescription(), project.getPronoun()));
+        assertThat(icon, instanceOf(UrlFolderIcon.class));
+        assertThat(icon.getDescription(), startsWith(project.getPronoun()));
     }
 
     /**
@@ -68,22 +73,27 @@ class UrlFolderIconTest {
     @Test
     void organizationFolder() throws Exception {
         UrlFolderIcon customIcon = new UrlFolderIcon(null);
-        assertNull(customIcon.getUrl());
-        assertEquals(r.jenkins.getRootUrl() + DEFAULT_ICON_PATH, customIcon.getImageOf(null));
-        assertNull(customIcon.getIconClassName());
+        assertThat(customIcon.getUrl(), nullValue());
+        assertThat(customIcon.getImageOf(null), is(r.jenkins.getRootUrl() + DEFAULT_ICON_PATH));
+        assertThat(customIcon.getIconClassName(), nullValue());
+
+        customIcon = new UrlFolderIcon("");
+        assertThat(customIcon.getUrl(), is(""));
+        assertThat(customIcon.getImageOf(null), is(r.jenkins.getRootUrl() + DEFAULT_ICON_PATH));
+        assertThat(customIcon.getIconClassName(), nullValue());
 
         customIcon = new UrlFolderIcon(DUMMY_ICON);
-        assertTrue(StringUtils.startsWith(customIcon.getDescription(), Messages.Folder_description()));
-        assertEquals(DUMMY_ICON, customIcon.getUrl());
-        assertEquals(DUMMY_ICON, customIcon.getImageOf(null));
-        assertNull(customIcon.getIconClassName());
+        assertThat(customIcon.getDescription(), startsWith(Messages.Folder_description()));
+        assertThat(customIcon.getUrl(), is(DUMMY_ICON));
+        assertThat(customIcon.getImageOf(null), is(DUMMY_ICON));
+        assertThat(customIcon.getIconClassName(), nullValue());
 
         OrganizationFolder project = r.jenkins.createProject(OrganizationFolder.class, "org");
         project.setIcon(customIcon);
         FolderIcon icon = project.getIcon();
 
-        assertInstanceOf(UrlFolderIcon.class, icon);
-        assertTrue(StringUtils.startsWith(icon.getDescription(), project.getPronoun()));
+        assertThat(icon, instanceOf(UrlFolderIcon.class));
+        assertThat(icon.getDescription(), startsWith(project.getPronoun()));
     }
 
     /**
@@ -93,8 +103,8 @@ class UrlFolderIconTest {
     void descriptor() {
         UrlFolderIcon customIcon = new UrlFolderIcon(DUMMY_ICON);
         DescriptorImpl descriptor = customIcon.getDescriptor();
-        assertEquals(Messages.UrlFolderIcon_description(), descriptor.getDisplayName());
-        assertTrue(descriptor.isApplicable(null));
+        assertThat(descriptor.getDisplayName(), is(Messages.UrlFolderIcon_description()));
+        assertThat(descriptor.isApplicable(null), is(true));
     }
 
     /**
@@ -105,15 +115,15 @@ class UrlFolderIconTest {
         UrlFolderIcon customIcon = new UrlFolderIcon(DUMMY_ICON);
         DescriptorImpl descriptor = customIcon.getDescriptor();
 
-        assertEquals(FormValidation.ok().kind, descriptor.doCheckUrl(null, null).kind);
-        assertEquals(FormValidation.ok().kind, descriptor.doCheckUrl(null, "").kind);
-        assertEquals(FormValidation.ok().kind, descriptor.doCheckUrl(null, "http://jenkins.io").kind);
-        assertEquals(FormValidation.ok().kind, descriptor.doCheckUrl(null, "https://jenkins.io").kind);
-        assertEquals(FormValidation.ok().kind, descriptor.doCheckUrl(null, "HTTPS://jenkins.io").kind);
+        assertThat(descriptor.doCheckUrl(null, null).kind, is(FormValidation.ok().kind));
+        assertThat(descriptor.doCheckUrl(null, "").kind, is(FormValidation.ok().kind));
+        assertThat(descriptor.doCheckUrl(null, "http://jenkins.io").kind, is(FormValidation.ok().kind));
+        assertThat(descriptor.doCheckUrl(null, "https://jenkins.io").kind, is(FormValidation.ok().kind));
+        assertThat(descriptor.doCheckUrl(null, "HTTPS://jenkins.io").kind, is(FormValidation.ok().kind));
 
         FormValidation actual = descriptor.doCheckUrl(null, DUMMY_ICON);
         FormValidation expected = FormValidation.error(Messages.Url_invalidUrl());
-        assertEquals(expected.kind, actual.kind);
-        assertEquals(expected.getMessage(), actual.getMessage());
+        assertThat(actual.kind, is(expected.kind));
+        assertThat(actual.getMessage(), is(expected.getMessage()));
     }
 }
