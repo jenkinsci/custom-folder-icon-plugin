@@ -42,7 +42,7 @@
   <properties>
     <gitHubRepo>jenkinsci/custom-folder-icon-plugin</gitHubRepo>
     <jenkins.baseline>2.504</jenkins.baseline>
-    <jenkins.version>${jenkins.baseline}.1</jenkins.version>
+    <jenkins.version>${jenkins.baseline}.3</jenkins.version>
     <revision>2.22</revision>
     <changelist>-SNAPSHOT</changelist>
     <spotless.check.skip>false</spotless.check.skip>
