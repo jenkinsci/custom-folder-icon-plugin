@@ -7,8 +7,18 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.model.Item;
 import hudson.util.FormValidation;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jenkins.model.Jenkins;
+import jenkins.security.csp.Contributor;
+import jenkins.security.csp.CspBuilder;
+import jenkins.security.csp.Directive;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.accmod.restrictions.suppressions.SuppressRestrictedWarnings;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -95,6 +105,35 @@ public class UrlFolderIcon extends FolderIcon {
                 return FormValidation.error(Messages.Url_invalidUrl());
             }
             return FormValidation.ok();
+        }
+    }
+
+    @Extension
+    @Restricted(NoExternalUse.class)
+    @SuppressRestrictedWarnings({Contributor.class, CspBuilder.class})
+    public static class UrlFolderIconContributor implements Contributor {
+
+        private static final Logger LOGGER = Logger.getLogger(UrlFolderIconContributor.class.getName());
+
+        @Override
+        public void apply(CspBuilder cspBuilder) {
+            Jenkins.get().allItems(AbstractFolder.class).forEach(folder -> {
+                FolderIcon icon = folder.getIcon();
+                if (icon instanceof UrlFolderIcon urlFolderIcon) {
+                    String url = urlFolderIcon.getUrl();
+                    if (url != null && !url.isBlank()) {
+                        try {
+                            URI uri = new URI(url);
+                            if (uri.isAbsolute()) {
+                                cspBuilder.add(Directive.IMG_SRC, uri.toASCIIString());
+                            }
+                            // Scheme-relative URLs are not supported by this plugin, so no need to handle them here.
+                        } catch (URISyntaxException e) {
+                            LOGGER.log(Level.FINE, "Invalid URL: " + url, e);
+                        }
+                    }
+                }
+            });
         }
     }
 }
