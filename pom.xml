@@ -42,7 +42,7 @@
   <properties>
     <gitHubRepo>jenkinsci/custom-folder-icon-plugin</gitHubRepo>
     <jenkins.baseline>2.504</jenkins.baseline>
-    <jenkins.version>${jenkins.baseline}.3</jenkins.version>
+    <jenkins.version>2.539</jenkins.version>
     <revision>2.22</revision>
     <changelist>-SNAPSHOT</changelist>
     <spotless.check.skip>false</spotless.check.skip>
@@ -82,6 +82,12 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>cloudbees-folder</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.kohsuke</groupId>
+      <artifactId>access-modifier-suppressions</artifactId>
+      <version>${access-modifier-checker.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
