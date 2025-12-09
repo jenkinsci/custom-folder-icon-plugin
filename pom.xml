@@ -43,7 +43,7 @@
     <gitHubRepo>jenkinsci/custom-folder-icon-plugin</gitHubRepo>
     <jenkins.baseline>2.504</jenkins.baseline>
     <jenkins.version>2.539</jenkins.version>
-    <revision>2.23</revision>
+    <revision>2.22</revision>
     <changelist>-SNAPSHOT</changelist>
     <spotless.check.skip>false</spotless.check.skip>
     <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
