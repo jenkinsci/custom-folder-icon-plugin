@@ -10,7 +10,7 @@
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>custom-folder-icon</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>${revision}.${changelist}</version>
   <packaging>hpi</packaging>
 
   <name>Custom Folder Icon Plugin</name>
@@ -43,8 +43,8 @@
     <gitHubRepo>jenkinsci/custom-folder-icon-plugin</gitHubRepo>
     <jenkins.baseline>2.504</jenkins.baseline>
     <jenkins.version>2.539</jenkins.version>
-    <revision>2.23</revision>
-    <changelist>-SNAPSHOT</changelist>
+    <revision>2</revision>
+    <changelist>999999-SNAPSHOT</changelist>
     <spotless.check.skip>false</spotless.check.skip>
     <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
     <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
