@@ -41,7 +41,7 @@
 
   <properties>
     <gitHubRepo>jenkinsci/custom-folder-icon-plugin</gitHubRepo>
-    <jenkins.baseline>2.504</jenkins.baseline>
+    <jenkins.baseline>2.528</jenkins.baseline>
     <jenkins.version>2.539</jenkins.version>
     <revision>2</revision>
     <changelist>999999-SNAPSHOT</changelist>
@@ -55,7 +55,7 @@
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
         <artifactId>bom-${jenkins.baseline}.x</artifactId>
-        <version>5750.vec44cb_c78352</version>
+        <version>5759.va_1462c940572</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
