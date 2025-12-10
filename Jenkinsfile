@@ -1,9 +1,11 @@
-// Builds the plugin using https://github.com/jenkins-infra/pipeline-library
+/*
+ See the documentation for more options:
+ https://github.com/jenkins-infra/pipeline-library/
+*/
 buildPlugin(
-  forkCount: '1C',
-  useContainerAgent: true,
+  forkCount: '1C', // Run parallel tests on ci.jenkins.io for lower costs, faster feedback
+  useContainerAgent: true, // Set to `false` if you need to use Docker for containerized tests
   configurations: [
-    // Test the minimum required Jenkins Version.
-    [ platform: 'linux', jdk: '17', jenkins: null ],
-    [ platform: 'windows', jdk: '21', jenkins: null ]
+    [platform: 'linux', jdk: 25],
+    [platform: 'windows', jdk: 21],
 ])
