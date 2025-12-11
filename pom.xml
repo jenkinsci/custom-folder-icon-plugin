@@ -24,14 +24,6 @@
     </license>
   </licenses>
 
-  <developers>
-    <developer>
-      <id>strangelookingnerd</id>
-      <name>Daniel Krämer</name>
-      <email>daniel-kraemer@gmx.net</email>
-    </developer>
-  </developers>
-
   <scm>
     <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
     <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
@@ -55,7 +47,7 @@
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
         <artifactId>bom-${jenkins.baseline}.x</artifactId>
-        <version>5759.va_1462c940572</version>
+        <version>5750.vec44cb_c78352</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
