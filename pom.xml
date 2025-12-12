@@ -40,6 +40,8 @@
     <spotless.check.skip>false</spotless.check.skip>
     <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
     <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
+    <jenkins-test-harness.version>2537.vccf3ca_0a_d566</jenkins-test-harness.version>
+    <hpi-plugin.version>3.1786.v1a_9a_47a_30055</hpi-plugin.version>
   </properties>
 
   <dependencyManagement>
