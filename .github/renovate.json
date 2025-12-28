@@ -2,14 +2,6 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "automerge": true,
   "extends": [
-    "config:recommended",
-    ":semanticCommitsDisabled"
-  ],
-  "reviewers": [
-    "team:custom-folder-icon-plugin-developers"
-  ],
-  "labels": [
-    "dependencies"
-  ],
-  "rebaseWhen": "conflicted"
+    "github>jenkinsci/renovate-config"
+  ]
 }
