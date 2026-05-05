@@ -144,7 +144,7 @@ class UITest {
 
             String src = null;
             if (!cropper.getElementsByTagName("img").isEmpty()) {
-                DomElement image = cropper.getElementsByTagName("img").get(0);
+                DomElement image = cropper.getElementsByTagName("img").getFirst();
                 src = image.getAttribute("src");
             }
             assertThat(src, notNullValue());
